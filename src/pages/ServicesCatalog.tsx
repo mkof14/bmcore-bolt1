@@ -61,7 +61,7 @@ const categoryHeroData: Record<string, { bgImage: string; iconColor: string; tex
     textColor: 'text-yellow-400'
   },
   'womens-health': {
-    bgImage: 'https://images.pexels.com/photos/3738388/pexels-photo-3738388.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    bgImage: 'https://images.pexels.com/photos/3760259/pexels-photo-3760259.jpeg?auto=compress&cs=tinysrgb&w=1200',
     iconColor: 'text-pink-400',
     textColor: 'text-pink-400'
   },
@@ -121,7 +121,7 @@ const categoryHeroData: Record<string, { bgImage: string; iconColor: string; tex
     textColor: 'text-purple-400'
   },
   'general-sexual': {
-    bgImage: 'https://images.pexels.com/photos/3738388/pexels-photo-3738388.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    bgImage: 'https://images.pexels.com/photos/3259580/pexels-photo-3259580.jpeg?auto=compress&cs=tinysrgb&w=1200',
     iconColor: 'text-red-400',
     textColor: 'text-red-400'
   },
@@ -131,7 +131,7 @@ const categoryHeroData: Record<string, { bgImage: string; iconColor: string; tex
     textColor: 'text-blue-400'
   },
   'womens-sexual-health': {
-    bgImage: 'https://images.pexels.com/photos/3738388/pexels-photo-3738388.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    bgImage: 'https://images.pexels.com/photos/3894378/pexels-photo-3894378.jpeg?auto=compress&cs=tinysrgb&w=1200',
     iconColor: 'text-pink-400',
     textColor: 'text-pink-400'
   }

@@ -90,7 +90,7 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
       iconColor: 'text-pink-400',
       glowColor: 'drop-shadow-[0_0_15px_rgba(244,114,182,0.8)]',
       shadowColor: 'shadow-pink-500/50',
-      bgImage: 'https://images.pexels.com/photos/3738388/pexels-photo-3738388.jpeg?auto=compress&cs=tinysrgb&w=600',
+      bgImage: 'https://images.pexels.com/photos/3760259/pexels-photo-3760259.jpeg?auto=compress&cs=tinysrgb&w=600',
     },
     {
       id: 'mens-health',
@@ -210,7 +210,7 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
       iconColor: 'text-red-400',
       glowColor: 'drop-shadow-[0_0_15px_rgba(248,113,113,0.8)]',
       shadowColor: 'shadow-red-500/50',
-      bgImage: 'https://images.pexels.com/photos/3738388/pexels-photo-3738388.jpeg?auto=compress&cs=tinysrgb&w=600',
+      bgImage: 'https://images.pexels.com/photos/3259580/pexels-photo-3259580.jpeg?auto=compress&cs=tinysrgb&w=600',
     },
     {
       id: 'mens-sexual-health',
@@ -230,7 +230,7 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
       iconColor: 'text-pink-400',
       glowColor: 'drop-shadow-[0_0_15px_rgba(244,114,182,0.8)]',
       shadowColor: 'shadow-pink-500/50',
-      bgImage: 'https://images.pexels.com/photos/3738388/pexels-photo-3738388.jpeg?auto=compress&cs=tinysrgb&w=600',
+      bgImage: 'https://images.pexels.com/photos/3894378/pexels-photo-3894378.jpeg?auto=compress&cs=tinysrgb&w=600',
     },
   ];
 
@@ -259,7 +259,7 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
                 <img
                   src={category.bgImage}
                   alt={category.name}
-                  className="absolute inset-0 w-full h-full object-cover transition-all duration-300 brightness-[0.35] group-hover:brightness-75 group-hover:saturate-100"
+                  className="absolute inset-0 w-full h-full object-cover transition-all duration-300 brightness-[0.35] group-hover:brightness-[0.55] group-hover:saturate-100"
                 />
 
                 <div className={`absolute inset-0 bg-gradient-to-t ${category.gradient} opacity-95 transition-opacity duration-300 group-hover:opacity-60`}></div>
