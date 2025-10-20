@@ -259,25 +259,25 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
                 <img
                   src={category.bgImage}
                   alt={category.name}
-                  className="absolute inset-0 w-full h-full object-cover transition-all duration-300 group-hover:brightness-125 group-hover:saturate-110"
+                  className="absolute inset-0 w-full h-full object-cover transition-all duration-300 brightness-50 group-hover:brightness-100 group-hover:saturate-110"
                 />
 
-                <div className={`absolute inset-0 bg-gradient-to-t ${category.gradient} transition-opacity duration-300 group-hover:opacity-60`}></div>
+                <div className={`absolute inset-0 bg-gradient-to-t ${category.gradient} opacity-90 transition-opacity duration-300 group-hover:opacity-50`}></div>
 
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
                 </div>
 
-                <div className="relative h-full px-3 py-4 flex flex-col items-center justify-between text-center">
-                  <div className={`transform group-hover:scale-125 transition-all duration-300 ${category.glowColor}`}>
-                    <Icon className={`h-10 w-10 ${category.iconColor}`} strokeWidth={2} />
+                <div className="relative h-full px-3 py-4 flex flex-col items-center justify-center text-center">
+                  <div className={`mb-3 transform transition-all duration-300 ${category.glowColor} group-hover:scale-110 group-hover:mb-4`}>
+                    <Icon className={`h-8 w-8 ${category.iconColor}`} strokeWidth={2.5} />
                   </div>
-                  <h3 className="text-white font-bold text-sm leading-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)] transition-all duration-300 group-hover:text-base group-hover:scale-110">
+                  <h3 className="text-white font-bold text-base leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,1)] transition-all duration-300 group-hover:text-lg group-hover:scale-105">
                     {category.name}
                   </h3>
                 </div>
 
-                <div className="absolute inset-0 border border-white/0 group-hover:border-white/30 rounded-lg transition-all duration-300"></div>
+                <div className="absolute inset-0 border-2 border-white/0 group-hover:border-white/40 rounded-lg transition-all duration-300"></div>
               </button>
             );
           })}

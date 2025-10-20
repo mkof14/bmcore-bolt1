@@ -179,11 +179,11 @@ export default function ServicesCatalog({ onNavigate, initialCategory }: Service
 
           <div className="relative h-full flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
             <button
-              onClick={() => onNavigate('services-catalog')}
+              onClick={() => onNavigate('home')}
               className="absolute top-6 left-6 flex items-center space-x-2 text-gray-300 hover:text-white transition-colors group"
             >
               <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
-              <span className="font-medium">Back to Services</span>
+              <span className="font-medium">Back to Categories</span>
             </button>
 
             <div className="text-center">
