@@ -230,7 +230,7 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
             return (
               <button
                 key={category.id}
-                onClick={() => onNavigate('services-catalog')}
+                onClick={() => onNavigate('services-catalog', category.id)}
                 className={`group relative overflow-hidden rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:${category.shadowColor || 'shadow-white/50'}`}
                 style={{ aspectRatio: '1' }}
               >

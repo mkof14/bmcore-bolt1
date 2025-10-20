@@ -5,19 +5,26 @@ import type { Category, Service } from '../types/database';
 
 interface ServicesCatalogDBProps {
   onNavigate: (page: string, categoryId?: string) => void;
+  categoryFilter?: string;
 }
 
-export default function ServicesCatalogDB({ onNavigate }: ServicesCatalogDBProps) {
+export default function ServicesCatalogDB({ onNavigate, categoryFilter }: ServicesCatalogDBProps) {
   const [categories, setCategories] = useState<Category[]>([]);
   const [services, setServices] = useState<Service[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
+  const [selectedCategory, setSelectedCategory] = useState<string | null>(categoryFilter || null);
   const [loading, setLoading] = useState(true);
   const [locale] = useState<'en' | 'ru'>('en');
 
   useEffect(() => {
     loadData();
   }, []);
+
+  useEffect(() => {
+    if (categoryFilter) {
+      setSelectedCategory(categoryFilter);
+    }
+  }, [categoryFilter]);
 
   const loadData = async () => {
     try {
