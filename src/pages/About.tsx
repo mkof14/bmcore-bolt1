@@ -57,7 +57,12 @@ export default function About() {
                 </p>
                 <p>
                   Recognized by <span className="text-orange-500 font-semibold">Healthcare Tech Outlook</span>.{' '}
-                  <a href="#" className="text-orange-500 hover:text-orange-400 underline transition-colors">
+                  <a
+                    href="https://www.healthcaretechoutlook.com/digital-invest-inc"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-orange-500 hover:text-orange-400 underline transition-colors"
+                  >
                     Read the interview →
                   </a>
                 </p>
@@ -68,7 +73,7 @@ export default function About() {
           <div className="mt-12 bg-gray-900/30 backdrop-blur border border-gray-800 rounded-xl p-8">
             <p className="text-gray-300 text-lg">
               Our platform spans{' '}
-              <span className="font-bold text-white">20 categories with 180+ services</span>{' '}
+              <span className="font-bold text-white">20 categories with 200+ services</span>{' '}
               (and growing). We expand only when the signal is strong — based on real user needs and evidence.
             </p>
           </div>
