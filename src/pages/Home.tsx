@@ -40,32 +40,34 @@ export default function Home({ onNavigate }: HomeProps) {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors">
-      <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20"></div>
+      <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden bg-gray-900 dark:bg-gray-950">
         <div className="relative max-w-7xl mx-auto">
           <div className="text-center">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white mb-6">
-              Understand Your Body
-              <span className="block text-blue-600 dark:text-blue-400 mt-2">Day-to-Day</span>
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6">
+              Welcome to BioMath Core
             </h1>
-            <p className="text-xl md:text-2xl text-gray-600 dark:text-gray-300 mb-8 max-w-3xl mx-auto">
-              A wellness intelligence platform that converts your body's signals into meaning,
-              then into clear, gentle, personalized guidance. Understanding, not overwhelm.
+            <p className="text-3xl md:text-4xl lg:text-5xl font-medium text-yellow-500 mb-8">
+              Where data meets daily life.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-blue-400 mb-12">
+              All of Health. One Platform.
+            </h2>
+            <p className="text-lg md:text-xl text-gray-300 mb-12 max-w-5xl mx-auto leading-relaxed">
+              From sleep to cognition, from movement to mood — BioMath Core brings clarity to your
+              health journey. Track, understand, and optimize your wellbeing through intelligent, real-time insights tailored to you.
+            </p>
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <button
                 onClick={() => onNavigate('signup')}
-                className="px-8 py-4 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold rounded-lg transition-colors flex items-center justify-center space-x-2"
+                className="px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold rounded-lg transition-colors"
               >
-                <span>Get Started</span>
-                <ArrowRight className="h-5 w-5" />
+                Start Free Today
               </button>
               <button
-                onClick={() => onNavigate('learning-center')}
-                className="px-8 py-4 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 text-gray-900 dark:text-white font-semibold rounded-lg border-2 border-gray-200 dark:border-gray-700 transition-colors flex items-center justify-center space-x-2"
+                onClick={() => onNavigate('learning')}
+                className="px-10 py-4 bg-orange-500 hover:bg-orange-600 text-white text-lg font-semibold rounded-lg transition-colors"
               >
-                <BookOpen className="h-5 w-5" />
-                <span>Explore Learning Center</span>
+                Explore Learning Center
               </button>
             </div>
           </div>
