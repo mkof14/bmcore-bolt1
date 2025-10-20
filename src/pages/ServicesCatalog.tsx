@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Search, ChevronRight, Heart, Brain, Users, Activity, Sparkles, Moon, Shield, Zap, Apple, Leaf, Eye, Tablet, Hourglass, ArrowLeft } from 'lucide-react';
+import { Search, ChevronRight, Heart, Brain, Users, Activity, Sparkles, Moon, Shield, Zap, Apple, Leaf, Eye, Tablet, Hourglass, ArrowLeft, TrendingUp, Dumbbell, Flower2, User, Droplets, HeartHandshake, Smartphone, Fingerprint, Target, Blend } from 'lucide-react';
 import { serviceCategories } from '../data/services';
 import BackButton from '../components/BackButton';
 
@@ -21,7 +21,120 @@ const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
   Leaf,
   Eye,
   Tablet,
-  Hourglass
+  Hourglass,
+  TrendingUp,
+  Dumbbell,
+  Flower2,
+  User,
+  Droplets,
+  HeartHandshake,
+  Smartphone,
+  Fingerprint,
+  Target,
+  Blend
+};
+
+const categoryHeroData: Record<string, { bgImage: string; iconColor: string; textColor: string }> = {
+  'critical-health': {
+    bgImage: 'https://images.pexels.com/photos/4386466/pexels-photo-4386466.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    iconColor: 'text-orange-400',
+    textColor: 'text-orange-400'
+  },
+  'everyday-wellness': {
+    bgImage: 'https://images.pexels.com/photos/3768894/pexels-photo-3768894.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    iconColor: 'text-green-400',
+    textColor: 'text-green-400'
+  },
+  'longevity': {
+    bgImage: 'https://images.pexels.com/photos/4498606/pexels-photo-4498606.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    iconColor: 'text-pink-400',
+    textColor: 'text-pink-400'
+  },
+  'mental-wellness': {
+    bgImage: 'https://images.pexels.com/photos/7592370/pexels-photo-7592370.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    iconColor: 'text-cyan-400',
+    textColor: 'text-cyan-400'
+  },
+  'fitness-performance': {
+    bgImage: 'https://images.pexels.com/photos/1954524/pexels-photo-1954524.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    iconColor: 'text-yellow-400',
+    textColor: 'text-yellow-400'
+  },
+  'womens-health': {
+    bgImage: 'https://images.pexels.com/photos/3738388/pexels-photo-3738388.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    iconColor: 'text-pink-400',
+    textColor: 'text-pink-400'
+  },
+  'mens-health': {
+    bgImage: 'https://images.pexels.com/photos/1516680/pexels-photo-1516680.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    iconColor: 'text-blue-400',
+    textColor: 'text-blue-400'
+  },
+  'beauty-skincare': {
+    bgImage: 'https://images.pexels.com/photos/3785147/pexels-photo-3785147.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    iconColor: 'text-pink-400',
+    textColor: 'text-pink-400'
+  },
+  'nutrition-diet': {
+    bgImage: 'https://images.pexels.com/photos/1640770/pexels-photo-1640770.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    iconColor: 'text-green-400',
+    textColor: 'text-green-400'
+  },
+  'sleep-recovery': {
+    bgImage: 'https://images.pexels.com/photos/6942086/pexels-photo-6942086.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    iconColor: 'text-purple-400',
+    textColor: 'text-purple-400'
+  },
+  'environmental-health': {
+    bgImage: 'https://images.pexels.com/photos/1072179/pexels-photo-1072179.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    iconColor: 'text-teal-400',
+    textColor: 'text-teal-400'
+  },
+  'family-health': {
+    bgImage: 'https://images.pexels.com/photos/4259140/pexels-photo-4259140.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    iconColor: 'text-orange-400',
+    textColor: 'text-orange-400'
+  },
+  'preventive-medicine': {
+    bgImage: 'https://images.pexels.com/photos/4386466/pexels-photo-4386466.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    iconColor: 'text-cyan-400',
+    textColor: 'text-cyan-400'
+  },
+  'biohacking': {
+    bgImage: 'https://images.pexels.com/photos/4498606/pexels-photo-4498606.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    iconColor: 'text-blue-400',
+    textColor: 'text-blue-400'
+  },
+  'senior-care': {
+    bgImage: 'https://images.pexels.com/photos/3768131/pexels-photo-3768131.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    iconColor: 'text-slate-300',
+    textColor: 'text-slate-300'
+  },
+  'eye-health': {
+    bgImage: 'https://images.pexels.com/photos/1624496/pexels-photo-1624496.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    iconColor: 'text-blue-400',
+    textColor: 'text-blue-400'
+  },
+  'digital-therapeutics': {
+    bgImage: 'https://images.pexels.com/photos/5632379/pexels-photo-5632379.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    iconColor: 'text-purple-400',
+    textColor: 'text-purple-400'
+  },
+  'general-sexual': {
+    bgImage: 'https://images.pexels.com/photos/3738388/pexels-photo-3738388.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    iconColor: 'text-red-400',
+    textColor: 'text-red-400'
+  },
+  'mens-sexual-health': {
+    bgImage: 'https://images.pexels.com/photos/1516680/pexels-photo-1516680.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    iconColor: 'text-blue-400',
+    textColor: 'text-blue-400'
+  },
+  'womens-sexual-health': {
+    bgImage: 'https://images.pexels.com/photos/3738388/pexels-photo-3738388.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    iconColor: 'text-pink-400',
+    textColor: 'text-pink-400'
+  }
 };
 
 export default function ServicesCatalog({ onNavigate, initialCategory }: ServicesCatalogProps) {
@@ -51,29 +164,88 @@ export default function ServicesCatalog({ onNavigate, initialCategory }: Service
     ? serviceCategories.find(c => c.id === selectedCategory)
     : null;
 
+  const heroData = selectedCategoryData ? categoryHeroData[selectedCategoryData.id] : null;
+  const IconComponent = selectedCategoryData ? iconMap[selectedCategoryData.icon] : null;
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors pt-16">
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
-        <div className="max-w-7xl mx-auto">
-          <BackButton onNavigate={onNavigate} />
+      {selectedCategoryData && heroData && IconComponent ? (
+        <section className="relative h-80 overflow-hidden">
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${heroData.bgImage})` }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/80" />
 
-          <div className="text-center mb-8">
-            <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-4">
-              {selectedCategoryData ? selectedCategoryData.name : 'Complete Services Catalog'}
-            </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8">
-              {selectedCategoryData
-                ? selectedCategoryData.description
-                : 'Explore our comprehensive suite of 200+ biomathematical health services across 20 specialized categories'
-              }
-            </p>
+          <div className="relative h-full flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
+            <button
+              onClick={() => onNavigate('services-catalog')}
+              className="absolute top-6 left-6 flex items-center space-x-2 text-gray-300 hover:text-white transition-colors group"
+            >
+              <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
+              <span className="font-medium">Back to Services</span>
+            </button>
 
+            <div className="text-center">
+              <div className="flex justify-center mb-6">
+                <div className={`w-20 h-20 rounded-2xl bg-gray-900/50 backdrop-blur-sm border-2 border-white/20 flex items-center justify-center ${heroData.iconColor} drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]`}>
+                  <IconComponent className="h-12 w-12" strokeWidth={2} />
+                </div>
+              </div>
+
+              <h1 className={`text-5xl md:text-6xl font-bold mb-4 ${heroData.textColor} drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]`}>
+                {selectedCategoryData.name}
+              </h1>
+
+              <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-6 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                {selectedCategoryData.description}
+              </p>
+
+              <div className={`inline-block px-6 py-3 rounded-full bg-gray-900/50 backdrop-blur-sm border border-white/20 ${heroData.textColor} font-semibold text-lg drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]`}>
+                {selectedCategoryData.services.length} services available
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : (
+        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
+          <div className="max-w-7xl mx-auto">
+            <BackButton onNavigate={onNavigate} />
+
+            <div className="text-center mb-8">
+              <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-4">
+                Complete Services Catalog
+              </h1>
+              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8">
+                Explore our comprehensive suite of 200+ biomathematical health services across 20 specialized categories
+              </p>
+
+              <div className="max-w-2xl mx-auto">
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <input
+                    type="text"
+                    placeholder="Search categories or services..."
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    className="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {selectedCategoryData && (
+        <section className="py-8 px-4 sm:px-6 lg:px-8 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+          <div className="max-w-7xl mx-auto">
             <div className="max-w-2xl mx-auto">
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
                 <input
                   type="text"
-                  placeholder={selectedCategoryData ? "Search services..." : "Search categories or services..."}
+                  placeholder="Search services..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
                   className="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors"
@@ -81,20 +253,8 @@ export default function ServicesCatalog({ onNavigate, initialCategory }: Service
               </div>
             </div>
           </div>
-
-          {selectedCategoryData && (
-            <div className="flex justify-center">
-              <button
-                onClick={() => setSelectedCategory(null)}
-                className="flex items-center space-x-2 px-6 py-3 bg-white dark:bg-gray-800 border-2 border-gray-200 dark:border-gray-700 rounded-lg hover:border-blue-500 dark:hover:border-blue-400 transition-colors"
-              >
-                <ArrowLeft className="h-5 w-5 text-gray-600 dark:text-gray-400" />
-                <span className="text-gray-700 dark:text-gray-300 font-medium">Back to All Categories</span>
-              </button>
-            </div>
-          )}
-        </div>
-      </section>
+        </section>
+      )}
 
       <section className="py-12 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">

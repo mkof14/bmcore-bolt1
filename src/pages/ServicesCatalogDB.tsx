@@ -1,7 +1,27 @@
 import { useState, useEffect } from 'react';
-import { Search, ChevronRight, Activity } from 'lucide-react';
+import { Search, ChevronRight, Activity, ArrowLeft } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import type { Category, Service } from '../types/database';
+
+const categoryHeroImages: Record<string, string> = {
+  'critical-health': 'https://images.pexels.com/photos/4386466/pexels-photo-4386466.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'everyday-wellness': 'https://images.pexels.com/photos/3768894/pexels-photo-3768894.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'longevity': 'https://images.pexels.com/photos/4498606/pexels-photo-4498606.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'mental-wellness': 'https://images.pexels.com/photos/7592370/pexels-photo-7592370.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'fitness-performance': 'https://images.pexels.com/photos/1954524/pexels-photo-1954524.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'womens-health': 'https://images.pexels.com/photos/3738388/pexels-photo-3738388.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'mens-health': 'https://images.pexels.com/photos/1516680/pexels-photo-1516680.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'beauty-skincare': 'https://images.pexels.com/photos/3785147/pexels-photo-3785147.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'nutrition-diet': 'https://images.pexels.com/photos/1640770/pexels-photo-1640770.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'sleep-recovery': 'https://images.pexels.com/photos/6942086/pexels-photo-6942086.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'environmental-health': 'https://images.pexels.com/photos/1072179/pexels-photo-1072179.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'family-health': 'https://images.pexels.com/photos/4259140/pexels-photo-4259140.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'preventive-medicine': 'https://images.pexels.com/photos/4386466/pexels-photo-4386466.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'biohacking': 'https://images.pexels.com/photos/4498606/pexels-photo-4498606.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'senior-care': 'https://images.pexels.com/photos/3768131/pexels-photo-3768131.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'eye-health': 'https://images.pexels.com/photos/1624496/pexels-photo-1624496.jpeg?auto=compress&cs=tinysrgb&w=1200',
+  'digital-therapeutics': 'https://images.pexels.com/photos/5632379/pexels-photo-5632379.jpeg?auto=compress&cs=tinysrgb&w=1200'
+};
 
 interface ServicesCatalogDBProps {
   onNavigate: (page: string, categoryId?: string) => void;
@@ -68,6 +88,14 @@ export default function ServicesCatalogDB({ onNavigate, categoryFilter }: Servic
     ? categories.filter(c => c.id === selectedCategory)
     : categories;
 
+  const selectedCategoryData = selectedCategory
+    ? categories.find(c => c.id === selectedCategory)
+    : null;
+
+  const categoryServicesCount = selectedCategoryData
+    ? filteredServices.length
+    : 0;
+
   if (loading) {
     return (
       <div className="min-h-screen bg-white dark:bg-gray-950 pt-16 flex items-center justify-center">
@@ -81,16 +109,75 @@ export default function ServicesCatalogDB({ onNavigate, categoryFilter }: Servic
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors pt-16">
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
-        <div className="max-w-7xl mx-auto">
-          <div className="text-center mb-8">
-            <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-4">
-              Complete Services Catalog
-            </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8">
-              Explore our comprehensive suite of 200+ biomathematical health services across 20 specialized categories
-            </p>
+      {selectedCategoryData ? (
+        <section className="relative h-80 overflow-hidden">
+          <div
+            className="absolute inset-0 bg-cover bg-center"
+            style={{ backgroundImage: `url(${categoryHeroImages[selectedCategoryData.slug] || 'https://images.pexels.com/photos/4386466/pexels-photo-4386466.jpeg?auto=compress&cs=tinysrgb&w=1200'})` }}
+          />
+          <div className="absolute inset-0 bg-gradient-to-b from-black/70 via-black/60 to-black/80" />
 
+          <div className="relative h-full flex flex-col items-center justify-center px-4 sm:px-6 lg:px-8">
+            <button
+              onClick={() => setSelectedCategory(null)}
+              className="absolute top-6 left-6 flex items-center space-x-2 text-gray-300 hover:text-white transition-colors group"
+            >
+              <ArrowLeft className="h-5 w-5 group-hover:-translate-x-1 transition-transform" />
+              <span className="font-medium">Back to Services</span>
+            </button>
+
+            <div className="text-center">
+              <div className="flex justify-center mb-6">
+                <div className="w-20 h-20 rounded-2xl bg-gray-900/50 backdrop-blur-sm border-2 border-white/20 flex items-center justify-center drop-shadow-[0_0_20px_rgba(255,255,255,0.3)]">
+                  <Activity className={`h-12 w-12 ${selectedCategoryData.color_class} drop-shadow-lg`} strokeWidth={2} />
+                </div>
+              </div>
+
+              <h1 className={`text-5xl md:text-6xl font-bold mb-4 ${selectedCategoryData.color_class} drop-shadow-[0_2px_10px_rgba(0,0,0,0.9)]`}>
+                {locale === 'en' ? selectedCategoryData.name_en : selectedCategoryData.name_ru}
+              </h1>
+
+              <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-6 drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                {locale === 'en' ? selectedCategoryData.description_en : selectedCategoryData.description_ru}
+              </p>
+
+              <div className={`inline-block px-6 py-3 rounded-full bg-gray-900/50 backdrop-blur-sm border border-white/20 ${selectedCategoryData.color_class} font-semibold text-lg drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]`}>
+                {categoryServicesCount} services available
+              </div>
+            </div>
+          </div>
+        </section>
+      ) : (
+        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
+          <div className="max-w-7xl mx-auto">
+            <div className="text-center mb-8">
+              <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-4">
+                Complete Services Catalog
+              </h1>
+              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8">
+                Explore our comprehensive suite of 200+ biomathematical health services across 20 specialized categories
+              </p>
+
+              <div className="max-w-2xl mx-auto">
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+                  <input
+                    type="text"
+                    value={searchQuery}
+                    onChange={(e) => setSearchQuery(e.target.value)}
+                    placeholder="Search services or categories..."
+                    className="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors text-lg"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+      )}
+
+      {selectedCategoryData && (
+        <section className="py-8 px-4 sm:px-6 lg:px-8 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+          <div className="max-w-7xl mx-auto">
             <div className="max-w-2xl mx-auto">
               <div className="relative">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
@@ -98,23 +185,14 @@ export default function ServicesCatalogDB({ onNavigate, categoryFilter }: Servic
                   type="text"
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search services or categories..."
+                  placeholder="Search services..."
                   className="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors text-lg"
                 />
               </div>
             </div>
           </div>
-
-          {selectedCategory && (
-            <div className="mb-6 text-center">
-              <button
-                onClick={() => setSelectedCategory(null)}
-                className="text-blue-600 dark:text-blue-400 hover:underline"
-              >
-                ← Back to all categories
-              </button>
-            </div>
-          )}
+        </section>
+      )}
 
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-4 mb-8">
             <button
