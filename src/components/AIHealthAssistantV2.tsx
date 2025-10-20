@@ -44,7 +44,7 @@ export default function AIHealthAssistantV2({ isOpen, onClose }: AIHealthAssista
     setMessages([{
       id: 'welcome',
       role: 'assistant',
-      content: 'Hello! I\'m your AI Health Assistant with dual-opinion capability. I can provide you with two expert perspectives on your health questions. Toggle "Second Opinion" to get comprehensive insights from multiple AI reasoning approaches.',
+      content: 'Hello! I\'m your AI Health Advisor with dual-opinion capability. I can provide you with two expert perspectives on your health questions. Toggle "Second Opinion" to get comprehensive insights from multiple AI reasoning approaches.',
       timestamp: new Date()
     }]);
   };

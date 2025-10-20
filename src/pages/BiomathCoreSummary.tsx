@@ -64,7 +64,7 @@ export default function BiomathCoreSummary({ onNavigate }: BiomathCoreSummaryPro
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className={`text-5xl md:text-6xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
-              THE AI TUTOR
+              THE AI HEALTH ADVISOR
             </h2>
             <div className="h-1 w-32 bg-orange-500 mx-auto mb-8"></div>
             <p className={`text-xl max-w-4xl mx-auto ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
@@ -79,7 +79,7 @@ export default function BiomathCoreSummary({ onNavigate }: BiomathCoreSummaryPro
                 <h3 className={`text-2xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>Contextual Leadership</h3>
               </div>
               <p className={`leading-relaxed ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                Instead of forcing users to search for insight, navigate menus, or configure settings, the Tutor <span className="text-orange-500 font-semibold">leads them contextually</span>, presenting the right service, interpretation, or next step at the right time.
+                Instead of forcing users to search for insight, navigate menus, or configure settings, the AI Health Advisor <span className="text-orange-500 font-semibold">leads them contextually</span>, presenting the right service, interpretation, or next step at the right time.
               </p>
             </div>
 
@@ -162,7 +162,7 @@ export default function BiomathCoreSummary({ onNavigate }: BiomathCoreSummaryPro
                 <div>
                   <h3 className={`text-3xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>INTERPRETATION</h3>
                   <p className={`text-lg leading-relaxed ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                    After generation, the Tutor <span className="text-green-400 font-semibold">interprets meaning</span>—not just output—and directs the user toward next actions, learning context, or longitudinal tracking. Each service becomes a <span className="text-green-400 font-semibold">living module</span> rather than a single-use tool.
+                    After generation, the AI Health Advisor <span className="text-green-400 font-semibold">interprets meaning</span>—not just output—and directs the user toward next actions, learning context, or longitudinal tracking. Each service becomes a <span className="text-green-400 font-semibold">living module</span> rather than a single-use tool.
                   </p>
                 </div>
               </div>

@@ -58,7 +58,7 @@ export default function Contact({ onNavigate }: ContactProps) {
           <div className="flex items-start space-x-3">
             <AlertCircle className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
             <p className="text-sm text-gray-700 dark:text-gray-300">
-              <span className="font-semibold">Important:</span> This contact channel is for platform inquiries, partnerships, and business questions only. For wellness guidance and health-related questions, please use the AI Health Assistant available throughout the platform.
+              <span className="font-semibold">Important:</span> This contact channel is for platform inquiries, partnerships, and business questions only. For wellness guidance and health-related questions, please use the AI Health Advisor available throughout the platform.
             </p>
           </div>
         </div>

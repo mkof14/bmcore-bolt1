@@ -76,7 +76,7 @@ export default function AIAssistantButton({ onClick, isOpen }: AIAssistantButton
             ? 'bg-red-500 hover:bg-red-600'
             : 'gradient-bg hover:shadow-3xl breathing-button'
         } flex items-center justify-center group`}
-        aria-label={isOpen ? 'Close AI Assistant' : 'Open AI Assistant'}
+        aria-label={isOpen ? 'Close AI Advisor' : 'Open AI Advisor'}
       >
         {isOpen ? (
           <X className="h-7 w-7 text-white transition-transform group-hover:rotate-90" />
@@ -90,7 +90,7 @@ export default function AIAssistantButton({ onClick, isOpen }: AIAssistantButton
       {!isOpen && (
         <div className="absolute bottom-20 right-0 w-48 opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none">
           <div className="bg-gray-900 text-white text-sm py-2 px-3 rounded-lg shadow-xl">
-            AI Health Assistant
+            AI Health Advisor
             <div className="text-xs text-gray-400 mt-1">Ask me anything about your health</div>
           </div>
         </div>

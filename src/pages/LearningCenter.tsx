@@ -309,10 +309,10 @@ export default function LearningCenter({ onNavigate }: LearningCenterProps) {
             <div className="bg-blue-600 dark:bg-blue-700 rounded-xl p-6 text-white">
               <div className="flex items-center space-x-3 mb-4">
                 <Sparkles className="h-6 w-6" />
-                <h3 className="text-xl font-bold">AI Tutor</h3>
+                <h3 className="text-xl font-bold">AI Health Advisor</h3>
               </div>
               <p className="text-blue-100 mb-4 text-sm">
-                Not sure where to start? The AI Tutor helps you find the right category and services based on your needs.
+                Not sure where to start? The AI Health Advisor helps you find the right category and services based on your needs.
               </p>
               <button
                 onClick={() => onNavigate('member')}

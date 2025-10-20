@@ -232,7 +232,7 @@ export default function FAQ({ onNavigate }: FAQProps) {
       ]
     },
     {
-      title: "AI Health Assistant",
+      title: "AI Health Advisor",
       items: [
         {
           id: "assistant-features",

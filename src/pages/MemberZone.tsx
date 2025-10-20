@@ -45,11 +45,11 @@ export default function MemberZone({ onNavigate, onSignOut }: MemberZoneProps) {
       case 'ai-assistant':
         return (
           <PlaceholderSection
-            title="AI Health Assistant"
+            title="AI Health Advisor"
             description="Your personal AI health advisor with multi-persona support and dual opinion capability"
             icon={Sparkles}
             features={[
-              'Chat with AI health advisor in real-time',
+              'Chat with AI Health Advisor in real-time',
               'Switch between Doctor, Nurse, and Coach personas',
               'Get dual expert opinions on health questions',
               'Voice input and text-to-speech responses',

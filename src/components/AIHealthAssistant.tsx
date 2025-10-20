@@ -95,7 +95,7 @@ export default function AIHealthAssistant({ isOpen, onClose }: AIHealthAssistant
       session_id: sessionId,
       user_id: userId,
       role: 'assistant',
-      content: 'Hello! I\'m your AI Health Assistant. I can help you understand your health data, answer wellness questions, and provide evidence-based guidance. How can I assist you today?',
+      content: 'Hello! I\'m your AI Health Advisor. I can help you understand your health data, answer wellness questions, and provide evidence-based guidance. How can I assist you today?',
       persona_id: selectedPersona?.id,
       created_at: new Date().toISOString()
     };

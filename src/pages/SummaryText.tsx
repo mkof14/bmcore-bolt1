@@ -41,9 +41,9 @@ export default function SummaryText({ onNavigate }: SummaryTextProps) {
               </p>
 
               <div className={`my-8 pt-8 ${isDark ? 'border-t border-gray-700' : 'border-t border-gray-300'}`}>
-                <h2 className={`text-3xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>The AI Tutor</h2>
+                <h2 className={`text-3xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>The AI Health Advisor</h2>
                 <p className={`leading-relaxed text-lg mb-4 ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                  Instead of forcing users to search for insight, navigate menus, or configure settings, the Tutor <span className="text-orange-500 font-semibold">leads them contextually</span>, presenting the right service, interpretation, or next step at the right time.
+                  Instead of forcing users to search for insight, navigate menus, or configure settings, the AI Health Advisor <span className="text-orange-500 font-semibold">leads them contextually</span>, presenting the right service, interpretation, or next step at the right time.
                 </p>
                 <p className={`leading-relaxed text-lg ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
                   This converts the user from a passive recipient of health information into an <span className="text-blue-400 font-semibold">active decision-maker</span>. The first screen shows "what matters now" and "what to do next."
@@ -71,7 +71,7 @@ export default function SummaryText({ onNavigate }: SummaryTextProps) {
                   <div>
                     <h3 className="text-xl font-bold text-green-400 mb-2">3. Interpretation</h3>
                     <p className={`leading-relaxed ${isDark ? 'text-gray-300' : 'text-gray-700'}`}>
-                      After generation, the Tutor interprets meaning—not just output—and directs the user toward next actions, learning context, or longitudinal tracking. Each service becomes a living module rather than a single-use tool.
+                      After generation, the AI Health Advisor interprets meaning—not just output—and directs the user toward next actions, learning context, or longitudinal tracking. Each service becomes a living module rather than a single-use tool.
                     </p>
                   </div>
                 </div>

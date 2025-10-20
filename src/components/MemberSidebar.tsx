@@ -31,7 +31,7 @@ export default function MemberSidebar({ currentSection, onSectionChange }: Membe
       title: 'Main',
       items: [
         { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-        { id: 'ai-assistant', label: 'AI Health Assistant', icon: Sparkles },
+        { id: 'ai-assistant', label: 'AI Health Advisor', icon: Sparkles },
         { id: 'devices', label: 'Connect Devices', icon: Watch },
       ]
     },
