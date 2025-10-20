@@ -14,7 +14,7 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
       id: 'critical-health',
       name: 'Critical Health',
       icon: Heart,
-      gradient: 'from-red-950/95 via-black/90 to-black/95',
+      gradient: 'from-red-950/80 via-black/70 to-black/85',
       iconColor: 'text-orange-400',
       glowColor: 'drop-shadow-[0_0_15px_rgba(251,146,60,0.8)]',
       bgImage: 'https://images.pexels.com/photos/7108344/pexels-photo-7108344.jpeg?auto=compress&cs=tinysrgb&w=400',
@@ -23,7 +23,7 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
       id: 'everyday-wellness',
       name: 'Everyday Wellness',
       icon: Sparkles,
-      gradient: 'from-amber-950/95 via-black/90 to-black/95',
+      gradient: 'from-amber-950/80 via-black/70 to-black/85',
       iconColor: 'text-green-400',
       glowColor: 'drop-shadow-[0_0_15px_rgba(74,222,128,0.8)]',
       bgImage: 'https://images.pexels.com/photos/1051838/pexels-photo-1051838.jpeg?auto=compress&cs=tinysrgb&w=400',
@@ -32,7 +32,7 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
       id: 'longevity-aging',
       name: 'Longevity & Anti-Aging',
       icon: TrendingUp,
-      gradient: 'from-blue-950/95 via-black/90 to-black/95',
+      gradient: 'from-blue-950/80 via-black/70 to-black/85',
       iconColor: 'text-pink-400',
       glowColor: 'drop-shadow-[0_0_15px_rgba(244,114,182,0.8)]',
       bgImage: 'https://images.pexels.com/photos/3943716/pexels-photo-3943716.jpeg?auto=compress&cs=tinysrgb&w=400',
@@ -41,7 +41,7 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
       id: 'mental-wellness',
       name: 'Mental Wellness',
       icon: Brain,
-      gradient: 'from-purple-950/95 via-black/90 to-black/95',
+      gradient: 'from-purple-950/80 via-black/70 to-black/85',
       iconColor: 'text-cyan-400',
       glowColor: 'drop-shadow-[0_0_15px_rgba(34,211,238,0.8)]',
       bgImage: 'https://images.pexels.com/photos/3760607/pexels-photo-3760607.jpeg?auto=compress&cs=tinysrgb&w=400',
@@ -50,7 +50,7 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
       id: 'fitness-performance',
       name: 'Fitness & Performance',
       icon: Dumbbell,
-      gradient: 'from-slate-950/95 via-black/90 to-black/95',
+      gradient: 'from-slate-950/80 via-black/70 to-black/85',
       iconColor: 'text-yellow-400',
       glowColor: 'drop-shadow-[0_0_15px_rgba(250,204,21,0.8)]',
       bgImage: 'https://images.pexels.com/photos/1552242/pexels-photo-1552242.jpeg?auto=compress&cs=tinysrgb&w=400',
@@ -59,7 +59,7 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
       id: 'womens-health',
       name: "Women's Health",
       icon: Flower2,
-      gradient: 'from-pink-950/95 via-black/90 to-black/95',
+      gradient: 'from-pink-950/80 via-black/70 to-black/85',
       iconColor: 'text-pink-400',
       glowColor: 'drop-shadow-[0_0_15px_rgba(244,114,182,0.8)]',
       bgImage: 'https://images.pexels.com/photos/3760259/pexels-photo-3760259.jpeg?auto=compress&cs=tinysrgb&w=400',
@@ -68,7 +68,7 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
       id: 'mens-health',
       name: "Men's Health",
       icon: User,
-      gradient: 'from-orange-950/95 via-black/90 to-black/95',
+      gradient: 'from-orange-950/80 via-black/70 to-black/85',
       iconColor: 'text-blue-400',
       glowColor: 'drop-shadow-[0_0_15px_rgba(96,165,250,0.8)]',
       bgImage: 'https://images.pexels.com/photos/1547248/pexels-photo-1547248.jpeg?auto=compress&cs=tinysrgb&w=400',
@@ -77,7 +77,7 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
       id: 'beauty-skincare',
       name: 'Beauty & Skincare',
       icon: Droplets,
-      gradient: 'from-rose-950/95 via-black/90 to-black/95',
+      gradient: 'from-rose-950/80 via-black/70 to-black/85',
       iconColor: 'text-pink-400',
       glowColor: 'drop-shadow-[0_0_15px_rgba(244,114,182,0.8)]',
       bgImage: 'https://images.pexels.com/photos/3762879/pexels-photo-3762879.jpeg?auto=compress&cs=tinysrgb&w=400',
@@ -86,7 +86,7 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
       id: 'nutrition-diet',
       name: 'Nutrition & Diet',
       icon: Apple,
-      gradient: 'from-green-950/95 via-black/90 to-black/95',
+      gradient: 'from-green-950/80 via-black/70 to-black/85',
       iconColor: 'text-green-400',
       glowColor: 'drop-shadow-[0_0_15px_rgba(74,222,128,0.8)]',
       bgImage: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=400',
@@ -95,7 +95,7 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
       id: 'sleep-recovery',
       name: 'Sleep & Recovery',
       icon: Moon,
-      gradient: 'from-indigo-950/95 via-black/90 to-black/95',
+      gradient: 'from-indigo-950/80 via-black/70 to-black/85',
       iconColor: 'text-purple-400',
       glowColor: 'drop-shadow-[0_0_15px_rgba(192,132,252,0.8)]',
       bgImage: 'https://images.pexels.com/photos/3771115/pexels-photo-3771115.jpeg?auto=compress&cs=tinysrgb&w=400',
@@ -104,7 +104,7 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
       id: 'environmental-health',
       name: 'Environmental Health',
       icon: Leaf,
-      gradient: 'from-teal-950/95 via-black/90 to-black/95',
+      gradient: 'from-teal-950/80 via-black/70 to-black/85',
       iconColor: 'text-teal-400',
       glowColor: 'drop-shadow-[0_0_15px_rgba(45,212,191,0.8)]',
       bgImage: 'https://images.pexels.com/photos/1108572/pexels-photo-1108572.jpeg?auto=compress&cs=tinysrgb&w=400',
@@ -113,7 +113,7 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
       id: 'family-health',
       name: 'Family Health',
       icon: Users,
-      gradient: 'from-orange-950/95 via-black/90 to-black/95',
+      gradient: 'from-orange-950/80 via-black/70 to-black/85',
       iconColor: 'text-orange-400',
       glowColor: 'drop-shadow-[0_0_15px_rgba(251,146,60,0.8)]',
       bgImage: 'https://images.pexels.com/photos/1648387/pexels-photo-1648387.jpeg?auto=compress&cs=tinysrgb&w=400',
@@ -122,7 +122,7 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
       id: 'preventive-medicine',
       name: 'Preventive Medicine & Longevity',
       icon: Activity,
-      gradient: 'from-cyan-950/95 via-black/90 to-black/95',
+      gradient: 'from-cyan-950/80 via-black/70 to-black/85',
       iconColor: 'text-cyan-400',
       glowColor: 'drop-shadow-[0_0_15px_rgba(34,211,238,0.8)]',
       bgImage: 'https://images.pexels.com/photos/7108337/pexels-photo-7108337.jpeg?auto=compress&cs=tinysrgb&w=400',
@@ -131,7 +131,7 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
       id: 'biohacking',
       name: 'Biohacking & Performance',
       icon: Zap,
-      gradient: 'from-violet-950/95 via-black/90 to-black/95',
+      gradient: 'from-violet-950/80 via-black/70 to-black/85',
       iconColor: 'text-blue-400',
       glowColor: 'drop-shadow-[0_0_15px_rgba(96,165,250,0.8)]',
       bgImage: 'https://images.pexels.com/photos/3760072/pexels-photo-3760072.jpeg?auto=compress&cs=tinysrgb&w=400',
@@ -140,7 +140,7 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
       id: 'senior-care',
       name: 'Senior Care',
       icon: HeartHandshake,
-      gradient: 'from-slate-950/95 via-black/90 to-black/95',
+      gradient: 'from-slate-950/80 via-black/70 to-black/85',
       iconColor: 'text-slate-300',
       glowColor: 'drop-shadow-[0_0_15px_rgba(203,213,225,0.8)]',
       bgImage: 'https://images.pexels.com/photos/6032877/pexels-photo-6032877.jpeg?auto=compress&cs=tinysrgb&w=400',
@@ -149,7 +149,7 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
       id: 'eye-health',
       name: 'Eye-Health Suite',
       icon: Eye,
-      gradient: 'from-blue-950/95 via-black/90 to-black/95',
+      gradient: 'from-blue-950/80 via-black/70 to-black/85',
       iconColor: 'text-blue-400',
       glowColor: 'drop-shadow-[0_0_15px_rgba(96,165,250,0.8)]',
       bgImage: 'https://images.pexels.com/photos/1841645/pexels-photo-1841645.jpeg?auto=compress&cs=tinysrgb&w=400',
@@ -158,7 +158,7 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
       id: 'digital-therapeutics',
       name: 'Digital Therapeutics Store',
       icon: Smartphone,
-      gradient: 'from-violet-950/95 via-black/90 to-black/95',
+      gradient: 'from-violet-950/80 via-black/70 to-black/85',
       iconColor: 'text-purple-400',
       glowColor: 'drop-shadow-[0_0_15px_rgba(192,132,252,0.8)]',
       bgImage: 'https://images.pexels.com/photos/4195325/pexels-photo-4195325.jpeg?auto=compress&cs=tinysrgb&w=400',
@@ -167,7 +167,7 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
       id: 'general-sexual',
       name: 'General Sexual Longevity',
       icon: Fingerprint,
-      gradient: 'from-red-950/95 via-black/90 to-black/95',
+      gradient: 'from-red-950/80 via-black/70 to-black/85',
       iconColor: 'text-red-400',
       glowColor: 'drop-shadow-[0_0_15px_rgba(248,113,113,0.8)]',
       bgImage: 'https://images.pexels.com/photos/3259580/pexels-photo-3259580.jpeg?auto=compress&cs=tinysrgb&w=400',
@@ -176,7 +176,7 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
       id: 'mens-sexual-health',
       name: "Men's Sexual Health",
       icon: Target,
-      gradient: 'from-blue-950/95 via-black/90 to-black/95',
+      gradient: 'from-blue-950/80 via-black/70 to-black/85',
       iconColor: 'text-blue-400',
       glowColor: 'drop-shadow-[0_0_15px_rgba(96,165,250,0.8)]',
       bgImage: 'https://images.pexels.com/photos/6975474/pexels-photo-6975474.jpeg?auto=compress&cs=tinysrgb&w=400',
@@ -185,7 +185,7 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
       id: 'womens-sexual-health',
       name: "Women's Sexual Health",
       icon: Blend,
-      gradient: 'from-pink-950/95 via-black/90 to-black/95',
+      gradient: 'from-pink-950/80 via-black/70 to-black/85',
       iconColor: 'text-pink-400',
       glowColor: 'drop-shadow-[0_0_15px_rgba(244,114,182,0.8)]',
       bgImage: 'https://images.pexels.com/photos/3894378/pexels-photo-3894378.jpeg?auto=compress&cs=tinysrgb&w=400',
@@ -204,7 +204,7 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
           </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
+        <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-2">
           {categories.map((category) => {
             const Icon = category.icon;
             return (
@@ -212,7 +212,7 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
                 key={category.id}
                 onClick={() => onNavigate('services-catalog')}
                 className="group relative overflow-hidden rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl"
-                style={{ aspectRatio: '4/3' }}
+                style={{ aspectRatio: '1' }}
               >
                 <img
                   src={category.bgImage}
@@ -230,7 +230,7 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
                   <div className={`transform group-hover:scale-110 transition-all duration-300 ${category.glowColor}`}>
                     <Icon className={`h-10 w-10 ${category.iconColor}`} strokeWidth={2} />
                   </div>
-                  <h3 className="text-white font-bold text-xs leading-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
+                  <h3 className="text-white font-bold text-sm leading-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
                     {category.name}
                   </h3>
                 </div>
