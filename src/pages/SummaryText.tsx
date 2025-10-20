@@ -1,5 +1,4 @@
-import { useState, useEffect } from 'react';
-import { Sun, Moon } from 'lucide-react';
+import { useTheme } from '../contexts/ThemeContext';
 import BackButton from '../components/BackButton';
 
 interface SummaryTextProps {
@@ -7,38 +6,15 @@ interface SummaryTextProps {
 }
 
 export default function SummaryText({ onNavigate }: SummaryTextProps) {
-  const [isDark, setIsDark] = useState(true);
-
-  useEffect(() => {
-    const saved = localStorage.getItem('summary-theme');
-    if (saved) {
-      setIsDark(saved === 'dark');
-    }
-  }, []);
-
-  const toggleTheme = () => {
-    const newTheme = !isDark;
-    setIsDark(newTheme);
-    localStorage.setItem('summary-theme', newTheme ? 'dark' : 'light');
-  };
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
 
   return (
     <div className={`min-h-screen transition-colors ${isDark ? 'bg-gray-950' : 'bg-gray-50'}`}>
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
-          <div className="flex justify-between items-center mb-8">
+          <div className="mb-8">
             <BackButton onNavigate={onNavigate} />
-            <button
-              onClick={toggleTheme}
-              className={`p-3 rounded-full transition-all ${
-                isDark
-                  ? 'bg-gray-800 hover:bg-gray-700 text-yellow-400'
-                  : 'bg-white hover:bg-gray-100 text-gray-900 shadow-md'
-              }`}
-              aria-label="Toggle theme"
-            >
-              {isDark ? <Sun className="h-6 w-6" /> : <Moon className="h-6 w-6" />}
-            </button>
           </div>
 
           <div className="text-center mb-16">
