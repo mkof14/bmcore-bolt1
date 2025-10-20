@@ -1,5 +1,6 @@
 import { BookOpen, Sparkles, FileText, HelpCircle, Search, ChevronRight, ChevronDown, GraduationCap, DollarSign, Users, Grid } from 'lucide-react';
 import { useState } from 'react';
+import { useTheme } from '../contexts/ThemeContext';
 import BackButton from '../components/BackButton';
 
 interface LearningCenterProps {
@@ -141,6 +142,8 @@ const glossaryTerms = [
 ];
 
 export default function LearningCenter({ onNavigate }: LearningCenterProps) {
+  const { theme } = useTheme();
+  const isDark = theme === 'dark';
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedTerm, setSelectedTerm] = useState<string | null>(null);
   const [expandedSection, setExpandedSection] = useState<string | null>(null);
@@ -183,7 +186,7 @@ export default function LearningCenter({ onNavigate }: LearningCenterProps) {
         <BackButton onNavigate={onNavigate} />
 
         <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 dark:bg-blue-500 rounded-2xl mb-4">
+          <div className="inline-flex items-center justify-center w-16 h-16 bg-orange-600 dark:bg-orange-700 rounded-2xl mb-4">
             <GraduationCap className="h-8 w-8 text-white" />
           </div>
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
@@ -202,7 +205,7 @@ export default function LearningCenter({ onNavigate }: LearningCenterProps) {
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               placeholder="Search categories, services, or health terms..."
-              className="w-full pl-12 pr-4 py-4 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
+              className="w-full pl-12 pr-4 py-4 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-orange-600 focus:border-transparent shadow-sm"
             />
           </div>
         </div>
@@ -211,7 +214,7 @@ export default function LearningCenter({ onNavigate }: LearningCenterProps) {
           <div className="lg:col-span-2 space-y-8">
             <div className="bg-white dark:bg-gray-800 rounded-xl p-8 border border-gray-200 dark:border-gray-700">
               <div className="flex items-center space-x-3 mb-6">
-                <BookOpen className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                <BookOpen className="h-6 w-6 text-orange-600 dark:text-orange-500" />
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Getting Started</h2>
               </div>
 
@@ -227,7 +230,7 @@ export default function LearningCenter({ onNavigate }: LearningCenterProps) {
                         className="w-full flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
                       >
                         <div className="flex items-center space-x-3">
-                          <Icon className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+                          <Icon className="h-5 w-5 text-orange-600 dark:text-orange-500" />
                           <span className="font-medium text-gray-900 dark:text-white">{section.title}</span>
                         </div>
                         {isExpanded ? (
@@ -244,7 +247,7 @@ export default function LearningCenter({ onNavigate }: LearningCenterProps) {
                           {section.title === 'Pricing Plans' && (
                             <button
                               onClick={() => onNavigate('services')}
-                              className="mt-4 text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                              className="mt-4 text-sm text-orange-600 dark:text-orange-500 hover:underline"
                             >
                               View Plans →
                             </button>
@@ -252,7 +255,7 @@ export default function LearningCenter({ onNavigate }: LearningCenterProps) {
                           {section.title === 'Member Zone' && (
                             <button
                               onClick={() => onNavigate('member')}
-                              className="mt-4 text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                              className="mt-4 text-sm text-orange-600 dark:text-orange-500 hover:underline"
                             >
                               Go to Member Zone →
                             </button>
@@ -260,7 +263,7 @@ export default function LearningCenter({ onNavigate }: LearningCenterProps) {
                           {section.title === 'Services Guide' && (
                             <button
                               onClick={() => onNavigate('services-catalog')}
-                              className="mt-4 text-sm text-blue-600 dark:text-blue-400 hover:underline"
+                              className="mt-4 text-sm text-orange-600 dark:text-orange-500 hover:underline"
                             >
                               Browse All Services →
                             </button>
@@ -275,7 +278,7 @@ export default function LearningCenter({ onNavigate }: LearningCenterProps) {
 
             <div className="bg-white dark:bg-gray-800 rounded-xl p-8 border border-gray-200 dark:border-gray-700">
               <div className="flex items-center space-x-3 mb-6">
-                <Grid className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                <Grid className="h-6 w-6 text-orange-600 dark:text-orange-500" />
                 <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Health Categories</h2>
               </div>
               <p className="text-gray-600 dark:text-gray-400 mb-6">
@@ -297,7 +300,7 @@ export default function LearningCenter({ onNavigate }: LearningCenterProps) {
                         </div>
                         <p className="text-xs text-gray-600 dark:text-gray-400">{category.description}</p>
                       </div>
-                      <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 flex-shrink-0 ml-2 transition-colors" />
+                      <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-orange-600 dark:group-hover:text-orange-500 flex-shrink-0 ml-2 transition-colors" />
                     </div>
                   </button>
                 ))}
@@ -306,17 +309,17 @@ export default function LearningCenter({ onNavigate }: LearningCenterProps) {
           </div>
 
           <div className="space-y-6">
-            <div className="bg-blue-600 dark:bg-blue-700 rounded-xl p-6 text-white">
+            <div className="bg-gradient-to-br from-orange-600 to-orange-700 dark:from-orange-700 dark:to-orange-800 rounded-xl p-6 text-white shadow-lg">
               <div className="flex items-center space-x-3 mb-4">
                 <Sparkles className="h-6 w-6" />
                 <h3 className="text-xl font-bold">AI Health Advisor</h3>
               </div>
-              <p className="text-blue-100 mb-4 text-sm">
+              <p className="text-orange-100 mb-4 text-sm">
                 Not sure where to start? The AI Health Advisor helps you find the right category and services based on your needs.
               </p>
               <button
                 onClick={() => onNavigate('member')}
-                className="w-full px-4 py-3 bg-white text-blue-600 hover:bg-blue-50 rounded-lg transition-colors font-medium text-sm"
+                className="w-full px-4 py-3 bg-white text-orange-700 hover:bg-orange-50 rounded-lg transition-colors font-medium text-sm"
               >
                 Start Guided Tour
               </button>
@@ -324,7 +327,7 @@ export default function LearningCenter({ onNavigate }: LearningCenterProps) {
 
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
               <div className="flex items-center space-x-3 mb-4">
-                <HelpCircle className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                <HelpCircle className="h-6 w-6 text-orange-600 dark:text-orange-500" />
                 <h3 className="text-lg font-bold text-gray-900 dark:text-white">Quick Help</h3>
               </div>
               <button
@@ -339,7 +342,7 @@ export default function LearningCenter({ onNavigate }: LearningCenterProps) {
 
         <div className="bg-white dark:bg-gray-800 rounded-xl p-8 border border-gray-200 dark:border-gray-700 mb-12">
           <div className="flex items-center space-x-3 mb-6">
-            <BookOpen className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+            <BookOpen className="h-6 w-6 text-orange-600 dark:text-orange-500" />
             <h2 className="text-2xl font-bold text-gray-900 dark:text-white">Health Glossary</h2>
           </div>
           <p className="text-gray-600 dark:text-gray-400 mb-6">
@@ -362,11 +365,11 @@ export default function LearningCenter({ onNavigate }: LearningCenterProps) {
                   {isExpanded && (
                     <div className="mt-3 pt-3 border-t border-gray-200 dark:border-gray-700 space-y-2">
                       <div>
-                        <p className="text-xs font-medium text-blue-600 dark:text-blue-400 mb-1">Why it matters:</p>
+                        <p className="text-xs font-medium text-orange-600 dark:text-orange-500 mb-1">Why it matters:</p>
                         <p className="text-xs text-gray-600 dark:text-gray-400">{item.importance}</p>
                       </div>
                       <div>
-                        <p className="text-xs font-medium text-green-600 dark:text-green-400 mb-1">How it helps:</p>
+                        <p className="text-xs font-medium text-orange-700 dark:text-orange-600 mb-1">How it helps:</p>
                         <p className="text-xs text-gray-600 dark:text-gray-400">{item.helps}</p>
                       </div>
                     </div>
