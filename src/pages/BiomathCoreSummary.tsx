@@ -19,8 +19,9 @@ export default function BiomathCoreSummary({ onNavigate }: BiomathCoreSummaryPro
 
           <div className="text-center mb-16">
             <div className="mb-8">
-              <h1 className="text-7xl md:text-8xl lg:text-9xl font-bold text-white mb-6 tracking-tight">
-                BIOMATH CORE
+              <h1 className="text-7xl md:text-8xl lg:text-9xl font-bold mb-6 tracking-tight">
+                <span className="text-blue-500">BIOMATH</span>
+                <span className="text-white"> CORE</span>
               </h1>
               <div className="h-1 w-48 bg-gradient-to-r from-blue-500 via-orange-500 to-blue-500 mx-auto mb-8"></div>
             </div>
@@ -346,6 +347,13 @@ export default function BiomathCoreSummary({ onNavigate }: BiomathCoreSummaryPro
               className="group flex items-center justify-center space-x-2 text-green-400 hover:text-green-300 text-lg font-semibold transition-colors"
             >
               <span>Get Started</span>
+              <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
+            </button>
+            <button
+              onClick={() => onNavigate('summary-text')}
+              className="group flex items-center justify-center space-x-2 text-gray-400 hover:text-gray-300 text-lg font-semibold transition-colors"
+            >
+              <span>Read Summary</span>
               <ArrowRight className="h-5 w-5 group-hover:translate-x-1 transition-transform" />
             </button>
           </div>
