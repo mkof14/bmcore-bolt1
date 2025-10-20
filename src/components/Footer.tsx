@@ -16,7 +16,7 @@ export default function Footer({ onNavigate }: FooterProps) {
             <div className="flex items-center mb-4">
               <span className="text-xl font-bold">
                 <span className="text-blue-500">BioMath</span>
-                <span className="text-white"> Core</span>
+                <span className="text-gray-900 dark:text-white"> Core</span>
               </span>
             </div>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
