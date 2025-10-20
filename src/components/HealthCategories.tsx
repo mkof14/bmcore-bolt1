@@ -1,4 +1,4 @@
-import { HeartPulse, Sparkles, TrendingUp, BrainCircuit, Flame, Flower, Shield, Droplet, Leaf, Moon, Wind, Users, Activity, Zap, Heart, Eye, Laptop, Fingerprint, CircleDot, Blend } from 'lucide-react';
+import { Heart, Sparkles, TrendingUp, Brain, Dumbbell, Flower2, User, Droplets, Apple, Moon, Leaf, Users, Activity, Zap, HeartHandshake, Eye, Smartphone, Fingerprint, Target, Blend } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
 interface HealthCategoriesProps {
@@ -13,169 +13,189 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
     {
       id: 'critical-health',
       name: 'Critical Health',
-      icon: HeartPulse,
-      gradient: 'from-red-600/90 via-orange-600/90 to-red-700/90',
-      iconColor: 'text-orange-300',
-      pattern: 'radial-gradient(circle at 20% 50%, rgba(239, 68, 68, 0.3) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(234, 88, 12, 0.2) 0%, transparent 50%)',
+      icon: Heart,
+      gradient: 'from-red-950/95 via-black/90 to-black/95',
+      iconColor: 'text-orange-400',
+      glowColor: 'drop-shadow-[0_0_15px_rgba(251,146,60,0.8)]',
+      bgImage: 'https://images.pexels.com/photos/7108344/pexels-photo-7108344.jpeg?auto=compress&cs=tinysrgb&w=400',
     },
     {
       id: 'everyday-wellness',
       name: 'Everyday Wellness',
       icon: Sparkles,
-      gradient: 'from-amber-600/90 via-yellow-600/90 to-orange-600/90',
-      iconColor: 'text-green-300',
-      pattern: 'radial-gradient(circle at 30% 30%, rgba(245, 158, 11, 0.3) 0%, transparent 60%), linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, transparent 100%)',
+      gradient: 'from-amber-950/95 via-black/90 to-black/95',
+      iconColor: 'text-green-400',
+      glowColor: 'drop-shadow-[0_0_15px_rgba(74,222,128,0.8)]',
+      bgImage: 'https://images.pexels.com/photos/1051838/pexels-photo-1051838.jpeg?auto=compress&cs=tinysrgb&w=400',
     },
     {
       id: 'longevity-aging',
       name: 'Longevity & Anti-Aging',
       icon: TrendingUp,
-      gradient: 'from-blue-700/90 via-indigo-700/90 to-purple-700/90',
-      iconColor: 'text-pink-300',
-      pattern: 'radial-gradient(circle at 70% 20%, rgba(59, 130, 246, 0.3) 0%, transparent 50%), linear-gradient(to bottom right, rgba(168, 85, 247, 0.2) 0%, transparent 100%)',
+      gradient: 'from-blue-950/95 via-black/90 to-black/95',
+      iconColor: 'text-pink-400',
+      glowColor: 'drop-shadow-[0_0_15px_rgba(244,114,182,0.8)]',
+      bgImage: 'https://images.pexels.com/photos/3943716/pexels-photo-3943716.jpeg?auto=compress&cs=tinysrgb&w=400',
     },
     {
       id: 'mental-wellness',
       name: 'Mental Wellness',
-      icon: BrainCircuit,
-      gradient: 'from-purple-700/90 via-fuchsia-700/90 to-pink-700/90',
-      iconColor: 'text-cyan-300',
-      pattern: 'radial-gradient(circle at 40% 60%, rgba(147, 51, 234, 0.3) 0%, transparent 60%), radial-gradient(circle at 80% 30%, rgba(236, 72, 153, 0.2) 0%, transparent 50%)',
+      icon: Brain,
+      gradient: 'from-purple-950/95 via-black/90 to-black/95',
+      iconColor: 'text-cyan-400',
+      glowColor: 'drop-shadow-[0_0_15px_rgba(34,211,238,0.8)]',
+      bgImage: 'https://images.pexels.com/photos/3760607/pexels-photo-3760607.jpeg?auto=compress&cs=tinysrgb&w=400',
     },
     {
       id: 'fitness-performance',
       name: 'Fitness & Performance',
-      icon: Flame,
-      gradient: 'from-slate-700/90 via-zinc-700/90 to-gray-800/90',
-      iconColor: 'text-yellow-300',
-      pattern: 'linear-gradient(135deg, rgba(234, 179, 8, 0.2) 0%, transparent 60%), radial-gradient(circle at 80% 80%, rgba(251, 191, 36, 0.15) 0%, transparent 50%)',
+      icon: Dumbbell,
+      gradient: 'from-slate-950/95 via-black/90 to-black/95',
+      iconColor: 'text-yellow-400',
+      glowColor: 'drop-shadow-[0_0_15px_rgba(250,204,21,0.8)]',
+      bgImage: 'https://images.pexels.com/photos/1552242/pexels-photo-1552242.jpeg?auto=compress&cs=tinysrgb&w=400',
     },
     {
       id: 'womens-health',
       name: "Women's Health",
-      icon: Flower,
-      gradient: 'from-pink-600/90 via-rose-600/90 to-pink-700/90',
-      iconColor: 'text-pink-200',
-      pattern: 'radial-gradient(circle at 50% 50%, rgba(236, 72, 153, 0.3) 0%, transparent 60%), linear-gradient(to top, rgba(244, 114, 182, 0.2) 0%, transparent 100%)',
+      icon: Flower2,
+      gradient: 'from-pink-950/95 via-black/90 to-black/95',
+      iconColor: 'text-pink-400',
+      glowColor: 'drop-shadow-[0_0_15px_rgba(244,114,182,0.8)]',
+      bgImage: 'https://images.pexels.com/photos/3760259/pexels-photo-3760259.jpeg?auto=compress&cs=tinysrgb&w=400',
     },
     {
       id: 'mens-health',
       name: "Men's Health",
-      icon: Shield,
-      gradient: 'from-amber-700/90 via-orange-700/90 to-red-700/90',
-      iconColor: 'text-blue-300',
-      pattern: 'linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, transparent 70%), radial-gradient(circle at 30% 70%, rgba(234, 88, 12, 0.25) 0%, transparent 50%)',
+      icon: User,
+      gradient: 'from-orange-950/95 via-black/90 to-black/95',
+      iconColor: 'text-blue-400',
+      glowColor: 'drop-shadow-[0_0_15px_rgba(96,165,250,0.8)]',
+      bgImage: 'https://images.pexels.com/photos/1547248/pexels-photo-1547248.jpeg?auto=compress&cs=tinysrgb&w=400',
     },
     {
       id: 'beauty-skincare',
       name: 'Beauty & Skincare',
-      icon: Droplet,
-      gradient: 'from-rose-600/90 via-pink-600/90 to-fuchsia-600/90',
-      iconColor: 'text-pink-200',
-      pattern: 'radial-gradient(circle at 60% 40%, rgba(244, 63, 94, 0.3) 0%, transparent 60%), radial-gradient(circle at 20% 80%, rgba(232, 121, 249, 0.2) 0%, transparent 50%)',
+      icon: Droplets,
+      gradient: 'from-rose-950/95 via-black/90 to-black/95',
+      iconColor: 'text-pink-400',
+      glowColor: 'drop-shadow-[0_0_15px_rgba(244,114,182,0.8)]',
+      bgImage: 'https://images.pexels.com/photos/3762879/pexels-photo-3762879.jpeg?auto=compress&cs=tinysrgb&w=400',
     },
     {
       id: 'nutrition-diet',
       name: 'Nutrition & Diet',
-      icon: Leaf,
-      gradient: 'from-green-700/90 via-emerald-700/90 to-teal-700/90',
-      iconColor: 'text-green-200',
-      pattern: 'radial-gradient(circle at 30% 30%, rgba(34, 197, 94, 0.3) 0%, transparent 60%), linear-gradient(to bottom right, rgba(20, 184, 166, 0.2) 0%, transparent 100%)',
+      icon: Apple,
+      gradient: 'from-green-950/95 via-black/90 to-black/95',
+      iconColor: 'text-green-400',
+      glowColor: 'drop-shadow-[0_0_15px_rgba(74,222,128,0.8)]',
+      bgImage: 'https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&cs=tinysrgb&w=400',
     },
     {
       id: 'sleep-recovery',
       name: 'Sleep & Recovery',
       icon: Moon,
-      gradient: 'from-indigo-800/90 via-blue-800/90 to-purple-800/90',
-      iconColor: 'text-purple-200',
-      pattern: 'radial-gradient(circle at 50% 20%, rgba(99, 102, 241, 0.3) 0%, transparent 70%), linear-gradient(to bottom, rgba(147, 51, 234, 0.2) 0%, transparent 100%)',
+      gradient: 'from-indigo-950/95 via-black/90 to-black/95',
+      iconColor: 'text-purple-400',
+      glowColor: 'drop-shadow-[0_0_15px_rgba(192,132,252,0.8)]',
+      bgImage: 'https://images.pexels.com/photos/3771115/pexels-photo-3771115.jpeg?auto=compress&cs=tinysrgb&w=400',
     },
     {
       id: 'environmental-health',
       name: 'Environmental Health',
-      icon: Wind,
-      gradient: 'from-teal-700/90 via-cyan-700/90 to-emerald-700/90',
-      iconColor: 'text-teal-200',
-      pattern: 'radial-gradient(circle at 40% 60%, rgba(20, 184, 166, 0.3) 0%, transparent 60%), linear-gradient(135deg, rgba(6, 182, 212, 0.2) 0%, transparent 100%)',
+      icon: Leaf,
+      gradient: 'from-teal-950/95 via-black/90 to-black/95',
+      iconColor: 'text-teal-400',
+      glowColor: 'drop-shadow-[0_0_15px_rgba(45,212,191,0.8)]',
+      bgImage: 'https://images.pexels.com/photos/1108572/pexels-photo-1108572.jpeg?auto=compress&cs=tinysrgb&w=400',
     },
     {
       id: 'family-health',
       name: 'Family Health',
       icon: Users,
-      gradient: 'from-orange-600/90 via-amber-600/90 to-yellow-600/90',
-      iconColor: 'text-orange-200',
-      pattern: 'radial-gradient(circle at 60% 40%, rgba(251, 146, 60, 0.3) 0%, transparent 60%), linear-gradient(to top right, rgba(245, 158, 11, 0.2) 0%, transparent 100%)',
+      gradient: 'from-orange-950/95 via-black/90 to-black/95',
+      iconColor: 'text-orange-400',
+      glowColor: 'drop-shadow-[0_0_15px_rgba(251,146,60,0.8)]',
+      bgImage: 'https://images.pexels.com/photos/1648387/pexels-photo-1648387.jpeg?auto=compress&cs=tinysrgb&w=400',
     },
     {
       id: 'preventive-medicine',
-      name: 'Preventive Medicine',
+      name: 'Preventive Medicine & Longevity',
       icon: Activity,
-      gradient: 'from-cyan-700/90 via-blue-700/90 to-sky-700/90',
-      iconColor: 'text-cyan-200',
-      pattern: 'radial-gradient(circle at 30% 50%, rgba(6, 182, 212, 0.3) 0%, transparent 60%), linear-gradient(135deg, rgba(59, 130, 246, 0.2) 0%, transparent 100%)',
+      gradient: 'from-cyan-950/95 via-black/90 to-black/95',
+      iconColor: 'text-cyan-400',
+      glowColor: 'drop-shadow-[0_0_15px_rgba(34,211,238,0.8)]',
+      bgImage: 'https://images.pexels.com/photos/7108337/pexels-photo-7108337.jpeg?auto=compress&cs=tinysrgb&w=400',
     },
     {
       id: 'biohacking',
-      name: 'Biohacking',
+      name: 'Biohacking & Performance',
       icon: Zap,
-      gradient: 'from-violet-700/90 via-purple-700/90 to-fuchsia-700/90',
-      iconColor: 'text-blue-300',
-      pattern: 'radial-gradient(circle at 70% 30%, rgba(139, 92, 246, 0.3) 0%, transparent 60%), linear-gradient(to bottom, rgba(147, 51, 234, 0.25) 0%, transparent 100%)',
+      gradient: 'from-violet-950/95 via-black/90 to-black/95',
+      iconColor: 'text-blue-400',
+      glowColor: 'drop-shadow-[0_0_15px_rgba(96,165,250,0.8)]',
+      bgImage: 'https://images.pexels.com/photos/3760072/pexels-photo-3760072.jpeg?auto=compress&cs=tinysrgb&w=400',
     },
     {
       id: 'senior-care',
       name: 'Senior Care',
-      icon: Heart,
-      gradient: 'from-slate-600/90 via-gray-700/90 to-zinc-700/90',
-      iconColor: 'text-slate-200',
-      pattern: 'linear-gradient(135deg, rgba(148, 163, 184, 0.3) 0%, transparent 70%), radial-gradient(circle at 50% 50%, rgba(113, 113, 122, 0.2) 0%, transparent 60%)',
+      icon: HeartHandshake,
+      gradient: 'from-slate-950/95 via-black/90 to-black/95',
+      iconColor: 'text-slate-300',
+      glowColor: 'drop-shadow-[0_0_15px_rgba(203,213,225,0.8)]',
+      bgImage: 'https://images.pexels.com/photos/6032877/pexels-photo-6032877.jpeg?auto=compress&cs=tinysrgb&w=400',
     },
     {
       id: 'eye-health',
-      name: 'Eye Health',
+      name: 'Eye-Health Suite',
       icon: Eye,
-      gradient: 'from-blue-700/90 via-cyan-700/90 to-teal-700/90',
-      iconColor: 'text-blue-200',
-      pattern: 'radial-gradient(circle at 50% 50%, rgba(59, 130, 246, 0.3) 0%, transparent 60%), linear-gradient(to bottom right, rgba(6, 182, 212, 0.2) 0%, transparent 100%)',
+      gradient: 'from-blue-950/95 via-black/90 to-black/95',
+      iconColor: 'text-blue-400',
+      glowColor: 'drop-shadow-[0_0_15px_rgba(96,165,250,0.8)]',
+      bgImage: 'https://images.pexels.com/photos/1841645/pexels-photo-1841645.jpeg?auto=compress&cs=tinysrgb&w=400',
     },
     {
       id: 'digital-therapeutics',
-      name: 'Digital Therapeutics',
-      icon: Laptop,
-      gradient: 'from-violet-700/90 via-purple-700/90 to-indigo-700/90',
-      iconColor: 'text-purple-200',
-      pattern: 'radial-gradient(circle at 60% 40%, rgba(139, 92, 246, 0.3) 0%, transparent 60%), linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, transparent 100%)',
+      name: 'Digital Therapeutics Store',
+      icon: Smartphone,
+      gradient: 'from-violet-950/95 via-black/90 to-black/95',
+      iconColor: 'text-purple-400',
+      glowColor: 'drop-shadow-[0_0_15px_rgba(192,132,252,0.8)]',
+      bgImage: 'https://images.pexels.com/photos/4195325/pexels-photo-4195325.jpeg?auto=compress&cs=tinysrgb&w=400',
     },
     {
       id: 'general-sexual',
-      name: 'Sexual Longevity',
+      name: 'General Sexual Longevity',
       icon: Fingerprint,
-      gradient: 'from-red-700/90 via-rose-700/90 to-pink-700/90',
-      iconColor: 'text-red-200',
-      pattern: 'radial-gradient(circle at 40% 60%, rgba(239, 68, 68, 0.3) 0%, transparent 60%), linear-gradient(to top, rgba(244, 63, 94, 0.2) 0%, transparent 100%)',
+      gradient: 'from-red-950/95 via-black/90 to-black/95',
+      iconColor: 'text-red-400',
+      glowColor: 'drop-shadow-[0_0_15px_rgba(248,113,113,0.8)]',
+      bgImage: 'https://images.pexels.com/photos/3259580/pexels-photo-3259580.jpeg?auto=compress&cs=tinysrgb&w=400',
     },
     {
       id: 'mens-sexual-health',
       name: "Men's Sexual Health",
-      icon: CircleDot,
-      gradient: 'from-blue-700/90 via-indigo-700/90 to-cyan-700/90',
-      iconColor: 'text-blue-200',
-      pattern: 'radial-gradient(circle at 50% 30%, rgba(59, 130, 246, 0.3) 0%, transparent 60%), linear-gradient(135deg, rgba(99, 102, 241, 0.2) 0%, transparent 100%)',
+      icon: Target,
+      gradient: 'from-blue-950/95 via-black/90 to-black/95',
+      iconColor: 'text-blue-400',
+      glowColor: 'drop-shadow-[0_0_15px_rgba(96,165,250,0.8)]',
+      bgImage: 'https://images.pexels.com/photos/6975474/pexels-photo-6975474.jpeg?auto=compress&cs=tinysrgb&w=400',
     },
     {
       id: 'womens-sexual-health',
       name: "Women's Sexual Health",
       icon: Blend,
-      gradient: 'from-pink-700/90 via-fuchsia-700/90 to-purple-700/90',
-      iconColor: 'text-pink-200',
-      pattern: 'radial-gradient(circle at 60% 50%, rgba(236, 72, 153, 0.3) 0%, transparent 60%), linear-gradient(to bottom right, rgba(192, 38, 211, 0.2) 0%, transparent 100%)',
+      gradient: 'from-pink-950/95 via-black/90 to-black/95',
+      iconColor: 'text-pink-400',
+      glowColor: 'drop-shadow-[0_0_15px_rgba(244,114,182,0.8)]',
+      bgImage: 'https://images.pexels.com/photos/3894378/pexels-photo-3894378.jpeg?auto=compress&cs=tinysrgb&w=400',
     },
   ];
 
   return (
     <section className={`py-20 px-4 sm:px-6 lg:px-8 ${isDark ? 'bg-gray-950' : 'bg-gray-50'}`}>
       <div className="max-w-7xl mx-auto">
-        <div className="text-center mb-16">
+        <div className="text-center mb-12">
           <h2 className={`text-4xl md:text-5xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
             Health Categories
           </h2>
@@ -184,48 +204,44 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
           </p>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
           {categories.map((category) => {
             const Icon = category.icon;
             return (
               <button
                 key={category.id}
                 onClick={() => onNavigate('services-catalog')}
-                className="group relative overflow-hidden rounded-xl transition-all duration-300 hover:scale-105 hover:shadow-2xl hover:-translate-y-1"
-                style={{ aspectRatio: '1' }}
+                className="group relative overflow-hidden rounded-lg transition-all duration-300 hover:scale-105 hover:shadow-2xl"
+                style={{ aspectRatio: '4/3' }}
               >
-                <div
-                  className={`absolute inset-0 bg-gradient-to-br ${category.gradient} transition-all duration-300`}
-                  style={{ backgroundImage: category.pattern }}
-                ></div>
+                <img
+                  src={category.bgImage}
+                  alt={category.name}
+                  className="absolute inset-0 w-full h-full object-cover"
+                />
 
-                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/30 to-transparent"></div>
+                <div className={`absolute inset-0 bg-gradient-to-t ${category.gradient}`}></div>
 
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
-                  <div className="absolute inset-0 bg-[radial-gradient(circle_at_50%_120%,rgba(255,255,255,0.1),transparent_50%)]"></div>
+                  <div className="absolute inset-0 bg-gradient-to-br from-white/5 to-transparent"></div>
                 </div>
 
-                <div className="relative h-full p-4 flex flex-col items-center justify-end text-center">
-                  <div className="mb-auto mt-4 transform group-hover:scale-110 group-hover:rotate-3 transition-all duration-300">
-                    <Icon className={`h-8 w-8 ${category.iconColor} drop-shadow-lg`} strokeWidth={1.5} />
+                <div className="relative h-full px-3 py-4 flex flex-col items-center justify-between text-center">
+                  <div className={`transform group-hover:scale-110 transition-all duration-300 ${category.glowColor}`}>
+                    <Icon className={`h-10 w-10 ${category.iconColor}`} strokeWidth={2} />
                   </div>
-                  <h3 className="text-white font-bold text-sm leading-tight drop-shadow-md">
+                  <h3 className="text-white font-bold text-xs leading-tight drop-shadow-[0_2px_8px_rgba(0,0,0,0.9)]">
                     {category.name}
                   </h3>
                 </div>
 
-                <div className="absolute inset-0 border border-white/0 group-hover:border-white/30 rounded-xl transition-all duration-300"></div>
-
-                <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                  <div className="absolute inset-0 shadow-[inset_0_0_20px_rgba(255,255,255,0.1)]"></div>
-                </div>
+                <div className="absolute inset-0 border border-white/0 group-hover:border-white/20 rounded-lg transition-all duration-300"></div>
               </button>
             );
           })}
         </div>
 
-        <div className="mt-12 text-center">
+        <div className="mt-10 text-center">
           <button
             onClick={() => onNavigate('services-catalog')}
             className={`inline-flex items-center space-x-2 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 ${
