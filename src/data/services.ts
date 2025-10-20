@@ -335,10 +335,10 @@ export const serviceCategories: ServiceCategory[] = [
     ]
   },
   {
-    id: 'sexual-longevity',
+    id: 'general-sexual',
     name: 'General Sexual Longevity',
     description: 'Comprehensive sexual health and wellness optimization',
-    icon: 'Heart',
+    icon: 'Fingerprint',
     services: [
       { id: 'libido-optimization', name: 'Libido Hormonal Optimization', description: 'Hormone balance for sexual health' },
       { id: 'sexual-biomarkers', name: 'Sexual Health Biomarkers', description: 'Key health indicators tracking' },
@@ -362,7 +362,7 @@ export const serviceCategories: ServiceCategory[] = [
     id: 'mens-sexual-health',
     name: "Men's Sexual Health",
     description: 'Specialized sexual wellness for men',
-    icon: 'Activity',
+    icon: 'Target',
     services: [
       { id: 'vascular-health', name: 'Vascular Health for Potency', description: 'Circulatory sexual function' },
       { id: 'male-vitality-trt', name: 'Male Vitality and TRT', description: 'Testosterone replacement therapy' },
@@ -374,7 +374,7 @@ export const serviceCategories: ServiceCategory[] = [
     id: 'womens-sexual-health',
     name: "Women's Sexual Health",
     description: 'Specialized sexual wellness for women',
-    icon: 'Heart',
+    icon: 'Blend',
     services: [
       { id: 'female-hormone-optimization', name: 'Female Hormonal Optimization', description: 'Women hormone balance' },
       { id: 'libido-nutrition', name: 'Libido-Boosting Nutrition', description: 'Nutrition for female desire' },

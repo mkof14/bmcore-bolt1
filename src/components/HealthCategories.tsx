@@ -90,7 +90,7 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
       iconColor: 'text-pink-400',
       glowColor: 'drop-shadow-[0_0_15px_rgba(244,114,182,0.8)]',
       shadowColor: 'shadow-pink-500/50',
-      bgImage: 'https://images.pexels.com/photos/3760259/pexels-photo-3760259.jpeg?auto=compress&cs=tinysrgb&w=600',
+      bgImage: 'https://images.pexels.com/photos/3737169/pexels-photo-3737169.jpeg?auto=compress&cs=tinysrgb&w=600',
     },
     {
       id: 'mens-health',

@@ -61,7 +61,7 @@ const categoryHeroData: Record<string, { bgImage: string; iconColor: string; tex
     textColor: 'text-yellow-400'
   },
   'womens-health': {
-    bgImage: 'https://images.pexels.com/photos/3760259/pexels-photo-3760259.jpeg?auto=compress&cs=tinysrgb&w=1200',
+    bgImage: 'https://images.pexels.com/photos/3737169/pexels-photo-3737169.jpeg?auto=compress&cs=tinysrgb&w=1200',
     iconColor: 'text-pink-400',
     textColor: 'text-pink-400'
   },
