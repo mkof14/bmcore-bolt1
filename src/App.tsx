@@ -23,8 +23,9 @@ import FAQ from './pages/FAQ';
 import Referral from './pages/Referral';
 import Ambassador from './pages/Ambassador';
 import LearningCenter from './pages/LearningCenter';
+import BiomathCoreSummary from './pages/BiomathCoreSummary';
 
-type Page = 'home' | 'about' | 'services' | 'pricing' | 'investors' | 'science' | 'api' | 'contact' | 'signin' | 'signup' | 'member' | 'member-zone' | 'services-catalog' | 'service-detail' | 'devices' | 'reports' | 'faq' | 'referral' | 'ambassador' | 'learning' | 'learning-center';
+type Page = 'home' | 'about' | 'services' | 'pricing' | 'investors' | 'science' | 'api' | 'contact' | 'signin' | 'signup' | 'member' | 'member-zone' | 'services-catalog' | 'service-detail' | 'devices' | 'reports' | 'faq' | 'referral' | 'ambassador' | 'learning' | 'learning-center' | 'biomath-core-summary';
 
 function App() {
   // VERSION: 2025-10-20-01:48 - Force HMR refresh
@@ -124,6 +125,8 @@ function App() {
       case 'learning':
       case 'learning-center':
         return <LearningCenter onNavigate={handleNavigate} />;
+      case 'biomath-core-summary':
+        return <BiomathCoreSummary onNavigate={handleNavigate} />;
       default:
         return <Home onNavigate={handleNavigate} />;
     }
