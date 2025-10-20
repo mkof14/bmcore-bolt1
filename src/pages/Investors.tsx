@@ -34,6 +34,12 @@ export default function Investors({ onNavigate }: InvestorsProps) {
               Contact the team
             </button>
             <button
+              onClick={() => onNavigate('biomath-core-summary')}
+              className="text-blue-400 hover:text-blue-300 text-lg font-semibold transition-colors"
+            >
+              BioMath Core Summary
+            </button>
+            <button
               onClick={() => onNavigate('about')}
               className="text-blue-400 hover:text-blue-300 text-lg font-semibold transition-colors"
             >
@@ -578,6 +584,12 @@ export default function Investors({ onNavigate }: InvestorsProps) {
                 className="text-orange-500 hover:text-orange-400 text-lg font-semibold transition-colors"
               >
                 Contact the team
+              </button>
+              <button
+                onClick={() => onNavigate('biomath-core-summary')}
+                className="text-blue-400 hover:text-blue-300 text-lg font-semibold transition-colors"
+              >
+                BioMath Core Summary
               </button>
               <button
                 onClick={() => onNavigate('about')}
