@@ -56,19 +56,20 @@ export default function Home({ onNavigate }: HomeProps) {
               From sleep to cognition, from movement to mood — BioMath Core brings clarity to your
               health journey. Track, understand, and optimize your wellbeing through intelligent, real-time insights tailored to you.
             </p>
-            <div className="flex flex-col sm:flex-row gap-6 justify-center">
-              <button
+            <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
+              <span
                 onClick={() => onNavigate('signup')}
-                className="px-10 py-4 bg-blue-600 hover:bg-blue-700 text-white text-lg font-semibold rounded-lg transition-colors"
+                className="text-blue-500 text-lg font-semibold cursor-pointer hover:text-blue-400 transition-colors"
               >
                 Start Free Today
-              </button>
-              <button
+              </span>
+              <span className="text-gray-500 text-2xl">•</span>
+              <span
                 onClick={() => onNavigate('learning')}
-                className="px-10 py-4 bg-orange-500 hover:bg-orange-600 text-white text-lg font-semibold rounded-lg transition-colors"
+                className="text-orange-500 text-lg font-semibold cursor-pointer hover:text-orange-400 transition-colors"
               >
                 Explore Learning Center
-              </button>
+              </span>
             </div>
           </div>
         </div>
@@ -202,23 +203,22 @@ export default function Home({ onNavigate }: HomeProps) {
         </div>
       </section>
 
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
-        <div className="max-w-4xl mx-auto text-center">
-          <Sparkles className="h-16 w-16 text-blue-600 dark:text-blue-400 mx-auto mb-6" />
-          <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">
-            Ready to Begin?
-          </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
-            Join thousands of people who are learning to understand their bodies better,
-            one supportive insight at a time.
-          </p>
-          <button
-            onClick={() => onNavigate('signup')}
-            className="px-8 py-4 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold rounded-lg transition-colors inline-flex items-center space-x-2"
-          >
-            <span>Get Started Today</span>
-            <ArrowRight className="h-5 w-5" />
-          </button>
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-900 dark:bg-gray-950">
+        <div className="max-w-7xl mx-auto space-y-12">
+          <div>
+            <img
+              src="/Screenshot 2025-10-19 at 22.52.11.png"
+              alt="AI Health with Two Expert Opinions"
+              className="w-full rounded-lg shadow-2xl"
+            />
+          </div>
+          <div>
+            <img
+              src="/Screenshot 2025-10-19 at 22.52.28.png"
+              alt="Model Archive - Your Secure Vault"
+              className="w-full rounded-lg shadow-2xl"
+            />
+          </div>
         </div>
       </section>
     </div>
