@@ -96,6 +96,19 @@ export default function About() {
         </div>
       </section>
 
+      <section className="py-4 px-4 sm:px-6 lg:px-8 bg-gray-900/30">
+        <div className="max-w-7xl mx-auto">
+          <div className="text-center py-8">
+            <h2 className="text-4xl md:text-5xl font-bold text-gray-800/40 dark:text-gray-800/40">
+              BioMath Core
+            </h2>
+            <p className="text-lg text-gray-700/30 dark:text-gray-700/30 mt-2">
+              Where data meets daily life
+            </p>
+          </div>
+        </div>
+      </section>
+
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-900/50">
         <div className="max-w-5xl mx-auto">
           <div className="flex items-center gap-4 mb-8">
