@@ -166,7 +166,7 @@ export default function AIHealthAssistantV2({ isOpen, onClose }: AIHealthAssista
                 <Sparkles className="h-6 w-6 text-white" />
               </div>
               <div>
-                <h3 className="text-white font-semibold">AI Health Assistant</h3>
+                <h3 className="text-white font-semibold">AI Health Advisor</h3>
                 <p className="text-white/80 text-xs">Multi-Persona Doctor with Dual Opinion</p>
               </div>
             </div>

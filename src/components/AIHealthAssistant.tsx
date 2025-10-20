@@ -275,7 +275,7 @@ export default function AIHealthAssistant({ isOpen, onClose }: AIHealthAssistant
               <Sparkles className="h-6 w-6 text-white" />
             </div>
             <div>
-              <h3 className="text-white font-semibold">AI Health Assistant</h3>
+              <h3 className="text-white font-semibold">AI Health Advisor</h3>
               <p className="text-white/80 text-xs">
                 {selectedPersona ? selectedPersona.name_en : 'Choose a persona'}
               </p>
