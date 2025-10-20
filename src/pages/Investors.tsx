@@ -1,4 +1,4 @@
-import { BarChart3, Users2, Rocket, Globe, Target, TrendingUp, Cpu, Shield } from 'lucide-react';
+import { BarChart3, Users2, Rocket, Globe, Target, TrendingUp, Cpu, Shield, Zap, Lock, Lightbulb } from 'lucide-react';
 
 interface InvestorsProps {
   onNavigate: (page: string) => void;
@@ -291,6 +291,278 @@ export default function Investors({ onNavigate }: InvestorsProps) {
       </section>
 
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 to-gray-950">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              Business <span className="text-blue-400">model</span>
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-3 gap-8 mb-12">
+            <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-8">
+              <div className="bg-blue-500/10 p-4 rounded-lg w-fit mb-6">
+                <Users2 className="h-10 w-10 text-blue-400" />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-6">Consumer plans</h3>
+              <div className="space-y-3">
+                <div className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full bg-orange-500 mt-2 flex-shrink-0"></div>
+                  <p className="text-gray-400 text-sm">5-day trial with subscription</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full bg-orange-500 mt-2 flex-shrink-0"></div>
+                  <p className="text-gray-400 text-sm">Premium bundles by category</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full bg-orange-500 mt-2 flex-shrink-0"></div>
+                  <p className="text-gray-400 text-sm">Optional add-on analyses</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-8">
+              <div className="bg-blue-500/10 p-4 rounded-lg w-fit mb-6">
+                <Globe className="h-10 w-10 text-blue-400" />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-6">B2B services</h3>
+              <div className="space-y-3">
+                <div className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full bg-orange-500 mt-2 flex-shrink-0"></div>
+                  <p className="text-gray-400 text-sm">Licensing of modules</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full bg-orange-500 mt-2 flex-shrink-0"></div>
+                  <p className="text-gray-400 text-sm">Co-branded programs</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full bg-orange-500 mt-2 flex-shrink-0"></div>
+                  <p className="text-gray-400 text-sm">Privacy-first integrations</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-8">
+              <div className="bg-orange-500/10 p-4 rounded-lg w-fit mb-6">
+                <Shield className="h-10 w-10 text-orange-500" />
+              </div>
+              <h3 className="text-2xl font-bold text-white mb-6">Data services (opt-in)</h3>
+              <div className="space-y-3">
+                <div className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full bg-orange-500 mt-2 flex-shrink-0"></div>
+                  <p className="text-gray-400 text-sm">Aggregated, de-identified learnings</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full bg-orange-500 mt-2 flex-shrink-0"></div>
+                  <p className="text-gray-400 text-sm">Model improvement loops</p>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full bg-orange-500 mt-2 flex-shrink-0"></div>
+                  <p className="text-gray-400 text-sm">Strict user consent rules</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-900/50">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              Market <span className="text-blue-400">opportunity</span>
+            </h2>
+          </div>
+
+          <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-8 text-center">
+              <div className="bg-green-500/10 p-4 rounded-lg w-fit mx-auto mb-6">
+                <TrendingUp className="h-10 w-10 text-green-400" />
+              </div>
+              <div className="text-4xl font-bold text-white mb-2">$230B+</div>
+              <p className="text-gray-400 text-sm">Global digital health market by 2030</p>
+            </div>
+
+            <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-8 text-center">
+              <div className="bg-blue-500/10 p-4 rounded-lg w-fit mx-auto mb-6">
+                <Globe className="h-10 w-10 text-blue-400" />
+              </div>
+              <div className="text-4xl font-bold text-white mb-2">500M+</div>
+              <p className="text-gray-400 text-sm">Addressable users worldwide</p>
+            </div>
+
+            <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-8 text-center">
+              <div className="bg-orange-500/10 p-4 rounded-lg w-fit mx-auto mb-6">
+                <Target className="h-10 w-10 text-orange-500" />
+              </div>
+              <div className="text-4xl font-bold text-white mb-2">20</div>
+              <p className="text-gray-400 text-sm">Health service categories</p>
+            </div>
+
+            <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-8 text-center">
+              <div className="bg-yellow-500/10 p-4 rounded-lg w-fit mx-auto mb-6">
+                <Lightbulb className="h-10 w-10 text-yellow-400" />
+              </div>
+              <div className="text-4xl font-bold text-white mb-2">200+</div>
+              <p className="text-gray-400 text-sm">AI-powered services</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 to-gray-950">
+        <div className="max-w-6xl mx-auto">
+          <div className="text-center mb-12">
+            <h2 className="text-4xl md:text-5xl font-bold text-white mb-4">
+              Growth <span className="text-orange-500">roadmap</span>
+            </h2>
+          </div>
+
+          <div className="space-y-6">
+            <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-8 flex items-start gap-6">
+              <div className="bg-orange-500 p-4 rounded-lg flex-shrink-0">
+                <Rocket className="h-8 w-8 text-white" />
+              </div>
+              <div>
+                <div className="flex items-baseline gap-3 mb-2">
+                  <span className="text-orange-500 font-bold text-lg">2025</span>
+                  <h3 className="text-2xl font-bold text-white">Platform Launch</h3>
+                </div>
+                <p className="text-gray-400">Consumer product launch, 20 categories, 200+ services live</p>
+              </div>
+            </div>
+
+            <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-8 flex items-start gap-6">
+              <div className="bg-orange-500 p-4 rounded-lg flex-shrink-0">
+                <BarChart3 className="h-8 w-8 text-white" />
+              </div>
+              <div>
+                <div className="flex items-baseline gap-3 mb-2">
+                  <span className="text-orange-500 font-bold text-lg">2026</span>
+                  <h3 className="text-2xl font-bold text-white">B2B Expansion</h3>
+                </div>
+                <p className="text-gray-400">Enterprise partnerships, co-branded wellness programs</p>
+              </div>
+            </div>
+
+            <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-8 flex items-start gap-6">
+              <div className="bg-orange-500 p-4 rounded-lg flex-shrink-0">
+                <Globe className="h-8 w-8 text-white" />
+              </div>
+              <div>
+                <div className="flex items-baseline gap-3 mb-2">
+                  <span className="text-orange-500 font-bold text-lg">2027+</span>
+                  <h3 className="text-2xl font-bold text-white">Global Scale</h3>
+                </div>
+                <p className="text-gray-400">International markets, advanced AI capabilities</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-900/50">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid md:grid-cols-2 gap-8">
+            <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-8">
+              <div className="flex items-start gap-4 mb-6">
+                <div className="bg-blue-500/10 p-3 rounded-lg">
+                  <Zap className="h-8 w-8 text-blue-400" />
+                </div>
+                <h2 className="text-3xl font-bold text-white">The BioMath Core Engine</h2>
+              </div>
+              <p className="text-gray-400 leading-relaxed mb-6">
+                A modeling layer that transforms raw inputs into personalized, time-aware suggestions. It blends evidence-based rules, transparent heuristics, and AI assistance.
+              </p>
+              <div className="space-y-3">
+                <div className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full bg-orange-500 mt-2 flex-shrink-0"></div>
+                  <div>
+                    <span className="text-white font-semibold">Multi-input:</span>
+                    <span className="text-gray-400 text-sm ml-1">questionnaires, wearables, labs, context</span>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full bg-orange-500 mt-2 flex-shrink-0"></div>
+                  <div>
+                    <span className="text-white font-semibold">Explainable outputs:</span>
+                    <span className="text-gray-400 text-sm ml-1">what matters now, and why</span>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full bg-orange-500 mt-2 flex-shrink-0"></div>
+                  <div>
+                    <span className="text-white font-semibold">Privacy by design:</span>
+                    <span className="text-gray-400 text-sm ml-1">minimal data, user control, encryption</span>
+                  </div>
+                </div>
+                <div className="flex items-start gap-2">
+                  <div className="w-2 h-2 rounded-full bg-orange-500 mt-2 flex-shrink-0"></div>
+                  <div>
+                    <span className="text-white font-semibold">Continuous updates:</span>
+                    <span className="text-gray-400 text-sm ml-1">learn from engagement, not profiles</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-8">
+              <div className="flex items-start gap-4 mb-6">
+                <div className="bg-orange-500/10 p-3 rounded-lg">
+                  <Rocket className="h-8 w-8 text-orange-500" />
+                </div>
+                <h2 className="text-3xl font-bold text-white">Why now (and why us)</h2>
+              </div>
+              <div className="space-y-6">
+                <div className="bg-gray-800/50 rounded-lg p-4">
+                  <h3 className="text-white font-semibold mb-2">Execution first</h3>
+                  <p className="text-gray-400 text-sm">We ship focused, useful features instead of hype</p>
+                </div>
+                <div className="bg-gray-800/50 rounded-lg p-4">
+                  <h3 className="text-white font-semibold mb-2">Lower friction</h3>
+                  <p className="text-gray-400 text-sm">Clear UX, fast answers, practical recommendations</p>
+                </div>
+                <div className="bg-gray-800/50 rounded-lg p-4">
+                  <h3 className="text-white font-semibold mb-2">Unit economics</h3>
+                  <p className="text-gray-400 text-sm">Path to healthy margins through modular plans</p>
+                </div>
+                <div className="bg-gray-800/50 rounded-lg p-4">
+                  <h3 className="text-white font-semibold mb-2">Partnership-ready</h3>
+                  <p className="text-gray-400 text-sm">Designed for integrations with clinics and wellness providers</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 to-gray-950">
+        <div className="max-w-5xl mx-auto text-center">
+          <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-12">
+            <div className="bg-orange-500/10 p-4 rounded-lg w-fit mx-auto mb-6">
+              <Lock className="h-12 w-12 text-orange-500" />
+            </div>
+            <h2 className="text-4xl font-bold text-white mb-6">
+              Trust, privacy, and clarity
+            </h2>
+            <p className="text-xl text-gray-300 mb-8 leading-relaxed max-w-4xl mx-auto">
+              Health guidance must respect people. We minimize data collection, keep explanations readable, and separate suggestions from diagnosis. Legal pages are public and plain-language. We grow through transparency, not promises of "miracles."
+            </p>
+            <div className="flex flex-wrap justify-center gap-4 text-sm">
+              <button className="text-orange-500 hover:text-orange-400 font-semibold transition-colors">Privacy Policy</button>
+              <span className="text-gray-600">•</span>
+              <button className="text-orange-500 hover:text-orange-400 font-semibold transition-colors">Terms of Use</button>
+              <span className="text-gray-600">•</span>
+              <button className="text-orange-500 hover:text-orange-400 font-semibold transition-colors">Disclaimer</button>
+              <span className="text-gray-600">•</span>
+              <button className="text-orange-500 hover:text-orange-400 font-semibold transition-colors">HIPAA Notice</button>
+              <span className="text-gray-600">•</span>
+              <button className="text-orange-500 hover:text-orange-400 font-semibold transition-colors">Security</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-900/50">
         <div className="max-w-4xl mx-auto text-center">
           <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-12">
             <Shield className="h-16 w-16 text-orange-500 mx-auto mb-6" />
