@@ -259,22 +259,22 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
                 <img
                   src={category.bgImage}
                   alt={category.name}
-                  className="absolute inset-0 w-full h-full object-cover transition-all duration-300 brightness-50 group-hover:brightness-100 group-hover:saturate-110"
+                  className="absolute inset-0 w-full h-full object-cover transition-all duration-300 brightness-[0.35] group-hover:brightness-75 group-hover:saturate-100"
                 />
 
-                <div className={`absolute inset-0 bg-gradient-to-t ${category.gradient} opacity-90 transition-opacity duration-300 group-hover:opacity-50`}></div>
+                <div className={`absolute inset-0 bg-gradient-to-t ${category.gradient} opacity-95 transition-opacity duration-300 group-hover:opacity-60`}></div>
 
                 <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
                   <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent"></div>
                 </div>
 
-                <div className="relative h-full px-3 py-4 flex flex-col items-center justify-center text-center">
-                  <div className={`mb-3 transform transition-all duration-300 ${category.glowColor} group-hover:scale-110 group-hover:mb-4`}>
-                    <Icon className={`h-8 w-8 ${category.iconColor}`} strokeWidth={2.5} />
-                  </div>
-                  <h3 className="text-white font-bold text-base leading-tight drop-shadow-[0_2px_10px_rgba(0,0,0,1)] transition-all duration-300 group-hover:text-lg group-hover:scale-105">
+                <div className="relative h-full px-2 py-3 flex flex-col items-center justify-center text-center gap-2">
+                  <h3 className="text-white font-extrabold text-lg leading-tight drop-shadow-[0_3px_12px_rgba(0,0,0,1)] transition-all duration-300 group-hover:text-xl group-hover:scale-105 px-1">
                     {category.name}
                   </h3>
+                  <div className={`transform transition-all duration-300 ${category.glowColor} group-hover:scale-125`}>
+                    <Icon className={`h-7 w-7 ${category.iconColor}`} strokeWidth={2.5} />
+                  </div>
                 </div>
 
                 <div className="absolute inset-0 border-2 border-white/0 group-hover:border-white/40 rounded-lg transition-all duration-300"></div>
