@@ -52,8 +52,24 @@ export default function About() {
                   <span className="font-bold text-white">Michael Kofman</span> is a visionary technology entrepreneur and creator of BioMath Core — a platform uniting advanced analytics, AI, and human health.
                 </p>
                 <p>
-                  Through <span className="text-blue-400 font-semibold">Digital Invest Inc.</span> and{' '}
-                  <span className="text-blue-400 font-semibold">BioMath Life</span>, he turns rigorous science into usable systems that scale.
+                  Through{' '}
+                  <a
+                    href="https://digitalinvest.com/#home"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-400 hover:text-blue-300 font-semibold underline transition-colors"
+                  >
+                    Digital Invest Inc.
+                  </a>{' '}
+                  and{' '}
+                  <a
+                    href="https://biomathlife.com/#"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-400 hover:text-blue-300 font-semibold underline transition-colors"
+                  >
+                    BioMath Life
+                  </a>, he turns rigorous science into usable systems that scale.
                 </p>
                 <p>
                   Recognized by <span className="text-orange-500 font-semibold">Healthcare Tech Outlook</span>.{' '}
