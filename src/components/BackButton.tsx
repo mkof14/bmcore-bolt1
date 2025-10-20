@@ -1,14 +1,14 @@
 import { ArrowLeft } from 'lucide-react';
 
 interface BackButtonProps {
-  onClick: () => void;
+  onNavigate: (page: string) => void;
   label?: string;
 }
 
-export default function BackButton({ onClick, label = 'Back' }: BackButtonProps) {
+export default function BackButton({ onNavigate, label = 'Back' }: BackButtonProps) {
   return (
     <button
-      onClick={onClick}
+      onClick={() => onNavigate('home')}
       className="inline-flex items-center text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors mb-6"
     >
       <ArrowLeft className="h-5 w-5 mr-2" />

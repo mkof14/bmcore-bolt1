@@ -26,16 +26,16 @@ export default function Investors({ onNavigate }: InvestorsProps) {
             We work with institutional investors, strategic partners, family offices, and individual investors. Our approach is flexible: equity investment, strategic partnerships, licensing agreements, or hybrid structures tailored to mutual value creation.
           </p>
 
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+          <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <button
               onClick={() => onNavigate('contact')}
-              className="px-8 py-4 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg transition-colors"
+              className="text-orange-500 hover:text-orange-400 text-lg font-semibold transition-colors"
             >
               Contact the team
             </button>
             <button
               onClick={() => onNavigate('about')}
-              className="px-8 py-4 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-lg border border-gray-700 transition-colors"
+              className="text-blue-400 hover:text-blue-300 text-lg font-semibold transition-colors"
             >
               Learn about us
             </button>
@@ -548,15 +548,15 @@ export default function Investors({ onNavigate }: InvestorsProps) {
               Health guidance must respect people. We minimize data collection, keep explanations readable, and separate suggestions from diagnosis. Legal pages are public and plain-language. We grow through transparency, not promises of "miracles."
             </p>
             <div className="flex flex-wrap justify-center gap-4 text-sm">
-              <button className="text-orange-500 hover:text-orange-400 font-semibold transition-colors">Privacy Policy</button>
+              <button className="text-orange-500 hover:text-orange-400 font-semibold transition-colors cursor-pointer">Privacy Policy</button>
               <span className="text-gray-600">•</span>
-              <button className="text-orange-500 hover:text-orange-400 font-semibold transition-colors">Terms of Use</button>
+              <button className="text-orange-500 hover:text-orange-400 font-semibold transition-colors cursor-pointer">Terms of Use</button>
               <span className="text-gray-600">•</span>
-              <button className="text-orange-500 hover:text-orange-400 font-semibold transition-colors">Disclaimer</button>
+              <button className="text-orange-500 hover:text-orange-400 font-semibold transition-colors cursor-pointer">Disclaimer</button>
               <span className="text-gray-600">•</span>
-              <button className="text-orange-500 hover:text-orange-400 font-semibold transition-colors">HIPAA Notice</button>
+              <button className="text-orange-500 hover:text-orange-400 font-semibold transition-colors cursor-pointer">HIPAA Notice</button>
               <span className="text-gray-600">•</span>
-              <button className="text-orange-500 hover:text-orange-400 font-semibold transition-colors">Security</button>
+              <button className="text-orange-500 hover:text-orange-400 font-semibold transition-colors cursor-pointer">Security</button>
             </div>
           </div>
         </div>
@@ -572,16 +572,16 @@ export default function Investors({ onNavigate }: InvestorsProps) {
             <p className="text-xl text-gray-300 mb-8 leading-relaxed">
               We're actively engaging with investors who share our vision for evidence-based, user-controlled health intelligence. Whether you're exploring strategic partnerships, equity investment, or licensing opportunities, we'd be happy to discuss how we can work together.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <button
                 onClick={() => onNavigate('contact')}
-                className="px-8 py-4 bg-orange-500 hover:bg-orange-600 text-white font-semibold rounded-lg transition-colors"
+                className="text-orange-500 hover:text-orange-400 text-lg font-semibold transition-colors"
               >
                 Contact the team
               </button>
               <button
                 onClick={() => onNavigate('about')}
-                className="px-8 py-4 bg-gray-800 hover:bg-gray-700 text-white font-semibold rounded-lg border border-gray-700 transition-colors"
+                className="text-blue-400 hover:text-blue-300 text-lg font-semibold transition-colors"
               >
                 Learn about us
               </button>
