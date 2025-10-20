@@ -24,9 +24,11 @@ export default function Header({ onNavigate, currentPage }: HeaderProps) {
     <header className="fixed top-0 left-0 right-0 z-50 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 transition-colors">
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
-          <div className="flex items-center space-x-2 cursor-pointer" onClick={() => onNavigate('home')}>
-            <Activity className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-            <span className="text-xl font-bold text-gray-900 dark:text-white">BioMath Core</span>
+          <div className="flex items-center cursor-pointer" onClick={() => onNavigate('home')}>
+            <span className="text-xl font-bold">
+              <span className="text-blue-500">BioMath</span>
+              <span className="text-white"> Core</span>
+            </span>
           </div>
 
           <div className="hidden md:flex items-center space-x-1">

@@ -1,4 +1,4 @@
-import { Activity, Mail, MapPin, Moon, Sun } from 'lucide-react';
+import { Mail, MapPin, Moon, Sun } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
 interface FooterProps {
@@ -13,9 +13,11 @@ export default function Footer({ onNavigate }: FooterProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
           <div className="col-span-1 md:col-span-2">
-            <div className="flex items-center space-x-2 mb-4">
-              <Activity className="h-8 w-8 text-blue-600 dark:text-blue-400" />
-              <span className="text-xl font-bold text-gray-900 dark:text-white">BioMath Core</span>
+            <div className="flex items-center mb-4">
+              <span className="text-xl font-bold">
+                <span className="text-blue-500">BioMath</span>
+                <span className="text-white"> Core</span>
+              </span>
             </div>
             <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
               Biomathematics-based wellness intelligence platform for understanding your body.
