@@ -76,6 +76,8 @@ export default function Home({ onNavigate }: HomeProps) {
         </div>
       </section>
 
+      <HealthCategories onNavigate={onNavigate} />
+
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-white dark:bg-gray-950">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
@@ -144,8 +146,6 @@ export default function Home({ onNavigate }: HomeProps) {
           </div>
         </div>
       </section>
-
-      <HealthCategories onNavigate={onNavigate} />
 
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
