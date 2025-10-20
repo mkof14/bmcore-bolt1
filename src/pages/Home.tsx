@@ -1,4 +1,5 @@
 import { Activity, Brain, Shield, Heart, Lightbulb, Sparkles, ArrowRight, Check, BookOpen } from 'lucide-react';
+import HealthCategories from '../components/HealthCategories';
 
 interface HomeProps {
   onNavigate: (page: string) => void;
@@ -143,6 +144,8 @@ export default function Home({ onNavigate }: HomeProps) {
           </div>
         </div>
       </section>
+
+      <HealthCategories onNavigate={onNavigate} />
 
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto">
