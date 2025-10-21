@@ -72,29 +72,29 @@ export default function CommandCenter({ onNavigate }: CommandCenterProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950 pt-20 pb-16 transition-colors">
+    <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 pt-20 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <BackButton onNavigate={onNavigate} />
 
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-2">Command Center</h1>
-          <p className="text-gray-600 dark:text-gray-400">Real-time business analytics and platform metrics</p>
+          <h1 className="text-4xl font-bold text-white mb-2">Command Center</h1>
+          <p className="text-gray-400">Real-time business analytics and platform metrics</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {cards.map((card, idx) => {
             const Icon = card.icon;
             return (
-              <div key={idx} className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6">
+              <div key={idx} className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl p-6 hover:border-orange-600/50 transition-all duration-300">
                 <div className="flex items-center justify-between mb-4">
-                  <Icon className="h-8 w-8 text-orange-600 dark:text-orange-500" />
-                  <div className={`flex items-center gap-1 text-sm font-medium ${card.positive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
+                  <Icon className="h-8 w-8 text-orange-500" />
+                  <div className={`flex items-center gap-1 text-sm font-medium ${card.positive ? 'text-green-400' : 'text-red-400'}`}>
                     {card.positive ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
                     {card.change}
                   </div>
                 </div>
-                <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{card.label}</h3>
-                <p className="text-3xl font-bold text-gray-900 dark:text-white">{card.value}</p>
+                <h3 className="text-sm font-medium text-gray-400 mb-1">{card.label}</h3>
+                <p className="text-3xl font-bold text-white">{card.value}</p>
               </div>
             );
           })}

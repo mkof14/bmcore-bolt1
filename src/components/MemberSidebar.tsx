@@ -70,7 +70,7 @@ export default function MemberSidebar({ currentSection, onSectionChange }: Membe
   ];
 
   return (
-    <aside className={`fixed left-0 top-16 bottom-0 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-800 transition-all duration-300 z-40 ${
+    <aside className={`fixed left-0 top-16 bottom-0 bg-gradient-to-b from-gray-900 to-gray-950 border-r border-gray-800/50 transition-all duration-300 z-40 ${
       isCollapsed ? 'w-20' : 'w-64'
     }`}>
       <div className="h-full flex flex-col">
@@ -78,7 +78,7 @@ export default function MemberSidebar({ currentSection, onSectionChange }: Membe
           {menuSections.map((section, sectionIndex) => (
             <div key={sectionIndex} className="mb-6">
               {!isCollapsed && (
-                <h3 className="px-3 mb-2 text-xs font-semibold text-gray-500 dark:text-gray-400 uppercase tracking-wider">
+                <h3 className="px-3 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
                   {section.title}
                 </h3>
               )}
@@ -91,14 +91,14 @@ export default function MemberSidebar({ currentSection, onSectionChange }: Membe
                     <button
                       key={item.id}
                       onClick={() => onSectionChange(item.id)}
-                      className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-colors ${
+                      className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-all duration-300 ${
                         isActive
-                          ? 'bg-blue-50 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400'
-                          : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+                          ? 'bg-gradient-to-r from-orange-900/30 to-orange-800/20 border border-orange-600/30 text-orange-500'
+                          : 'text-gray-400 hover:bg-gray-800/50 border border-transparent hover:border-gray-700/50'
                       }`}
                       title={isCollapsed ? item.label : ''}
                     >
-                      <Icon className={`h-5 w-5 flex-shrink-0 ${isActive ? 'text-blue-600 dark:text-blue-400' : ''}`} />
+                      <Icon className={`h-5 w-5 flex-shrink-0 ${isActive ? 'text-orange-500' : ''}`} />
                       {!isCollapsed && (
                         <span className={`text-sm font-medium ${isActive ? 'font-semibold' : ''}`}>
                           {item.label}
@@ -112,10 +112,10 @@ export default function MemberSidebar({ currentSection, onSectionChange }: Membe
           ))}
         </div>
 
-        <div className="border-t border-gray-200 dark:border-gray-800 p-4">
+        <div className="border-t border-gray-800/50 p-4">
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="w-full flex items-center justify-center space-x-2 px-3 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
+            className="w-full flex items-center justify-center space-x-2 px-3 py-2 text-gray-400 hover:bg-gray-800/50 hover:text-gray-300 rounded-lg transition-all duration-300"
           >
             {isCollapsed ? (
               <ChevronRight className="h-5 w-5" />

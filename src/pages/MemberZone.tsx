@@ -243,7 +243,7 @@ export default function MemberZone({ onNavigate, onSignOut }: MemberZoneProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-950 transition-colors pt-16">
+    <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 transition-colors pt-16">
       <MemberSidebar
         currentSection={currentSection}
         onSectionChange={setCurrentSection}
@@ -254,7 +254,7 @@ export default function MemberZone({ onNavigate, onSignOut }: MemberZoneProps) {
           <div className="flex justify-end mb-6">
             <button
               onClick={handleSignOut}
-              className="flex items-center space-x-2 px-4 py-2 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300 rounded-lg transition-colors"
+              className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700/50 hover:border-orange-600/50 text-gray-300 rounded-lg transition-all duration-300"
             >
               <LogOut className="h-5 w-5" />
               <span>Sign Out</span>
