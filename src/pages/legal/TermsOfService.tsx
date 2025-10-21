@@ -102,7 +102,7 @@ export default function TermsOfService({ onNavigate }: TermsOfServiceProps) {
           <section className="mb-8">
             <h2 className="text-2xl font-bold text-gray-900 mb-4">11. Contact</h2>
             <div className="bg-gray-50 border border-gray-300 rounded-xl p-6">
-              <p className="text-gray-800"><strong>BioMath Core</strong><br />Charlotte, NC, USA<br /><strong>Email:</strong> legal@biomathcore.com</p>
+              <p className="text-gray-800"><strong>BioMath Core</strong><br /><strong>Email:</strong> legal@biomathcore.com</p>
             </div>
           </section>
         </div>

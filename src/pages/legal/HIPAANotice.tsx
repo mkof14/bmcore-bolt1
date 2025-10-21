@@ -140,7 +140,6 @@ export default function HIPAANotice({ onNavigate }: HIPAANoticeProps) {
               <p className="text-gray-800">
                 <strong>BioMath Core</strong><br />
                 Privacy Officer<br />
-                Charlotte, NC, USA<br />
                 <strong>Email:</strong> privacy@biomathcore.com<br />
                 <strong>Support:</strong> support@biomathcore.com
               </p>

@@ -1,4 +1,4 @@
-import { Mail, MapPin, Moon, Sun } from 'lucide-react';
+import { Mail, Moon, Sun } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
 
 interface FooterProps {
@@ -52,10 +52,6 @@ export default function Footer({ onNavigate }: FooterProps) {
             </div>
 
             <div className="space-y-2 mb-6">
-              <div className="flex items-start space-x-2">
-                <MapPin className="h-4 w-4 text-gray-600 dark:text-gray-400 mt-0.5 flex-shrink-0" />
-                <span className="text-sm text-gray-600 dark:text-gray-400">Charlotte, NC USA</span>
-              </div>
               <div className="flex items-start space-x-2">
                 <Mail className="h-4 w-4 text-gray-600 dark:text-gray-400 mt-0.5 flex-shrink-0" />
                 <a href="mailto:info@biomathcore.com" className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">

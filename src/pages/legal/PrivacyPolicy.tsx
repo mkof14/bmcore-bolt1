@@ -271,8 +271,7 @@ export default function PrivacyPolicy({ onNavigate }: PrivacyPolicyProps) {
             <div className="bg-gray-50 border border-gray-300 rounded-xl p-6">
               <p className="text-gray-800 mb-2">
                 <strong>BioMath Core</strong><br />
-                Privacy Officer<br />
-                Charlotte, NC, USA
+                Privacy Officer
               </p>
               <p className="text-gray-800 mb-2">
                 <strong>Email:</strong> privacy@biomathcore.com<br />

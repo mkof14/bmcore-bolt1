@@ -155,7 +155,6 @@ export default function Disclaimer({ onNavigate }: DisclaimerProps) {
               <p className="text-gray-800">
                 <strong>BioMath Core</strong><br />
                 Legal Department<br />
-                Charlotte, NC, USA<br />
                 <strong>Email:</strong> legal@biomathcore.com
               </p>
             </div>

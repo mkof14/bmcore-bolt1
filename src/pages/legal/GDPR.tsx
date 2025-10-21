@@ -100,7 +100,6 @@ export default function GDPR({ onNavigate }: GDPRProps) {
               <p className="text-gray-800">
                 <strong>Data Protection Officer</strong><br />
                 BioMath Core<br />
-                Charlotte, NC, USA<br />
                 <strong>Email:</strong> dpo@biomathcore.com<br />
                 <strong>Privacy Email:</strong> privacy@biomathcore.com
               </p>

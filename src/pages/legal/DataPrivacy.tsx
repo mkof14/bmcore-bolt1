@@ -137,7 +137,6 @@ export default function DataPrivacy({ onNavigate }: DataPrivacyProps) {
               <p className="text-gray-800">
                 <strong>Privacy Officer</strong><br />
                 BioMath Core<br />
-                Charlotte, NC, USA<br />
                 <strong>Email:</strong> privacy@biomathcore.com<br />
                 <strong>DPO:</strong> dpo@biomathcore.com
               </p>
