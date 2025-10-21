@@ -48,49 +48,49 @@ export default function Referral({ onNavigate }: ReferralProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-50 to-white dark:from-gray-900 dark:to-gray-800 pt-20 pb-16 transition-colors">
+    <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 pt-20 pb-16">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <BackButton onNavigate={onNavigate} />
 
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full mb-4">
-            <Users className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-gray-800 to-gray-900 border border-orange-600/30 rounded-xl mb-6 shadow-lg shadow-orange-600/10">
+            <Users className="h-10 w-10 text-orange-500" />
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
             Share Health, Earn Rewards
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-300">
+          <p className="text-xl text-gray-300 leading-relaxed">
             Invite friends to BioMath Core and earn credits with every successful referral
           </p>
         </div>
 
         <div className="grid md:grid-cols-3 gap-6 mb-12">
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Total Referred</h3>
-              <Users className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+          <div className="relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 border border-gray-700/40 rounded-xl p-6 overflow-hidden">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-medium text-gray-400">Total Referred</h3>
+              <Users className="h-5 w-5 text-orange-500" />
             </div>
-            <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.totalReferred}</p>
+            <p className="text-3xl font-bold text-white">{stats.totalReferred}</p>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Credits Earned</h3>
-              <DollarSign className="h-5 w-5 text-green-600 dark:text-green-400" />
+          <div className="relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 border border-gray-700/40 rounded-xl p-6 overflow-hidden">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-medium text-gray-400">Credits Earned</h3>
+              <DollarSign className="h-5 w-5 text-orange-500" />
             </div>
-            <p className="text-3xl font-bold text-gray-900 dark:text-white">${stats.creditsEarned}</p>
+            <p className="text-3xl font-bold text-white">${stats.creditsEarned}</p>
           </div>
 
-          <div className="bg-white dark:bg-gray-800 rounded-xl p-6 shadow-sm border border-gray-200 dark:border-gray-700">
-            <div className="flex items-center justify-between mb-2">
-              <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400">Active Referrals</h3>
-              <Check className="h-5 w-5 text-blue-600 dark:text-blue-400" />
+          <div className="relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 border border-gray-700/40 rounded-xl p-6 overflow-hidden">
+            <div className="flex items-center justify-between mb-3">
+              <h3 className="text-sm font-medium text-gray-400">Active Referrals</h3>
+              <Check className="h-5 w-5 text-orange-500" />
             </div>
-            <p className="text-3xl font-bold text-gray-900 dark:text-white">{stats.activeReferrals}</p>
+            <p className="text-3xl font-bold text-white">{stats.activeReferrals}</p>
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl p-8 mb-8 text-white">
+        <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-2xl p-10 mb-12 text-white">
           <div className="grid md:grid-cols-2 gap-8">
             <div>
               <h2 className="text-2xl font-bold mb-4">How It Works</h2>
@@ -101,7 +101,7 @@ export default function Referral({ onNavigate }: ReferralProps) {
                   </div>
                   <div>
                     <p className="font-medium">Share your unique code</p>
-                    <p className="text-sm text-blue-100">Send it to friends via email or social media</p>
+                    <p className="text-sm text-gray-400">Send it to friends via email or social media</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-3">
@@ -110,7 +110,7 @@ export default function Referral({ onNavigate }: ReferralProps) {
                   </div>
                   <div>
                     <p className="font-medium">Friend gets $5 discount</p>
-                    <p className="text-sm text-blue-100">Applied instantly at signup</p>
+                    <p className="text-sm text-gray-400">Applied instantly at signup</p>
                   </div>
                 </div>
                 <div className="flex items-start space-x-3">
@@ -119,13 +119,13 @@ export default function Referral({ onNavigate }: ReferralProps) {
                   </div>
                   <div>
                     <p className="font-medium">You earn $10 credit</p>
-                    <p className="text-sm text-blue-100">Added instantly after confirmed signup</p>
+                    <p className="text-sm text-gray-400">Added instantly after confirmed signup</p>
                   </div>
                 </div>
               </div>
             </div>
 
-            <div className="bg-white/10 backdrop-blur-sm rounded-xl p-6">
+            <div className="bg-gray-800/50 border border-gray-700/30 rounded-xl p-6">
               <h3 className="text-lg font-semibold mb-4">Reward Details</h3>
               <div className="space-y-3 text-sm">
                 <div className="flex justify-between">
@@ -137,41 +137,41 @@ export default function Referral({ onNavigate }: ReferralProps) {
                   <span className="font-bold">$5</span>
                 </div>
                 <div className="border-t border-white/20 pt-3 mt-3">
-                  <p className="text-blue-100">• No limits on referrals</p>
-                  <p className="text-blue-100">• Credits never expire</p>
-                  <p className="text-blue-100">• Use for subscriptions & upgrades</p>
+                  <p className="text-gray-400">• No limits on referrals</p>
+                  <p className="text-gray-400">• Credits never expire</p>
+                  <p className="text-gray-400">• Use for subscriptions & upgrades</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-sm border border-gray-200 dark:border-gray-700 mb-8">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">Your Referral Code</h2>
+        <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-2xl p-8 mb-8">
+          <h2 className="text-2xl font-bold text-white mb-6">Your Referral Code</h2>
 
-          <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 mb-6">
+          <div className="bg-gray-800/50 border border-gray-700/30 rounded-lg p-6 mb-6">
             <div className="flex items-center justify-between mb-4">
               <div>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-1">Your permanent code:</p>
-                <p className="text-2xl font-mono font-bold text-gray-900 dark:text-white">{referralCode}</p>
+                <p className="text-sm text-gray-400 mb-1">Your permanent code:</p>
+                <p className="text-2xl font-mono font-bold text-white">{referralCode}</p>
               </div>
               <button
                 onClick={handleCopy}
-                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-lg hover:from-orange-500 hover:to-orange-600 transition-all duration-300 shadow-lg shadow-orange-600/20"
               >
                 {copied ? <Check className="h-5 w-5" /> : <Copy className="h-5 w-5" />}
                 <span>{copied ? 'Copied!' : 'Copy'}</span>
               </button>
             </div>
 
-            <div className="pt-4 border-t border-gray-200 dark:border-gray-700">
-              <p className="text-sm text-gray-600 dark:text-gray-400 mb-2">Share link:</p>
-              <p className="text-sm text-gray-900 dark:text-white font-mono break-all">{referralLink}</p>
+            <div className="pt-4 border-t border-gray-700">
+              <p className="text-sm text-gray-400 mb-2">Share link:</p>
+              <p className="text-sm text-white font-mono break-all">{referralLink}</p>
             </div>
           </div>
 
           <div className="mb-8">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Send Invitation via Email</h3>
+            <h3 className="text-lg font-semibold text-white mb-4">Send Invitation via Email</h3>
             <form onSubmit={handleSendInvite} className="flex gap-3">
               <input
                 type="email"
@@ -179,18 +179,18 @@ export default function Referral({ onNavigate }: ReferralProps) {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Friend's email address"
                 required
-                className="flex-1 px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                className="flex-1 px-4 py-3 border border-gray-700 rounded-lg bg-gray-900 text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
               />
               <button
                 type="submit"
-                className="flex items-center space-x-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                className="flex items-center space-x-2 px-6 py-3 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-lg hover:from-orange-500 hover:to-orange-600 transition-all duration-300 shadow-lg shadow-orange-600/20"
               >
                 <Mail className="h-5 w-5" />
                 <span>Send</span>
               </button>
             </form>
             {showSuccess && (
-              <p className="mt-3 text-sm text-green-600 dark:text-green-400 flex items-center space-x-2">
+              <p className="mt-3 text-sm text-green-400 flex items-center space-x-2">
                 <Check className="h-4 w-4" />
                 <span>Invitation sent successfully!</span>
               </p>
@@ -198,32 +198,32 @@ export default function Referral({ onNavigate }: ReferralProps) {
           </div>
 
           <div>
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">Share on Social Media</h3>
+            <h3 className="text-lg font-semibold text-white mb-4">Share on Social Media</h3>
             <div className="flex flex-wrap gap-3">
               <button
                 onClick={() => shareToSocial('twitter')}
-                className="flex items-center space-x-2 px-4 py-2 bg-black dark:bg-white text-white dark:text-black rounded-lg hover:opacity-80 transition-opacity"
+                className="flex items-center space-x-2 px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg hover:border-orange-600/50 transition-all duration-300"
               >
                 <Share2 className="h-5 w-5" />
                 <span>X</span>
               </button>
               <button
                 onClick={() => shareToSocial('facebook')}
-                className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                className="flex items-center space-x-2 px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg hover:border-orange-600/50 transition-all duration-300"
               >
                 <Share2 className="h-5 w-5" />
                 <span>Facebook</span>
               </button>
               <button
                 onClick={() => shareToSocial('linkedin')}
-                className="flex items-center space-x-2 px-4 py-2 bg-blue-700 text-white rounded-lg hover:bg-blue-800 transition-colors"
+                className="flex items-center space-x-2 px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg hover:border-orange-600/50 transition-all duration-300"
               >
                 <Share2 className="h-5 w-5" />
                 <span>LinkedIn</span>
               </button>
               <button
                 onClick={() => shareToSocial('whatsapp')}
-                className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+                className="flex items-center space-x-2 px-4 py-2 bg-gray-800 border border-gray-700 text-white rounded-lg hover:border-orange-600/50 transition-all duration-300"
               >
                 <Share2 className="h-5 w-5" />
                 <span>WhatsApp</span>
@@ -232,11 +232,11 @@ export default function Referral({ onNavigate }: ReferralProps) {
           </div>
         </div>
 
-        <div className="bg-gray-50 dark:bg-gray-900 rounded-xl p-6">
-          <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Program Details</h2>
-          <div className="grid md:grid-cols-2 gap-6 text-sm text-gray-600 dark:text-gray-400">
+        <div className="bg-gray-800/30 border border-gray-700/30 rounded-xl p-8">
+          <h2 className="text-xl font-bold text-white mb-6">Program Details</h2>
+          <div className="grid md:grid-cols-2 gap-8 text-sm text-gray-400">
             <div>
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Eligibility</h3>
+              <h3 className="font-semibold text-white mb-3">Eligibility</h3>
               <ul className="space-y-1">
                 <li>• Friend must be a new user</li>
                 <li>• Code must be entered during signup</li>
@@ -244,7 +244,7 @@ export default function Referral({ onNavigate }: ReferralProps) {
               </ul>
             </div>
             <div>
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Fraud Protection</h3>
+              <h3 className="font-semibold text-white mb-3">Fraud Protection</h3>
               <ul className="space-y-1">
                 <li>• No self-referrals allowed</li>
                 <li>• No duplicate accounts</li>
@@ -253,12 +253,12 @@ export default function Referral({ onNavigate }: ReferralProps) {
             </div>
           </div>
 
-          <div className="mt-6 pt-6 border-t border-gray-200 dark:border-gray-700">
-            <p className="text-sm text-gray-600 dark:text-gray-400 text-center">
-              <span className="font-medium text-gray-900 dark:text-white">Refer 10+ friends?</span> You may qualify for our{' '}
+          <div className="mt-6 pt-6 border-t border-gray-700">
+            <p className="text-sm text-gray-400 text-center">
+              <span className="font-medium text-white">Refer 10+ friends?</span> You may qualify for our{' '}
               <button
                 onClick={() => onNavigate('ambassador')}
-                className="text-blue-600 dark:text-blue-400 hover:underline font-medium"
+                className="text-orange-500 hover:text-orange-400 hover:underline font-medium transition-colors"
               >
                 Ambassador Program
               </button>

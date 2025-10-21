@@ -55,51 +55,51 @@ export default function Careers({ onNavigate }: CareersProps) {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950 pt-20 pb-16 transition-colors">
+    <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 pt-20 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <BackButton onNavigate={onNavigate} />
 
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-orange-100 dark:bg-orange-500/10 rounded-2xl mb-4">
-            <Briefcase className="h-8 w-8 text-orange-600 dark:text-orange-500" />
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-gray-800 to-gray-900 border border-orange-600/30 rounded-xl mb-6 shadow-lg shadow-orange-600/10">
+            <Briefcase className="h-10 w-10 text-orange-500" />
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">Careers</h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">Careers</h1>
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
             Join us in building the future of personalized health intelligence
           </p>
         </div>
 
-        <div className="bg-gradient-to-br from-orange-50 to-orange-100 dark:from-orange-900/20 dark:to-orange-800/10 border border-orange-200 dark:border-orange-800 rounded-xl p-8 mb-12">
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Why BioMath Core?</h2>
-          <div className="grid md:grid-cols-3 gap-6">
-            <div>
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Innovation-Driven</h3>
-              <p className="text-sm text-gray-700 dark:text-gray-300">Work on cutting-edge AI and biomathematics</p>
+        <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-2xl p-10 mb-12">
+          <h2 className="text-3xl font-bold text-white mb-8 text-center">Why BioMath Core?</h2>
+          <div className="grid md:grid-cols-3 gap-8">
+            <div className="text-center">
+              <h3 className="font-semibold text-white mb-3 text-lg">Innovation-Driven</h3>
+              <p className="text-gray-400 leading-relaxed">Work on cutting-edge AI and biomathematics</p>
             </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Impact-Focused</h3>
-              <p className="text-sm text-gray-700 dark:text-gray-300">Help millions improve their health</p>
+            <div className="text-center">
+              <h3 className="font-semibold text-white mb-3 text-lg">Impact-Focused</h3>
+              <p className="text-gray-400 leading-relaxed">Help millions improve their health</p>
             </div>
-            <div>
-              <h3 className="font-semibold text-gray-900 dark:text-white mb-2">Growth-Oriented</h3>
-              <p className="text-sm text-gray-700 dark:text-gray-300">Continuous learning and development</p>
+            <div className="text-center">
+              <h3 className="font-semibold text-white mb-3 text-lg">Growth-Oriented</h3>
+              <p className="text-gray-400 leading-relaxed">Continuous learning and development</p>
             </div>
           </div>
         </div>
 
         {loading && (
-          <div className="text-center py-12">
-            <p className="text-gray-600 dark:text-gray-400">Loading positions...</p>
+          <div className="text-center py-20">
+            <p className="text-gray-400 text-lg">Loading positions...</p>
           </div>
         )}
 
         {error && (
-          <div className="text-center py-12">
-            <p className="text-red-600 dark:text-red-400 font-semibold mb-2">Error Loading Positions</p>
-            <p className="text-sm text-gray-600 dark:text-gray-400">{error}</p>
+          <div className="text-center py-20 bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700/50 rounded-2xl p-12">
+            <p className="text-red-400 font-semibold mb-3 text-xl">Error Loading Positions</p>
+            <p className="text-sm text-gray-400 mb-6">{error}</p>
             <button
               onClick={loadJobs}
-              className="mt-4 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+              className="px-6 py-3 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-lg hover:from-orange-500 hover:to-orange-600 transition-all duration-300 shadow-lg shadow-orange-600/20"
             >
               Try Again
             </button>
@@ -107,46 +107,49 @@ export default function Careers({ onNavigate }: CareersProps) {
         )}
 
         {!loading && !error && jobs.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-600 dark:text-gray-400 mb-4">No open positions at the moment.</p>
-            <p className="text-sm text-gray-500 dark:text-gray-500">Check back soon or send us your CV at careers@biomathcore.com</p>
+          <div className="text-center py-20 bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700/50 rounded-2xl p-12">
+            <p className="text-gray-300 mb-4 text-lg">No open positions at the moment.</p>
+            <p className="text-sm text-gray-500">Check back soon or send us your CV at careers@biomathcore.com</p>
           </div>
         )}
 
         {!loading && !error && jobs.length > 0 && (
-          <div className="space-y-4">
+          <div className="space-y-6">
             {jobs.map((job) => (
               <div
                 key={job.id}
-                className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6 hover:shadow-lg transition-shadow cursor-pointer"
+                className="group relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-2xl p-8 hover:border-orange-600/50 transition-all duration-500 cursor-pointer overflow-hidden"
               >
-                <div className="flex items-start justify-between mb-4">
-                  <div>
-                    <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">{job.title}</h3>
-                    <span className="inline-block px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 text-xs font-medium rounded-full">
-                      {job.department}
-                    </span>
-                  </div>
-                  <ArrowRight className="h-5 w-5 text-gray-400" />
-                </div>
-                <p className="text-gray-600 dark:text-gray-400 mb-4 line-clamp-2">
-                  {job.description}
-                </p>
-                <div className="flex flex-wrap gap-4 text-sm text-gray-500 dark:text-gray-500">
-                  <div className="flex items-center gap-2">
-                    <MapPin className="h-4 w-4" />
-                    <span>{job.location}</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <Clock className="h-4 w-4" />
-                    <span>{job.employment_type}</span>
-                  </div>
-                  {job.salary_range && (
-                    <div className="flex items-center gap-2">
-                      <DollarSign className="h-4 w-4" />
-                      <span>{job.salary_range}</span>
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-900/0 to-orange-900/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="relative">
+                  <div className="flex items-start justify-between mb-4">
+                    <div>
+                      <h3 className="text-2xl font-bold text-white mb-3 group-hover:text-orange-50 transition-colors">{job.title}</h3>
+                      <span className="inline-block px-3 py-1 bg-orange-900/30 border border-orange-600/20 text-orange-400 text-xs font-medium rounded-full">
+                        {job.department}
+                      </span>
                     </div>
-                  )}
+                    <ArrowRight className="h-5 w-5 text-orange-500 group-hover:text-orange-400 transition-colors" />
+                  </div>
+                  <p className="text-gray-400 mb-6 line-clamp-2 leading-relaxed">
+                    {job.description}
+                  </p>
+                  <div className="flex flex-wrap gap-6 text-sm text-gray-500">
+                    <div className="flex items-center gap-2">
+                      <MapPin className="h-4 w-4 text-orange-500" />
+                      <span>{job.location}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4 text-orange-500" />
+                      <span>{job.employment_type}</span>
+                    </div>
+                    {job.salary_range && (
+                      <div className="flex items-center gap-2">
+                        <DollarSign className="h-4 w-4 text-orange-500" />
+                        <span>{job.salary_range}</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
               </div>
             ))}

@@ -55,33 +55,33 @@ export default function Blog({ onNavigate }: BlogProps) {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950 pt-20 pb-16 transition-colors">
+    <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 pt-20 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <BackButton onNavigate={onNavigate} />
 
-        <div className="text-center mb-12">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-orange-100 dark:bg-orange-500/10 rounded-2xl mb-4">
-            <BookOpen className="h-8 w-8 text-orange-600 dark:text-orange-500" />
+        <div className="text-center mb-16">
+          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-gray-800 to-gray-900 border border-orange-600/30 rounded-xl mb-6 shadow-lg shadow-orange-600/10">
+            <BookOpen className="h-10 w-10 text-orange-500" />
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">Blog</h1>
-          <p className="text-lg text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
+          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">Blog</h1>
+          <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
             Insights, research, and stories about health, wellness, and the future of personalized care
           </p>
         </div>
 
         {loading && (
-          <div className="text-center py-12">
-            <p className="text-gray-600 dark:text-gray-400">Loading articles...</p>
+          <div className="text-center py-20">
+            <p className="text-gray-400 text-lg">Loading articles...</p>
           </div>
         )}
 
         {error && (
-          <div className="text-center py-12">
-            <p className="text-red-600 dark:text-red-400 font-semibold mb-2">Error Loading Articles</p>
-            <p className="text-sm text-gray-600 dark:text-gray-400">{error}</p>
+          <div className="text-center py-20 bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700/50 rounded-2xl p-12">
+            <p className="text-red-400 font-semibold mb-3 text-xl">Error Loading Articles</p>
+            <p className="text-sm text-gray-400 mb-6">{error}</p>
             <button
               onClick={loadPosts}
-              className="mt-4 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+              className="px-6 py-3 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-lg hover:from-orange-500 hover:to-orange-600 transition-all duration-300 shadow-lg shadow-orange-600/20"
             >
               Try Again
             </button>
@@ -89,21 +89,22 @@ export default function Blog({ onNavigate }: BlogProps) {
         )}
 
         {!loading && !error && posts.length === 0 && (
-          <div className="text-center py-12">
-            <p className="text-gray-600 dark:text-gray-400 mb-4">No articles published yet.</p>
-            <p className="text-sm text-gray-500 dark:text-gray-500">Check back soon for new content!</p>
+          <div className="text-center py-20 bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700/50 rounded-2xl p-12">
+            <p className="text-gray-300 mb-4 text-lg">No articles published yet.</p>
+            <p className="text-sm text-gray-500">Check back soon for new content!</p>
           </div>
         )}
 
         {!loading && !error && posts.length > 0 && (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
             {posts.map((post) => (
               <article
                 key={post.id}
-                className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
+                className="group relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-2xl overflow-hidden hover:border-orange-600/50 transition-all duration-500 cursor-pointer"
               >
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-900/0 to-orange-900/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
                 {post.featured_image && (
-                  <div className="aspect-video bg-gray-200 dark:bg-gray-800">
+                  <div className="aspect-video bg-gray-800 relative overflow-hidden">
                     <img
                       src={post.featured_image}
                       alt={post.title}
@@ -111,24 +112,24 @@ export default function Blog({ onNavigate }: BlogProps) {
                     />
                   </div>
                 )}
-                <div className="p-6">
+                <div className="p-6 relative">
                   {post.category && (
-                    <span className="inline-block px-3 py-1 bg-orange-100 dark:bg-orange-900/30 text-orange-700 dark:text-orange-400 text-xs font-medium rounded-full mb-3">
+                    <span className="inline-block px-3 py-1 bg-orange-900/30 border border-orange-600/20 text-orange-400 text-xs font-medium rounded-full mb-3">
                       {post.category}
                     </span>
                   )}
-                  <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2 line-clamp-2">
+                  <h2 className="text-xl font-bold text-white mb-3 line-clamp-2 group-hover:text-orange-50 transition-colors">
                     {post.title}
                   </h2>
-                  <p className="text-gray-600 dark:text-gray-400 mb-4 line-clamp-3">
+                  <p className="text-gray-400 mb-4 line-clamp-3 leading-relaxed">
                     {post.excerpt}
                   </p>
-                  <div className="flex items-center justify-between text-sm text-gray-500 dark:text-gray-500">
+                  <div className="flex items-center justify-between text-sm text-gray-500">
                     <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4" />
+                      <Calendar className="h-4 w-4 text-orange-500" />
                       <span>{new Date(post.published_at).toLocaleDateString()}</span>
                     </div>
-                    <ArrowRight className="h-4 w-4" />
+                    <ArrowRight className="h-4 w-4 text-orange-500 group-hover:text-orange-400 transition-colors" />
                   </div>
                 </div>
               </article>
