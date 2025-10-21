@@ -144,13 +144,6 @@ export default function Footer({ onNavigate }: FooterProps) {
                   Learning Center
                 </button>
               </li>
-              <li>
-                <button onClick={() => onNavigate('biomath-core-summary')} className="text-sm font-semibold transition-colors">
-                  <span className="text-blue-500 hover:text-blue-600 dark:hover:text-blue-400">BioMath</span>
-                  <span className="text-gray-900 dark:text-white"> Core</span>
-                  <span className="text-gray-600 dark:text-gray-400"> Summary</span>
-                </button>
-              </li>
             </ul>
           </div>
 

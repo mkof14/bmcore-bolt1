@@ -29,21 +29,19 @@ export default function Investors({ onNavigate }: InvestorsProps) {
           <div className="flex flex-col sm:flex-row gap-6 justify-center">
             <button
               onClick={() => onNavigate('contact')}
-              className="text-orange-500 hover:text-orange-400 text-lg font-semibold transition-colors"
+              className="px-6 py-2.5 bg-gray-800/30 hover:bg-gray-800/60 border border-gray-700/30 hover:border-gray-600/50 rounded-lg text-orange-500 hover:text-orange-400 text-lg font-semibold transition-all duration-300"
             >
               Contact the team
             </button>
             <button
               onClick={() => onNavigate('biomath-core-summary')}
-              className="text-lg font-semibold transition-colors"
+              className="px-6 py-2.5 bg-gray-800/30 hover:bg-gray-800/60 border border-gray-700/30 hover:border-gray-600/50 rounded-lg text-lg font-semibold transition-all duration-300"
             >
-              <span className="text-blue-500 hover:text-blue-400">BioMath</span>
-              <span className="text-white"> Core</span>
-              <span className="text-gray-400"> Summary</span>
+              <span className="text-blue-500 hover:text-blue-400">Summary</span>
             </button>
             <button
               onClick={() => onNavigate('about')}
-              className="text-blue-400 hover:text-blue-300 text-lg font-semibold transition-colors"
+              className="px-6 py-2.5 bg-gray-800/30 hover:bg-gray-800/60 border border-gray-700/30 hover:border-gray-600/50 rounded-lg text-blue-400 hover:text-blue-300 text-lg font-semibold transition-all duration-300"
             >
               Learn about us
             </button>
@@ -556,15 +554,15 @@ export default function Investors({ onNavigate }: InvestorsProps) {
               Health guidance must respect people. We minimize data collection, keep explanations readable, and separate suggestions from diagnosis. Legal pages are public and plain-language. We grow through transparency, not promises of "miracles."
             </p>
             <div className="flex flex-wrap justify-center gap-4 text-sm">
-              <button className="text-orange-500 hover:text-orange-400 font-semibold transition-colors cursor-pointer">Privacy Policy</button>
+              <button onClick={() => onNavigate('privacy-policy')} className="text-orange-500 hover:text-orange-400 font-semibold transition-colors cursor-pointer">Privacy Policy</button>
               <span className="text-gray-600">•</span>
-              <button className="text-orange-500 hover:text-orange-400 font-semibold transition-colors cursor-pointer">Terms of Use</button>
+              <button onClick={() => onNavigate('terms-of-service')} className="text-orange-500 hover:text-orange-400 font-semibold transition-colors cursor-pointer">Terms of Use</button>
               <span className="text-gray-600">•</span>
-              <button className="text-orange-500 hover:text-orange-400 font-semibold transition-colors cursor-pointer">Disclaimer</button>
+              <button onClick={() => onNavigate('disclaimer')} className="text-orange-500 hover:text-orange-400 font-semibold transition-colors cursor-pointer">Disclaimer</button>
               <span className="text-gray-600">•</span>
-              <button className="text-orange-500 hover:text-orange-400 font-semibold transition-colors cursor-pointer">HIPAA Notice</button>
+              <button onClick={() => onNavigate('hipaa-notice')} className="text-orange-500 hover:text-orange-400 font-semibold transition-colors cursor-pointer">HIPAA Notice</button>
               <span className="text-gray-600">•</span>
-              <button className="text-orange-500 hover:text-orange-400 font-semibold transition-colors cursor-pointer">Security</button>
+              <button onClick={() => onNavigate('security')} className="text-orange-500 hover:text-orange-400 font-semibold transition-colors cursor-pointer">Security</button>
             </div>
           </div>
         </div>
@@ -583,21 +581,19 @@ export default function Investors({ onNavigate }: InvestorsProps) {
             <div className="flex flex-col sm:flex-row gap-6 justify-center">
               <button
                 onClick={() => onNavigate('contact')}
-                className="text-orange-500 hover:text-orange-400 text-lg font-semibold transition-colors"
+                className="px-6 py-2.5 bg-gray-800/30 hover:bg-gray-800/60 border border-gray-700/30 hover:border-gray-600/50 rounded-lg text-orange-500 hover:text-orange-400 text-lg font-semibold transition-all duration-300"
               >
                 Contact the team
               </button>
               <button
                 onClick={() => onNavigate('biomath-core-summary')}
-                className="text-lg font-semibold transition-colors"
+                className="px-6 py-2.5 bg-gray-800/30 hover:bg-gray-800/60 border border-gray-700/30 hover:border-gray-600/50 rounded-lg text-lg font-semibold transition-all duration-300"
               >
-                <span className="text-blue-500 hover:text-blue-400">BioMath</span>
-                <span className="text-white"> Core</span>
-                <span className="text-gray-400"> Summary</span>
+                <span className="text-blue-500 hover:text-blue-400">Summary</span>
               </button>
               <button
                 onClick={() => onNavigate('about')}
-                className="text-blue-400 hover:text-blue-300 text-lg font-semibold transition-colors"
+                className="px-6 py-2.5 bg-gray-800/30 hover:bg-gray-800/60 border border-gray-700/30 hover:border-gray-600/50 rounded-lg text-blue-400 hover:text-blue-300 text-lg font-semibold transition-all duration-300"
               >
                 Learn about us
               </button>
