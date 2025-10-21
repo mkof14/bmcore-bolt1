@@ -38,76 +38,85 @@ export default function Partnership({ onNavigate }: PartnershipProps) {
 
           <section className="mb-20">
             <div className="grid md:grid-cols-3 gap-8 mb-16">
-              <div className="group bg-gradient-to-br from-blue-900/40 to-blue-800/20 border-2 border-blue-500/30 rounded-2xl p-8 hover:border-blue-400 hover:shadow-xl hover:shadow-blue-500/20 transition-all transform hover:scale-105">
-                <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:shadow-blue-500/50 transition-shadow">
-                  <Building2 className="w-10 h-10 text-white" />
+              <div className="group relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-2xl p-8 hover:border-orange-600/50 transition-all duration-500 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-900/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="relative">
+                  <div className="w-20 h-20 bg-gradient-to-br from-gray-800 to-gray-900 border border-orange-600/30 rounded-xl flex items-center justify-center mb-6 group-hover:border-orange-500 group-hover:shadow-lg group-hover:shadow-orange-600/20 transition-all duration-300">
+                    <Building2 className="w-10 h-10 text-orange-500 group-hover:text-orange-400 transition-colors" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-orange-50 transition-colors">Business Development</h3>
+                  <p className="text-gray-400 mb-6 leading-relaxed">
+                    Strategic partnerships, distribution, and market expansion opportunities
+                  </p>
+                  <ul className="space-y-3 text-gray-300">
+                    <li className="flex items-start gap-3 group/item">
+                      <CheckCircle className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5 group-hover/item:text-orange-500 transition-colors" />
+                      <span>Revenue sharing models</span>
+                    </li>
+                    <li className="flex items-start gap-3 group/item">
+                      <CheckCircle className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5 group-hover/item:text-orange-500 transition-colors" />
+                      <span>Co-marketing initiatives</span>
+                    </li>
+                    <li className="flex items-start gap-3 group/item">
+                      <CheckCircle className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5 group-hover/item:text-orange-500 transition-colors" />
+                      <span>Market access</span>
+                    </li>
+                  </ul>
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-4">Business Development</h3>
-                <p className="text-blue-100 mb-6">
-                  Strategic partnerships, distribution, and market expansion opportunities
-                </p>
-                <ul className="space-y-3 text-blue-50">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 text-blue-300 flex-shrink-0 mt-0.5" />
-                    <span>Revenue sharing models</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 text-blue-300 flex-shrink-0 mt-0.5" />
-                    <span>Co-marketing initiatives</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 text-blue-300 flex-shrink-0 mt-0.5" />
-                    <span>Market access</span>
-                  </li>
-                </ul>
               </div>
 
-              <div className="group bg-gradient-to-br from-orange-900/40 to-orange-800/20 border-2 border-orange-500/30 rounded-2xl p-8 hover:border-orange-400 hover:shadow-xl hover:shadow-orange-500/20 transition-all transform hover:scale-105">
-                <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:shadow-orange-500/50 transition-shadow">
-                  <Microscope className="w-10 h-10 text-white" />
+              <div className="group relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-2xl p-8 hover:border-orange-600/50 transition-all duration-500 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-900/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="relative">
+                  <div className="w-20 h-20 bg-gradient-to-br from-gray-800 to-gray-900 border border-orange-600/30 rounded-xl flex items-center justify-center mb-6 group-hover:border-orange-500 group-hover:shadow-lg group-hover:shadow-orange-600/20 transition-all duration-300">
+                    <Microscope className="w-10 h-10 text-orange-500 group-hover:text-orange-400 transition-colors" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-orange-50 transition-colors">Scientists & Researchers</h3>
+                  <p className="text-gray-400 mb-6 leading-relaxed">
+                    Collaborate on cutting-edge AI health research and clinical validation
+                  </p>
+                  <ul className="space-y-3 text-gray-300">
+                    <li className="flex items-start gap-3 group/item">
+                      <CheckCircle className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5 group-hover/item:text-orange-500 transition-colors" />
+                      <span>Data access</span>
+                    </li>
+                    <li className="flex items-start gap-3 group/item">
+                      <CheckCircle className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5 group-hover/item:text-orange-500 transition-colors" />
+                      <span>Publication opportunities</span>
+                    </li>
+                    <li className="flex items-start gap-3 group/item">
+                      <CheckCircle className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5 group-hover/item:text-orange-500 transition-colors" />
+                      <span>Collaborative research</span>
+                    </li>
+                  </ul>
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-4">Scientists & Researchers</h3>
-                <p className="text-orange-100 mb-6">
-                  Collaborate on cutting-edge AI health research and clinical validation
-                </p>
-                <ul className="space-y-3 text-orange-50">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 text-orange-300 flex-shrink-0 mt-0.5" />
-                    <span>Data access</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 text-orange-300 flex-shrink-0 mt-0.5" />
-                    <span>Publication opportunities</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 text-orange-300 flex-shrink-0 mt-0.5" />
-                    <span>Collaborative research</span>
-                  </li>
-                </ul>
               </div>
 
-              <div className="group bg-gradient-to-br from-green-900/40 to-green-800/20 border-2 border-green-500/30 rounded-2xl p-8 hover:border-green-400 hover:shadow-xl hover:shadow-green-500/20 transition-all transform hover:scale-105">
-                <div className="w-20 h-20 bg-gradient-to-br from-green-500 to-green-600 rounded-2xl flex items-center justify-center mb-6 shadow-lg group-hover:shadow-green-500/50 transition-shadow">
-                  <Heart className="w-10 h-10 text-white" />
+              <div className="group relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-2xl p-8 hover:border-orange-600/50 transition-all duration-500 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-900/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
+                <div className="relative">
+                  <div className="w-20 h-20 bg-gradient-to-br from-gray-800 to-gray-900 border border-orange-600/30 rounded-xl flex items-center justify-center mb-6 group-hover:border-orange-500 group-hover:shadow-lg group-hover:shadow-orange-600/20 transition-all duration-300">
+                    <Heart className="w-10 h-10 text-orange-500 group-hover:text-orange-400 transition-colors" />
+                  </div>
+                  <h3 className="text-2xl font-bold text-white mb-4 group-hover:text-orange-50 transition-colors">Healthcare Professionals</h3>
+                  <p className="text-gray-400 mb-6 leading-relaxed">
+                    Integrate our platform into your practice and improve patient outcomes
+                  </p>
+                  <ul className="space-y-3 text-gray-300">
+                    <li className="flex items-start gap-3 group/item">
+                      <CheckCircle className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5 group-hover/item:text-orange-500 transition-colors" />
+                      <span>Practice integration</span>
+                    </li>
+                    <li className="flex items-start gap-3 group/item">
+                      <CheckCircle className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5 group-hover/item:text-orange-500 transition-colors" />
+                      <span>Training & support</span>
+                    </li>
+                    <li className="flex items-start gap-3 group/item">
+                      <CheckCircle className="w-5 h-5 text-orange-600 flex-shrink-0 mt-0.5 group-hover/item:text-orange-500 transition-colors" />
+                      <span>Patient monitoring tools</span>
+                    </li>
+                  </ul>
                 </div>
-                <h3 className="text-2xl font-bold text-white mb-4">Healthcare Professionals</h3>
-                <p className="text-green-100 mb-6">
-                  Integrate our platform into your practice and improve patient outcomes
-                </p>
-                <ul className="space-y-3 text-green-50">
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 text-green-300 flex-shrink-0 mt-0.5" />
-                    <span>Practice integration</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 text-green-300 flex-shrink-0 mt-0.5" />
-                    <span>Training & support</span>
-                  </li>
-                  <li className="flex items-start gap-2">
-                    <CheckCircle className="w-5 h-5 text-green-300 flex-shrink-0 mt-0.5" />
-                    <span>Patient monitoring tools</span>
-                  </li>
-                </ul>
               </div>
             </div>
 
@@ -127,36 +136,48 @@ export default function Partnership({ onNavigate }: PartnershipProps) {
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="group bg-gradient-to-br from-cyan-900/40 to-cyan-800/20 border-2 border-cyan-500/30 rounded-xl p-6 text-center hover:border-cyan-400 hover:shadow-lg hover:shadow-cyan-500/20 transition-all transform hover:scale-105">
-                <div className="w-16 h-16 bg-gradient-to-br from-cyan-500 to-cyan-600 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:shadow-cyan-500/50 transition-shadow">
-                  <TrendingUp className="w-8 h-8 text-white" />
+              <div className="group relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 border border-gray-700/40 rounded-xl p-6 text-center hover:border-orange-600/40 transition-all duration-300 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-900/0 to-orange-900/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative">
+                  <div className="w-16 h-16 bg-gray-900 border border-orange-600/20 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:border-orange-500/40 group-hover:shadow-lg group-hover:shadow-orange-600/10 transition-all">
+                    <TrendingUp className="w-8 h-8 text-orange-500" />
+                  </div>
+                  <h3 className="text-white font-bold mb-2 text-lg">Growing Market</h3>
+                  <p className="text-sm text-gray-400">$350B+ digital health market opportunity</p>
                 </div>
-                <h3 className="text-white font-bold mb-2 text-lg">Growing Market</h3>
-                <p className="text-sm text-cyan-100">$350B+ digital health market opportunity</p>
               </div>
 
-              <div className="group bg-gradient-to-br from-amber-900/40 to-amber-800/20 border-2 border-amber-500/30 rounded-xl p-6 text-center hover:border-amber-400 hover:shadow-lg hover:shadow-amber-500/20 transition-all transform hover:scale-105">
-                <div className="w-16 h-16 bg-gradient-to-br from-amber-500 to-amber-600 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:shadow-amber-500/50 transition-shadow">
-                  <Globe className="w-8 h-8 text-white" />
+              <div className="group relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 border border-gray-700/40 rounded-xl p-6 text-center hover:border-orange-600/40 transition-all duration-300 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-900/0 to-orange-900/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative">
+                  <div className="w-16 h-16 bg-gray-900 border border-orange-600/20 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:border-orange-500/40 group-hover:shadow-lg group-hover:shadow-orange-600/10 transition-all">
+                    <Globe className="w-8 h-8 text-orange-500" />
+                  </div>
+                  <h3 className="text-white font-bold mb-2 text-lg">Global Reach</h3>
+                  <p className="text-sm text-gray-400">Expand your impact worldwide</p>
                 </div>
-                <h3 className="text-white font-bold mb-2 text-lg">Global Reach</h3>
-                <p className="text-sm text-amber-100">Expand your impact worldwide</p>
               </div>
 
-              <div className="group bg-gradient-to-br from-emerald-900/40 to-emerald-800/20 border-2 border-emerald-500/30 rounded-xl p-6 text-center hover:border-emerald-400 hover:shadow-lg hover:shadow-emerald-500/20 transition-all transform hover:scale-105">
-                <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:shadow-emerald-500/50 transition-shadow">
-                  <Users className="w-8 h-8 text-white" />
+              <div className="group relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 border border-gray-700/40 rounded-xl p-6 text-center hover:border-orange-600/40 transition-all duration-300 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-900/0 to-orange-900/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative">
+                  <div className="w-16 h-16 bg-gray-900 border border-orange-600/20 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:border-orange-500/40 group-hover:shadow-lg group-hover:shadow-orange-600/10 transition-all">
+                    <Users className="w-8 h-8 text-orange-500" />
+                  </div>
+                  <h3 className="text-white font-bold mb-2 text-lg">User Base</h3>
+                  <p className="text-sm text-gray-400">Access to engaged health-conscious users</p>
                 </div>
-                <h3 className="text-white font-bold mb-2 text-lg">User Base</h3>
-                <p className="text-sm text-emerald-100">Access to engaged health-conscious users</p>
               </div>
 
-              <div className="group bg-gradient-to-br from-rose-900/40 to-rose-800/20 border-2 border-rose-500/30 rounded-xl p-6 text-center hover:border-rose-400 hover:shadow-lg hover:shadow-rose-500/20 transition-all transform hover:scale-105">
-                <div className="w-16 h-16 bg-gradient-to-br from-rose-500 to-rose-600 rounded-xl flex items-center justify-center mx-auto mb-4 shadow-lg group-hover:shadow-rose-500/50 transition-shadow">
-                  <Award className="w-8 h-8 text-white" />
+              <div className="group relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 border border-gray-700/40 rounded-xl p-6 text-center hover:border-orange-600/40 transition-all duration-300 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-900/0 to-orange-900/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative">
+                  <div className="w-16 h-16 bg-gray-900 border border-orange-600/20 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover:border-orange-500/40 group-hover:shadow-lg group-hover:shadow-orange-600/10 transition-all">
+                    <Award className="w-8 h-8 text-orange-500" />
+                  </div>
+                  <h3 className="text-white font-bold mb-2 text-lg">Innovation Leader</h3>
+                  <p className="text-sm text-gray-400">Cutting-edge AI health technology</p>
                 </div>
-                <h3 className="text-white font-bold mb-2 text-lg">Innovation Leader</h3>
-                <p className="text-sm text-rose-100">Cutting-edge AI health technology</p>
               </div>
             </div>
           </section>
