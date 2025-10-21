@@ -7,7 +7,7 @@ interface TrustSafetyProps {
 
 export default function TrustSafety({ onNavigate }: TrustSafetyProps) {
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950 pt-20 pb-16 transition-colors">
+    <div className="min-h-screen bg-white pt-20 pb-16">
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
         <BackButton onNavigate={onNavigate} />
         <div className="text-center mb-12">

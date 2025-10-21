@@ -38,8 +38,9 @@ import Security from './pages/legal/Security';
 import GDPR from './pages/legal/GDPR';
 import DataPrivacy from './pages/legal/DataPrivacy';
 import TrustSafety from './pages/legal/TrustSafety';
+import Partnership from './pages/Partnership';
 
-type Page = 'home' | 'about' | 'services' | 'pricing' | 'investors' | 'science' | 'api' | 'contact' | 'signin' | 'signup' | 'member' | 'member-zone' | 'services-catalog' | 'service-detail' | 'devices' | 'reports' | 'faq' | 'referral' | 'ambassador' | 'learning' | 'learning-center' | 'biomath-core-summary' | 'summary-text' | 'blog' | 'news' | 'careers' | 'command-center' | 'admin-panel' | 'privacy-policy' | 'terms-of-service' | 'disclaimer' | 'hipaa-notice' | 'security' | 'gdpr' | 'data-privacy' | 'trust-safety';
+type Page = 'home' | 'about' | 'services' | 'pricing' | 'investors' | 'science' | 'api' | 'contact' | 'signin' | 'signup' | 'member' | 'member-zone' | 'services-catalog' | 'service-detail' | 'devices' | 'reports' | 'faq' | 'referral' | 'ambassador' | 'learning' | 'learning-center' | 'biomath-core-summary' | 'summary-text' | 'blog' | 'news' | 'careers' | 'command-center' | 'admin-panel' | 'privacy-policy' | 'terms-of-service' | 'disclaimer' | 'hipaa-notice' | 'security' | 'gdpr' | 'data-privacy' | 'trust-safety' | 'partnership';
 
 function App() {
   // VERSION: 2025-10-20-01:48 - Force HMR refresh
@@ -169,6 +170,8 @@ function App() {
         return <DataPrivacy onNavigate={handleNavigate} />;
       case 'trust-safety':
         return <TrustSafety onNavigate={handleNavigate} />;
+      case 'partnership':
+        return <Partnership onNavigate={handleNavigate} />;
       default:
         return <Home onNavigate={handleNavigate} />;
     }
