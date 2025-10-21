@@ -56,7 +56,7 @@ export default function AIAssistantButton({ onClick, isOpen }: AIAssistantButton
         }
 
         .gradient-bg {
-          background: linear-gradient(135deg, #667eea 0%, #764ba2 50%, #f093fb 100%);
+          background: linear-gradient(135deg, #c2410c 0%, #1e3a8a 40%, #991b1b 80%, #ea580c 100%);
           background-size: 200% 200%;
           animation: gradient-shift 4s ease infinite;
         }
@@ -64,8 +64,8 @@ export default function AIAssistantButton({ onClick, isOpen }: AIAssistantButton
 
       {!isOpen && (
         <>
-          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 pulse-ring" />
-          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-blue-500 to-purple-600 pulse-ring" style={{ animationDelay: '1s' }} />
+          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-orange-700 via-blue-900 to-red-800 pulse-ring" />
+          <div className="absolute inset-0 rounded-full bg-gradient-to-br from-orange-700 via-blue-900 to-red-800 pulse-ring" style={{ animationDelay: '1s' }} />
         </>
       )}
 
