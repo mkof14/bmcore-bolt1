@@ -119,14 +119,6 @@ export default function Partnership({ onNavigate }: PartnershipProps) {
                 </div>
               </div>
             </div>
-
-            <div className="bg-gray-900 border border-gray-800 rounded-2xl overflow-hidden">
-              <img
-                src="/Screenshot 2025-10-21 at 08.40.56.png"
-                alt="Partnership Opportunities"
-                className="w-full h-auto"
-              />
-            </div>
           </section>
 
           <section className="mb-20">
