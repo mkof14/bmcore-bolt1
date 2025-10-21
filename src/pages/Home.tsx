@@ -40,38 +40,38 @@ export default function Home({ onNavigate }: HomeProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-gray-950 transition-colors">
-      <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-br from-gray-900 via-gray-950 to-gray-900">
+    <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors">
+      <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:via-gray-950 dark:to-gray-900">
         <div className="absolute inset-0 opacity-20">
-          <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-blue-500/20 to-transparent"></div>
+          <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-orange-500/20 dark:from-orange-500/20 to-transparent"></div>
         </div>
 
         <div className="relative max-w-7xl mx-auto">
           <div className="text-center">
-            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-white mb-6">
+            <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white mb-6">
               Welcome to BioMath Core
             </h1>
-            <p className="text-3xl md:text-4xl lg:text-5xl font-medium text-yellow-500 mb-8">
+            <p className="text-3xl md:text-4xl lg:text-5xl font-medium text-orange-600 dark:text-orange-500 mb-8">
               Where data meets daily life.
             </p>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-blue-400 mb-12">
+            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-orange-700 dark:text-orange-400 mb-12">
               All of Health. One Platform.
             </h2>
-            <p className="text-lg md:text-xl text-gray-300 mb-12 max-w-5xl mx-auto leading-relaxed">
+            <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 mb-12 max-w-5xl mx-auto leading-relaxed">
               From sleep to cognition, from movement to mood — BioMath Core brings clarity to your
               health journey. Track, understand, and optimize your wellbeing through intelligent, real-time insights tailored to you.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
               <span
                 onClick={() => onNavigate('signup')}
-                className="text-blue-500 text-lg font-semibold cursor-pointer hover:text-blue-400 transition-colors"
+                className="text-orange-600 dark:text-orange-500 text-lg font-semibold cursor-pointer hover:text-orange-700 dark:hover:text-orange-400 transition-colors"
               >
                 Start Free Today
               </span>
-              <span className="text-gray-500 text-2xl">•</span>
+              <span className="text-gray-400 dark:text-gray-500 text-2xl">•</span>
               <span
                 onClick={() => onNavigate('learning')}
-                className="text-orange-500 text-lg font-semibold cursor-pointer hover:text-orange-400 transition-colors"
+                className="text-orange-700 dark:text-orange-400 text-lg font-semibold cursor-pointer hover:text-orange-800 dark:hover:text-orange-300 transition-colors"
               >
                 Explore Learning Center
               </span>
@@ -85,10 +85,10 @@ export default function Home({ onNavigate }: HomeProps) {
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-900/50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
               From Signals to Meaning to Support
             </h2>
-            <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
               Rather than tracking numbers, BioMath Core focuses on interpretation, education,
               and preventive wellness through personalized AI insights.
             </p>
