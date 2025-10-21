@@ -21,7 +21,11 @@ export default function AIHealthAssistantV2({ isOpen, onClose }: AIHealthAssista
   const [dualOpinionEnabled, setDualOpinionEnabled] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [isSpeaking, setIsSpeaking] = useState(false);
+  const [isSpeakerMuted, setIsSpeakerMuted] = useState(false);
+  const [isUserSpeaking, setIsUserSpeaking] = useState(false);
   const [typingMessageId, setTypingMessageId] = useState<string | null>(null);
+  const [micIntensity, setMicIntensity] = useState(0.5);
+  const silenceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const synthRef = useRef<SpeechSynthesis | null>(null);
   const recognitionRef = useRef<any>(null);
@@ -77,6 +81,8 @@ export default function AIHealthAssistantV2({ isOpen, onClose }: AIHealthAssista
   };
 
   const speakText = (text: string) => {
+    if (isSpeakerMuted) return;
+
     if ('speechSynthesis' in window) {
       window.speechSynthesis.cancel();
 
@@ -129,6 +135,13 @@ export default function AIHealthAssistantV2({ isOpen, onClose }: AIHealthAssista
         let interimTranscript = '';
         let finalTranscript = '';
 
+        setIsUserSpeaking(true);
+        setMicIntensity(0.8);
+
+        if (silenceTimerRef.current) {
+          clearTimeout(silenceTimerRef.current);
+        }
+
         for (let i = event.resultIndex; i < event.results.length; i++) {
           const transcript = event.results[i][0].transcript;
           if (event.results[i].isFinal) {
@@ -141,6 +154,16 @@ export default function AIHealthAssistantV2({ isOpen, onClose }: AIHealthAssista
         if (finalTranscript) {
           setInputMessage(prev => prev + finalTranscript);
         }
+
+        silenceTimerRef.current = setTimeout(() => {
+          setIsUserSpeaking(false);
+          setMicIntensity(0.3);
+
+          if (inputMessage.trim()) {
+            handleSendMessage();
+            setIsRecording(false);
+          }
+        }, 2000);
       };
 
       recognition.onerror = (event: any) => {
@@ -186,6 +209,19 @@ export default function AIHealthAssistantV2({ isOpen, onClose }: AIHealthAssista
     if (audioContextRef.current) {
       audioContextRef.current.close();
       audioContextRef.current = null;
+    }
+    if (silenceTimerRef.current) {
+      clearTimeout(silenceTimerRef.current);
+    }
+    setIsUserSpeaking(false);
+    setMicIntensity(0.5);
+  };
+
+  const toggleSpeaker = () => {
+    setIsSpeakerMuted(!isSpeakerMuted);
+    if (!isSpeakerMuted && 'speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+      setIsSpeaking(false);
     }
   };
 
@@ -340,15 +376,49 @@ export default function AIHealthAssistantV2({ isOpen, onClose }: AIHealthAssista
                   <Shield className="h-4 w-4 text-orange-500" />
                   <span className="text-gray-300 text-xs font-medium">Wellness guidance • Not medical diagnosis</span>
                 </div>
-                <div className="flex items-center gap-3 bg-gray-800/50 backdrop-blur px-3 py-2 rounded-xl border border-gray-700/50">
-                  <div className="flex items-center gap-1.5">
-                    <Mic className="h-3.5 w-3.5 text-gray-400" />
-                    <AudioVisualizer isActive={isRecording} type="microphone" />
+                <div className="flex items-center gap-3 bg-gray-800/50 backdrop-blur px-4 py-2.5 rounded-xl border border-gray-700/50">
+                  <div className="flex items-center gap-2">
+                    <div className="relative">
+                      <Mic className={`h-4 w-4 transition-all ${
+                        isUserSpeaking
+                          ? 'text-orange-400 animate-pulse'
+                          : isRecording
+                          ? 'text-orange-500'
+                          : 'text-gray-500'
+                      }`} />
+                      {isUserSpeaking && (
+                        <div className="absolute -inset-1 bg-orange-500/30 rounded-full animate-ping"></div>
+                      )}
+                    </div>
+                    <AudioVisualizer isActive={isRecording || isUserSpeaking} type="microphone" intensity={micIntensity} />
+                    {isUserSpeaking && (
+                      <span className="text-xs text-orange-400 font-medium animate-pulse">Listening...</span>
+                    )}
                   </div>
-                  <div className="w-px h-4 bg-gray-700"></div>
-                  <div className="flex items-center gap-1.5">
-                    <Volume2 className="h-3.5 w-3.5 text-gray-400" />
-                    <AudioVisualizer isActive={isSpeaking} type="speaker" />
+                  <div className="w-px h-5 bg-gray-700"></div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={toggleSpeaker}
+                      className="relative hover:scale-110 transition-transform"
+                      title={isSpeakerMuted ? 'Unmute speaker' : 'Mute speaker'}
+                    >
+                      {isSpeakerMuted ? (
+                        <div className="relative">
+                          <Volume2 className="h-4 w-4 text-gray-600" />
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="w-5 h-0.5 bg-red-500 rotate-45"></div>
+                          </div>
+                        </div>
+                      ) : (
+                        <Volume2 className={`h-4 w-4 ${
+                          isSpeaking ? 'text-blue-400' : 'text-gray-500'
+                        }`} />
+                      )}
+                    </button>
+                    <AudioVisualizer isActive={isSpeaking && !isSpeakerMuted} type="speaker" intensity={0.7} />
+                    {isSpeaking && !isSpeakerMuted && (
+                      <span className="text-xs text-blue-400 font-medium">Speaking...</span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -458,14 +528,17 @@ export default function AIHealthAssistantV2({ isOpen, onClose }: AIHealthAssista
             <div className="relative flex items-center space-x-3">
               <button
                 onClick={() => setIsRecording(!isRecording)}
-                className={`p-3 bg-gray-800/50 hover:bg-gray-800 border rounded-xl transition-all ${
+                className={`relative p-3 bg-gray-800/50 hover:bg-gray-800 border rounded-xl transition-all ${
                   isRecording
-                    ? 'text-orange-500 border-orange-600/50'
+                    ? 'text-orange-500 border-orange-600/50 shadow-lg shadow-orange-600/30'
                     : 'text-gray-400 border-gray-700/50 hover:text-orange-500 hover:border-orange-600/50'
                 }`}
-                title="Voice input"
+                title={isRecording ? "Stop recording" : "Start voice input"}
               >
-                <Mic className="h-5 w-5" />
+                {isUserSpeaking && (
+                  <div className="absolute -inset-0.5 bg-orange-500/20 rounded-xl animate-pulse"></div>
+                )}
+                <Mic className={`h-5 w-5 relative z-10 ${isUserSpeaking ? 'animate-pulse' : ''}`} />
               </button>
 
               <input
