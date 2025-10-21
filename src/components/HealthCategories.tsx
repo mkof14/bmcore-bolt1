@@ -269,7 +269,7 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
                 </div>
 
                 <div className="relative h-full px-2 py-3 flex flex-col items-center justify-center text-center gap-2">
-                  <h3 className="text-white font-extrabold text-lg leading-tight drop-shadow-[0_3px_12px_rgba(0,0,0,1)] transition-all duration-300 group-hover:text-xl group-hover:scale-105 px-1">
+                  <h3 className="text-white font-bold text-lg leading-tight drop-shadow-[0_3px_12px_rgba(0,0,0,1)] transition-all duration-300 group-hover:text-xl group-hover:scale-105 px-1" style={{ WebkitFontSmoothing: 'antialiased', textRendering: 'optimizeLegibility' }}>
                     {category.name}
                   </h3>
                   <div className={`transform transition-all duration-300 ${category.glowColor} group-hover:scale-125`}>

@@ -62,19 +62,19 @@ export default function Home({ onNavigate }: HomeProps) {
               health journey. Track, understand, and optimize your wellbeing through intelligent, real-time insights tailored to you.
             </p>
             <div className="flex flex-col sm:flex-row gap-6 justify-center items-center">
-              <span
+              <button
                 onClick={() => onNavigate('signup')}
-                className="text-orange-600 dark:text-orange-500 text-lg font-semibold cursor-pointer hover:text-orange-700 dark:hover:text-orange-400 transition-colors"
+                className="px-6 py-2.5 bg-gray-100/30 dark:bg-gray-800/30 hover:bg-gray-100/60 dark:hover:bg-gray-800/60 border border-gray-300/30 dark:border-gray-700/30 hover:border-gray-300/50 dark:hover:border-gray-600/50 rounded-lg text-orange-600 dark:text-orange-500 text-lg font-semibold cursor-pointer hover:text-orange-700 dark:hover:text-orange-400 transition-all duration-300"
               >
                 Start Free Today
-              </span>
+              </button>
               <span className="text-gray-400 dark:text-gray-500 text-2xl">•</span>
-              <span
+              <button
                 onClick={() => onNavigate('learning')}
-                className="text-orange-700 dark:text-orange-400 text-lg font-semibold cursor-pointer hover:text-orange-800 dark:hover:text-orange-300 transition-colors"
+                className="px-6 py-2.5 bg-gray-100/30 dark:bg-gray-800/30 hover:bg-gray-100/60 dark:hover:bg-gray-800/60 border border-gray-300/30 dark:border-gray-700/30 hover:border-gray-300/50 dark:hover:border-gray-600/50 rounded-lg text-orange-700 dark:text-orange-400 text-lg font-semibold cursor-pointer hover:text-orange-800 dark:hover:text-orange-300 transition-all duration-300"
               >
                 Explore Learning Center
-              </span>
+              </button>
             </div>
           </div>
         </div>
