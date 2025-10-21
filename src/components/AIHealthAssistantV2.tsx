@@ -1,5 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import { Send, Mic, Sparkles, AlertCircle, Shield, Scale } from 'lucide-react';
+import { Send, Mic, AlertCircle, Shield, Scale, Activity, Volume2 } from 'lucide-react';
+import AudioVisualizer from './AudioVisualizer';
+import TypingIndicator from './TypingIndicator';
 import { supabase } from '../lib/supabase';
 import { generateDualOpinion } from '../lib/dualOpinionEngine';
 import DualOpinionView from './DualOpinionView';
@@ -17,7 +19,11 @@ export default function AIHealthAssistantV2({ isOpen, onClose }: AIHealthAssista
   const [inputMessage, setInputMessage] = useState('');
   const [isLoading, setIsLoading] = useState(false);
   const [dualOpinionEnabled, setDualOpinionEnabled] = useState(false);
+  const [isRecording, setIsRecording] = useState(false);
+  const [isSpeaking, setIsSpeaking] = useState(false);
+  const [typingMessageId, setTypingMessageId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const synthRef = useRef<SpeechSynthesis | null>(null);
 
   useEffect(() => {
     if (isOpen) {
@@ -45,8 +51,39 @@ export default function AIHealthAssistantV2({ isOpen, onClose }: AIHealthAssista
       id: 'welcome',
       role: 'assistant',
       content: 'Hello! I\'m your AI Health Advisor with dual-opinion capability. I can provide you with two expert perspectives on your health questions. Toggle "Second Opinion" to get comprehensive insights from multiple AI reasoning approaches.',
-      timestamp: new Date()
+      timestamp: new Date(),
+      isTyping: false
     }]);
+  };
+
+  const speakText = (text: string) => {
+    if ('speechSynthesis' in window) {
+      window.speechSynthesis.cancel();
+
+      const utterance = new SpeechSynthesisUtterance(text);
+      utterance.rate = 0.9;
+      utterance.pitch = 1.0;
+      utterance.volume = 1.0;
+      utterance.lang = 'en-US';
+
+      const voices = window.speechSynthesis.getVoices();
+      const preferredVoice = voices.find(voice =>
+        voice.name.includes('Microsoft David') ||
+        voice.name.includes('Google US English') ||
+        voice.name.includes('Alex') ||
+        voice.lang === 'en-US'
+      );
+
+      if (preferredVoice) {
+        utterance.voice = preferredVoice;
+      }
+
+      utterance.onstart = () => setIsSpeaking(true);
+      utterance.onend = () => setIsSpeaking(false);
+      utterance.onerror = () => setIsSpeaking(false);
+
+      window.speechSynthesis.speak(utterance);
+    }
   };
 
   const scrollToBottom = () => {
@@ -68,6 +105,9 @@ export default function AIHealthAssistantV2({ isOpen, onClose }: AIHealthAssista
     setIsLoading(true);
 
     setTimeout(() => {
+      const messageId = (Date.now() + 1).toString();
+      setTypingMessageId(messageId);
+
       if (dualOpinionEnabled && personas.length >= 2) {
         const personaA = personas.find(p => p.reasoning_style === 'evidence_based') || personas[0];
         const personaB = personas.find(p => p.reasoning_style === 'contextual') || personas[1];
@@ -79,32 +119,39 @@ export default function AIHealthAssistantV2({ isOpen, onClose }: AIHealthAssista
         );
 
         const dualOpinionMsg = {
-          id: (Date.now() + 1).toString(),
+          id: messageId,
           role: 'assistant',
           type: 'dual-opinion',
           opinionA,
           opinionB,
           diff,
-          timestamp: new Date()
+          timestamp: new Date(),
+          isTyping: false
         };
 
         setMessages(prev => [...prev, dualOpinionMsg]);
+        setTypingMessageId(null);
       } else {
         const defaultPersona = personas[0] || null;
         const response = generateSingleResponse(userMsg.content, defaultPersona);
 
         const assistantMsg = {
-          id: (Date.now() + 1).toString(),
+          id: messageId,
           role: 'assistant',
           content: response,
-          timestamp: new Date()
+          timestamp: new Date(),
+          isTyping: true
         };
 
         setMessages(prev => [...prev, assistantMsg]);
+
+        setTimeout(() => {
+          speakText(response);
+        }, response.length * 30);
       }
 
       setIsLoading(false);
-    }, 1500);
+    }, 800);
   };
 
   const generateSingleResponse = (input: string, persona: AssistantPersona | null): string => {
@@ -167,11 +214,11 @@ export default function AIHealthAssistantV2({ isOpen, onClose }: AIHealthAssista
             <div className="relative flex items-center justify-between">
               <div className="flex items-center space-x-4">
                 <div className="w-14 h-14 bg-gradient-to-br from-orange-600 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-600/50">
-                  <Sparkles className="h-7 w-7 text-white" />
+                  <Activity className="h-7 w-7 text-white" />
                 </div>
                 <div>
                   <h3 className="text-white font-bold text-xl">AI Health Advisor</h3>
-                  <p className="text-gray-400 text-sm">Multi-Persona Doctor with Dual Opinion</p>
+                  <p className="text-gray-400 text-sm">Advanced Wellness Intelligence with Dual Opinion</p>
                 </div>
               </div>
               <button
@@ -185,9 +232,22 @@ export default function AIHealthAssistantV2({ isOpen, onClose }: AIHealthAssista
             </div>
 
             <div className="relative mt-6 flex items-center justify-between">
-              <div className="flex items-center space-x-2 bg-gray-800/50 backdrop-blur px-3 py-2 rounded-xl border border-gray-700/50">
-                <Shield className="h-4 w-4 text-orange-500" />
-                <span className="text-gray-300 text-xs font-medium">Wellness guidance • Not medical diagnosis</span>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center space-x-2 bg-gray-800/50 backdrop-blur px-3 py-2 rounded-xl border border-gray-700/50">
+                  <Shield className="h-4 w-4 text-orange-500" />
+                  <span className="text-gray-300 text-xs font-medium">Wellness guidance • Not medical diagnosis</span>
+                </div>
+                <div className="flex items-center gap-3 bg-gray-800/50 backdrop-blur px-3 py-2 rounded-xl border border-gray-700/50">
+                  <div className="flex items-center gap-1.5">
+                    <Mic className="h-3.5 w-3.5 text-gray-400" />
+                    <AudioVisualizer isActive={isRecording} type="microphone" />
+                  </div>
+                  <div className="w-px h-4 bg-gray-700"></div>
+                  <div className="flex items-center gap-1.5">
+                    <Volume2 className="h-3.5 w-3.5 text-gray-400" />
+                    <AudioVisualizer isActive={isSpeaking} type="speaker" />
+                  </div>
+                </div>
               </div>
 
               <button
@@ -250,7 +310,22 @@ export default function AIHealthAssistantV2({ isOpen, onClose }: AIHealthAssista
                       ? 'bg-gradient-to-br from-orange-600 to-orange-500 text-white shadow-lg shadow-orange-600/30'
                       : 'bg-gray-800/80 backdrop-blur text-white border border-gray-700/50'
                   } rounded-2xl px-5 py-3`}>
-                    <div className="text-sm whitespace-pre-wrap leading-relaxed">{message.content}</div>
+                    {!isUser && message.isTyping ? (
+                      <TypingIndicator
+                        text={message.content}
+                        speed={30}
+                        onComplete={() => {
+                          setMessages(prev =>
+                            prev.map(msg =>
+                              msg.id === message.id ? { ...msg, isTyping: false } : msg
+                            )
+                          );
+                          setTypingMessageId(null);
+                        }}
+                      />
+                    ) : (
+                      <div className="text-sm whitespace-pre-wrap leading-relaxed">{message.content}</div>
+                    )}
                   </div>
                 </div>
               );
@@ -279,8 +354,13 @@ export default function AIHealthAssistantV2({ isOpen, onClose }: AIHealthAssista
 
             <div className="relative flex items-center space-x-3">
               <button
-                className="p-3 text-gray-400 hover:text-orange-500 bg-gray-800/50 hover:bg-gray-800 border border-gray-700/50 hover:border-orange-600/50 rounded-xl transition-all"
-                title="Voice input (coming soon)"
+                onClick={() => setIsRecording(!isRecording)}
+                className={`p-3 bg-gray-800/50 hover:bg-gray-800 border rounded-xl transition-all ${
+                  isRecording
+                    ? 'text-orange-500 border-orange-600/50'
+                    : 'text-gray-400 border-gray-700/50 hover:text-orange-500 hover:border-orange-600/50'
+                }`}
+                title="Voice input"
               >
                 <Mic className="h-5 w-5" />
               </button>
