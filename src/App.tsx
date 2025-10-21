@@ -25,8 +25,21 @@ import Ambassador from './pages/Ambassador';
 import LearningCenter from './pages/LearningCenter';
 import BiomathCoreSummary from './pages/BiomathCoreSummary';
 import SummaryText from './pages/SummaryText';
+import Blog from './pages/Blog';
+import News from './pages/News';
+import Careers from './pages/Careers';
+import CommandCenter from './pages/CommandCenter';
+import AdminPanel from './pages/AdminPanel';
+import PrivacyPolicy from './pages/legal/PrivacyPolicy';
+import TermsOfService from './pages/legal/TermsOfService';
+import Disclaimer from './pages/legal/Disclaimer';
+import HIPAANotice from './pages/legal/HIPAANotice';
+import Security from './pages/legal/Security';
+import GDPR from './pages/legal/GDPR';
+import DataPrivacy from './pages/legal/DataPrivacy';
+import TrustSafety from './pages/legal/TrustSafety';
 
-type Page = 'home' | 'about' | 'services' | 'pricing' | 'investors' | 'science' | 'api' | 'contact' | 'signin' | 'signup' | 'member' | 'member-zone' | 'services-catalog' | 'service-detail' | 'devices' | 'reports' | 'faq' | 'referral' | 'ambassador' | 'learning' | 'learning-center' | 'biomath-core-summary' | 'summary-text';
+type Page = 'home' | 'about' | 'services' | 'pricing' | 'investors' | 'science' | 'api' | 'contact' | 'signin' | 'signup' | 'member' | 'member-zone' | 'services-catalog' | 'service-detail' | 'devices' | 'reports' | 'faq' | 'referral' | 'ambassador' | 'learning' | 'learning-center' | 'biomath-core-summary' | 'summary-text' | 'blog' | 'news' | 'careers' | 'command-center' | 'admin-panel' | 'privacy-policy' | 'terms-of-service' | 'disclaimer' | 'hipaa-notice' | 'security' | 'gdpr' | 'data-privacy' | 'trust-safety';
 
 function App() {
   // VERSION: 2025-10-20-01:48 - Force HMR refresh
@@ -130,6 +143,32 @@ function App() {
         return <BiomathCoreSummary onNavigate={handleNavigate} />;
       case 'summary-text':
         return <SummaryText onNavigate={handleNavigate} />;
+      case 'blog':
+        return <Blog onNavigate={handleNavigate} />;
+      case 'news':
+        return <News onNavigate={handleNavigate} />;
+      case 'careers':
+        return <Careers onNavigate={handleNavigate} />;
+      case 'command-center':
+        return <CommandCenter onNavigate={handleNavigate} />;
+      case 'admin-panel':
+        return <AdminPanel onNavigate={handleNavigate} />;
+      case 'privacy-policy':
+        return <PrivacyPolicy onNavigate={handleNavigate} />;
+      case 'terms-of-service':
+        return <TermsOfService onNavigate={handleNavigate} />;
+      case 'disclaimer':
+        return <Disclaimer onNavigate={handleNavigate} />;
+      case 'hipaa-notice':
+        return <HIPAANotice onNavigate={handleNavigate} />;
+      case 'security':
+        return <Security onNavigate={handleNavigate} />;
+      case 'gdpr':
+        return <GDPR onNavigate={handleNavigate} />;
+      case 'data-privacy':
+        return <DataPrivacy onNavigate={handleNavigate} />;
+      case 'trust-safety':
+        return <TrustSafety onNavigate={handleNavigate} />;
       default:
         return <Home onNavigate={handleNavigate} />;
     }

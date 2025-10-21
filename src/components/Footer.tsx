@@ -162,44 +162,44 @@ export default function Footer({ onNavigate }: FooterProps) {
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Legal & Safety</h3>
             <ul className="space-y-2">
               <li>
-                <button onClick={() => onNavigate('about')} className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors font-semibold">
+                <button onClick={() => onNavigate('trust-safety')} className="text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors font-semibold">
                   Trust & Safety
                 </button>
               </li>
               <li>
-                <a href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                <button onClick={() => onNavigate('data-privacy')} className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                   Data Privacy
-                </a>
+                </button>
               </li>
               <li>
-                <a href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                <button onClick={() => onNavigate('privacy-policy')} className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                   Privacy Policy
-                </a>
+                </button>
               </li>
               <li>
-                <a href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                <button onClick={() => onNavigate('terms-of-service')} className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                   Terms of Service
-                </a>
+                </button>
               </li>
               <li>
-                <a href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                <button onClick={() => onNavigate('hipaa-notice')} className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                   HIPAA Notice
-                </a>
+                </button>
               </li>
               <li>
-                <a href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                <button onClick={() => onNavigate('security')} className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                   Security
-                </a>
+                </button>
               </li>
               <li>
-                <a href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                <button onClick={() => onNavigate('disclaimer')} className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                   Disclaimer
-                </a>
+                </button>
               </li>
               <li>
-                <a href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                <button onClick={() => onNavigate('gdpr')} className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                   GDPR
-                </a>
+                </button>
               </li>
             </ul>
           </div>
@@ -219,19 +219,19 @@ export default function Footer({ onNavigate }: FooterProps) {
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Corporate</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                <button onClick={() => onNavigate('news')} className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                   News
-                </a>
+                </button>
               </li>
               <li>
-                <a href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                <button onClick={() => onNavigate('blog')} className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                   Blog
-                </a>
+                </button>
               </li>
               <li>
-                <a href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                <button onClick={() => onNavigate('careers')} className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                   Careers
-                </a>
+                </button>
               </li>
               <li>
                 <button onClick={() => onNavigate('referral')} className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
@@ -253,14 +253,14 @@ export default function Footer({ onNavigate }: FooterProps) {
                 </button>
               </li>
               <li>
-                <a href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                <button onClick={() => onNavigate('command-center')} className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                   Command Center
-                </a>
+                </button>
               </li>
               <li>
-                <a href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                <button onClick={() => onNavigate('admin-panel')} className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                   Admin Panel
-                </a>
+                </button>
               </li>
             </ul>
           </div>
