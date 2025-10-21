@@ -286,10 +286,10 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
         <div className="mt-10 text-center">
           <button
             onClick={() => onNavigate('services-catalog')}
-            className={`inline-flex items-center space-x-2 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 transform hover:scale-105 ${
+            className={`inline-flex items-center space-x-2 px-8 py-4 rounded-xl font-semibold text-lg transition-all duration-300 ${
               isDark
-                ? 'bg-blue-600 hover:bg-blue-500 text-white shadow-lg hover:shadow-blue-500/50'
-                : 'bg-blue-600 hover:bg-blue-700 text-white shadow-lg hover:shadow-xl'
+                ? 'bg-gray-800/30 hover:bg-gray-800/60 border border-gray-700/30 hover:border-gray-600/50 text-orange-500 hover:text-orange-400'
+                : 'bg-gray-100/30 hover:bg-gray-100/60 border border-gray-300/30 hover:border-gray-300/50 text-orange-600 hover:text-orange-700'
             }`}
           >
             <span>View All Services</span>

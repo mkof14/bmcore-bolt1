@@ -168,7 +168,7 @@ export default function ServicesCatalog({ onNavigate, initialCategory }: Service
   const IconComponent = selectedCategoryData ? iconMap[selectedCategoryData.icon] : null;
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors pt-16">
+    <div className="min-h-screen bg-gray-950 transition-colors pt-16">
       {selectedCategoryData && heroData && IconComponent ? (
         <section className="relative h-80 overflow-hidden">
           <div
@@ -208,15 +208,18 @@ export default function ServicesCatalog({ onNavigate, initialCategory }: Service
           </div>
         </section>
       ) : (
-        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
-          <div className="max-w-7xl mx-auto">
+        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 via-gray-950 to-gray-900 relative overflow-hidden">
+          <div className="absolute inset-0 opacity-20">
+            <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-orange-500/20 to-transparent"></div>
+          </div>
+          <div className="max-w-7xl mx-auto relative z-10">
             <BackButton onNavigate={onNavigate} />
 
             <div className="text-center mb-8">
-              <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-4">
+              <h1 className="text-5xl font-bold text-white mb-4">
                 Complete Services Catalog
               </h1>
-              <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto mb-8">
+              <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
                 Explore our comprehensive suite of 200+ biomathematical health services across 20 specialized categories
               </p>
 
@@ -228,7 +231,7 @@ export default function ServicesCatalog({ onNavigate, initialCategory }: Service
                     placeholder="Search categories or services..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors"
+                    className="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-700 bg-gray-800 text-white focus:border-orange-500 focus:outline-none transition-colors"
                   />
                 </div>
               </div>
@@ -238,7 +241,7 @@ export default function ServicesCatalog({ onNavigate, initialCategory }: Service
       )}
 
       {selectedCategoryData && (
-        <section className="py-8 px-4 sm:px-6 lg:px-8 bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800">
+        <section className="py-8 px-4 sm:px-6 lg:px-8 bg-gray-900/50 border-b border-gray-800">
           <div className="max-w-7xl mx-auto">
             <div className="max-w-2xl mx-auto">
               <div className="relative">
@@ -248,7 +251,7 @@ export default function ServicesCatalog({ onNavigate, initialCategory }: Service
                   placeholder="Search services..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:border-blue-500 dark:focus:border-blue-400 focus:outline-none transition-colors"
+                  className="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-700 bg-gray-800 text-white focus:border-orange-500 focus:outline-none transition-colors"
                 />
               </div>
             </div>
@@ -256,13 +259,13 @@ export default function ServicesCatalog({ onNavigate, initialCategory }: Service
         </section>
       )}
 
-      <section className="py-12 px-4 sm:px-6 lg:px-8">
+      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-gray-950">
         <div className="max-w-7xl mx-auto">
           {!selectedCategoryData ? (
             <div>
               {filteredCategories.length === 0 ? (
                 <div className="text-center py-12">
-                  <p className="text-xl text-gray-600 dark:text-gray-400">No categories found matching your search.</p>
+                  <p className="text-xl text-gray-400">No categories found matching your search.</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -272,23 +275,23 @@ export default function ServicesCatalog({ onNavigate, initialCategory }: Service
                       <button
                         key={category.id}
                         onClick={() => setSelectedCategory(category.id)}
-                        className="group p-6 rounded-2xl border-2 border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-400 hover:shadow-lg transition-all text-left bg-white dark:bg-gray-800"
+                        className="group p-6 rounded-2xl border border-gray-800 hover:border-gray-700 bg-gray-900/50 backdrop-blur hover:shadow-2xl hover:shadow-orange-500/20 transition-all text-left"
                       >
                         <div className="flex items-start space-x-4 mb-4">
-                          <div className="flex-shrink-0 w-14 h-14 bg-blue-100 dark:bg-blue-900/30 rounded-xl flex items-center justify-center">
-                            <IconComponent className="h-7 w-7 text-blue-600 dark:text-blue-400" />
+                          <div className={`flex-shrink-0 w-14 h-14 bg-gray-800/50 rounded-xl flex items-center justify-center`}>
+                            <IconComponent className={`h-7 w-7 ${categoryHeroData[category.id]?.iconColor || 'text-orange-400'}`} />
                           </div>
                           <div className="flex-1">
-                            <h3 className="text-xl font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors mb-1">
+                            <h3 className={`text-xl font-bold ${categoryHeroData[category.id]?.textColor || 'text-orange-400'} mb-1`}>
                               {category.name}
                             </h3>
-                            <p className="text-sm font-medium text-blue-600 dark:text-blue-400">
+                            <p className="text-sm font-medium text-gray-400">
                               {category.services.length} Services
                             </p>
                           </div>
-                          <ChevronRight className="h-6 w-6 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 flex-shrink-0 transition-colors" />
+                          <ChevronRight className="h-6 w-6 text-gray-400 group-hover:text-orange-500 flex-shrink-0 transition-colors" />
                         </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <p className="text-sm text-gray-400">
                           {category.description}
                         </p>
                       </button>
@@ -308,7 +311,7 @@ export default function ServicesCatalog({ onNavigate, initialCategory }: Service
                 );
               }).length === 0 ? (
                 <div className="text-center py-12">
-                  <p className="text-xl text-gray-600 dark:text-gray-400">No services found matching your search.</p>
+                  <p className="text-xl text-gray-400">No services found matching your search.</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -325,15 +328,15 @@ export default function ServicesCatalog({ onNavigate, initialCategory }: Service
                       <button
                         key={service.id}
                         onClick={() => onNavigate('service-detail', `${selectedCategoryData.id}/${service.id}`)}
-                        className="group p-5 rounded-xl border-2 border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-400 hover:shadow-lg transition-all text-left bg-white dark:bg-gray-800"
+                        className="group p-5 rounded-xl border border-gray-800 hover:border-gray-700 bg-gray-900/50 backdrop-blur hover:shadow-2xl hover:shadow-orange-500/20 transition-all text-left"
                       >
                         <div className="flex items-start justify-between mb-2">
-                          <h3 className="font-semibold text-lg text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors pr-2">
+                          <h3 className="font-semibold text-lg text-white group-hover:text-orange-400 transition-colors pr-2">
                             {service.name}
                           </h3>
-                          <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-blue-600 dark:group-hover:text-blue-400 flex-shrink-0 transition-colors" />
+                          <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-orange-500 flex-shrink-0 transition-colors" />
                         </div>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">{service.description}</p>
+                        <p className="text-sm text-gray-400">{service.description}</p>
                       </button>
                     ))}
                 </div>
