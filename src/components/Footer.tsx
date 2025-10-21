@@ -208,9 +208,9 @@ export default function Footer({ onNavigate }: FooterProps) {
             <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Partnership</h3>
             <ul className="space-y-2">
               <li>
-                <a href="#" className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                <button onClick={() => onNavigate('partnership')} className="text-sm text-gray-600 dark:text-gray-400 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                   Partnership Opportunities
-                </a>
+                </button>
               </li>
             </ul>
           </div>
