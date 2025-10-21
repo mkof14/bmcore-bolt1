@@ -167,7 +167,7 @@ export default function DashboardSection({ onBack }: DashboardSectionProps = {})
   if (loading) {
     return (
       <div className="flex items-center justify-center py-12">
-        <Clock className="h-8 w-8 text-blue-600 dark:text-blue-400 animate-spin" />
+        <Clock className="h-8 w-8 text-orange-500 animate-spin" />
       </div>
     );
   }
@@ -176,26 +176,26 @@ export default function DashboardSection({ onBack }: DashboardSectionProps = {})
     <div className="space-y-6">
       {onBack && <BackButton onClick={onBack} label="Back to Home" />}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+        <h1 className="text-3xl font-bold text-white mb-2">
           Dashboard
         </h1>
-        <p className="text-gray-600 dark:text-gray-400">
+        <p className="text-gray-400">
           Your wellness command center: today's state, goals, and habits
         </p>
       </div>
 
       {!todaySnapshot ? (
-        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-8 border-2 border-dashed border-blue-200 dark:border-blue-800 text-center">
-          <Sun className="h-12 w-12 text-blue-600 dark:text-blue-400 mx-auto mb-4" />
-          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+        <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-xl p-8 border-2 border-dashed border-gray-700/50 text-center">
+          <Sun className="h-12 w-12 text-orange-500 mx-auto mb-4" />
+          <h3 className="text-xl font-bold text-white mb-2">
             Ready to see how your body is today?
           </h3>
-          <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
+          <p className="text-gray-400 mb-6 max-w-md mx-auto">
             Your daily snapshot will show your current state and suggest one gentle step
           </p>
           <button
             onClick={generateMockSnapshot}
-            className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white rounded-lg font-semibold transition-all duration-300 shadow-lg shadow-orange-600/20"
           >
             <Zap className="h-5 w-5 mr-2" />
             Generate Today's Snapshot
@@ -242,15 +242,15 @@ function TodaySnapshotCard({ snapshot }: { snapshot: DailySnapshot }) {
   };
 
   return (
-    <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
+    <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-xl p-6 border border-gray-700/50">
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center space-x-3">
-          <Sun className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+          <Sun className="h-8 w-8 text-orange-500" />
           <div>
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+            <h2 className="text-xl font-bold text-white">
               Today
             </h2>
-            <p className="text-sm text-gray-600 dark:text-gray-400">
+            <p className="text-sm text-gray-400">
               {new Date(snapshot.snapshot_date).toLocaleDateString('en-US', {
                 month: 'long',
                 day: 'numeric'
@@ -278,8 +278,8 @@ function TodaySnapshotCard({ snapshot }: { snapshot: DailySnapshot }) {
         </div>
       </div>
 
-      <div className="bg-white dark:bg-gray-800 rounded-lg p-4 mb-4">
-        <p className="text-lg font-semibold text-gray-900 dark:text-white mb-2">
+      <div className="bg-gray-800/50 border border-gray-700/30 rounded-lg p-4 mb-4">
+        <p className="text-lg font-semibold text-white mb-2">
           {snapshot.state_summary}
         </p>
         {snapshot.state_reason && (
@@ -290,14 +290,14 @@ function TodaySnapshotCard({ snapshot }: { snapshot: DailySnapshot }) {
 
         <button
           onClick={() => setShowExplanation(!showExplanation)}
-          className="mt-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold transition-colors inline-flex items-center"
+          className="mt-2 text-sm text-orange-500 hover:text-orange-400 font-semibold transition-colors inline-flex items-center"
         >
           <Info className="h-4 w-4 mr-1" />
           {showExplanation ? 'Hide explanation' : 'Why is this happening?'}
         </button>
 
         {showExplanation && (
-          <div className="mt-3 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+          <div className="mt-3 p-3 bg-gray-900/50 border border-gray-700/30 rounded-lg">
             <p className="text-sm text-gray-700 dark:text-gray-300">
               When your nervous system stays active during rest, your body doesn't fully switch to recovery mode.
               This is common after sustained effort and means gentle support is more helpful than pushing harder.
@@ -307,9 +307,9 @@ function TodaySnapshotCard({ snapshot }: { snapshot: DailySnapshot }) {
       </div>
 
       {snapshot.suggestion_of_day && (
-        <div className="bg-green-50 dark:bg-green-900/20 rounded-lg p-4 border border-green-200 dark:border-green-800">
+        <div className="bg-gray-900/50 border border-orange-600/20 rounded-lg p-4">
           <div className="flex items-start space-x-3">
-            <Heart className="h-6 w-6 text-green-600 dark:text-green-400 flex-shrink-0 mt-0.5" />
+            <Heart className="h-6 w-6 text-orange-500 flex-shrink-0 mt-0.5" />
             <div>
               <p className="font-semibold text-gray-900 dark:text-white mb-1">
                 Today's Suggestion
@@ -329,13 +329,13 @@ function TodaySnapshotCard({ snapshot }: { snapshot: DailySnapshot }) {
         <div className="mt-4">
           <button
             onClick={() => setShowSecondOpinion(!showSecondOpinion)}
-            className="text-sm text-purple-600 dark:text-purple-400 hover:text-purple-700 dark:hover:text-purple-300 font-semibold transition-colors"
+            className="text-sm text-orange-500 hover:text-orange-400 font-semibold transition-colors"
           >
             {showSecondOpinion ? '▼ Hide second opinion' : '▶ Show second opinion'}
           </button>
           {showSecondOpinion && (
             <div className="mt-3 space-y-3">
-              <div className="bg-purple-50 dark:bg-purple-900/20 rounded-lg p-3 border border-purple-200 dark:border-purple-800">
+              <div className="bg-gray-900/50 rounded-lg p-3 border border-gray-700/30">
                 <p className="text-xs font-semibold text-purple-900 dark:text-purple-300 mb-1">
                   Opinion A (Physiological)
                 </p>
@@ -343,7 +343,7 @@ function TodaySnapshotCard({ snapshot }: { snapshot: DailySnapshot }) {
                   {snapshot.second_opinion_a}
                 </p>
               </div>
-              <div className="bg-pink-50 dark:bg-pink-900/20 rounded-lg p-3 border border-pink-200 dark:border-pink-800">
+              <div className="bg-gray-900/50 rounded-lg p-3 border border-gray-700/30">
                 <p className="text-xs font-semibold text-pink-900 dark:text-pink-300 mb-1">
                   Opinion B (Lifestyle)
                 </p>

@@ -127,7 +127,7 @@ export default function ReportSettingsSection() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-600 dark:text-gray-400">Loading settings...</div>
+        <div className="text-gray-400">Loading settings...</div>
       </div>
     );
   }
@@ -137,13 +137,13 @@ export default function ReportSettingsSection() {
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Report Settings</h2>
-          <p className="text-gray-600 dark:text-gray-400">
+          <h2 className="text-3xl font-bold text-white mb-2">Report Settings</h2>
+          <p className="text-gray-400">
             Personalize how AI-generated reports are created and displayed
           </p>
         </div>
         {lastSaved && (
-          <div className="flex items-center space-x-2 text-sm text-gray-500 dark:text-gray-400">
+          <div className="flex items-center space-x-2 text-sm text-gray-500">
             <Save className="h-4 w-4" />
             <span>Saved {lastSaved.toLocaleTimeString()}</span>
           </div>
@@ -151,14 +151,14 @@ export default function ReportSettingsSection() {
       </div>
 
       {/* Detail Level */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg border-2 border-gray-200 dark:border-gray-700 p-6">
+      <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-lg border border-gray-700/50 p-6">
         <div className="flex items-start space-x-3 mb-4">
-          <Settings className="h-5 w-5 text-blue-600 dark:text-blue-400 mt-0.5" />
+          <Settings className="h-5 w-5 text-orange-500 mt-0.5" />
           <div className="flex-1">
-            <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+            <h3 className="text-lg font-semibold text-white mb-1">
               Level of Detail
             </h3>
-            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+            <p className="text-sm text-gray-400 mb-4">
               Choose how detailed your reports should be
             </p>
           </div>
@@ -175,20 +175,20 @@ export default function ReportSettingsSection() {
               onClick={() => updateSetting('detail_level', option.value)}
               className={`p-4 rounded-lg border-2 transition-all text-left ${
                 settings.detail_level === option.value
-                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                  : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                  ? 'border-orange-500 bg-orange-900/20'
+                  : 'border-gray-700/50 hover:border-orange-600/40'
               }`}
             >
-              <div className="font-medium text-gray-900 dark:text-white mb-1">{option.label}</div>
-              <div className="text-xs text-gray-600 dark:text-gray-400">{option.desc}</div>
+              <div className="font-medium text-white mb-1">{option.label}</div>
+              <div className="text-xs text-gray-400">{option.desc}</div>
             </button>
           ))}
         </div>
       </div>
 
       {/* Tone Style */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg border-2 border-gray-200 dark:border-gray-700 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+      <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-lg border border-gray-700/50 p-6">
+        <h3 className="text-lg font-semibold text-white mb-4">
           Report Tone Style
         </h3>
 
@@ -203,20 +203,20 @@ export default function ReportSettingsSection() {
               onClick={() => updateSetting('tone_style', option.value)}
               className={`p-4 rounded-lg border-2 transition-all text-left ${
                 settings.tone_style === option.value
-                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                  : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                  ? 'border-orange-500 bg-orange-900/20'
+                  : 'border-gray-700/50 hover:border-orange-600/40'
               }`}
             >
-              <div className="font-medium text-gray-900 dark:text-white mb-1">{option.label}</div>
-              <div className="text-xs text-gray-600 dark:text-gray-400">{option.desc}</div>
+              <div className="font-medium text-white mb-1">{option.label}</div>
+              <div className="text-xs text-gray-400">{option.desc}</div>
             </button>
           ))}
         </div>
       </div>
 
       {/* Visualization Mode */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg border-2 border-gray-200 dark:border-gray-700 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+      <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-lg border border-gray-700/50 p-6">
+        <h3 className="text-lg font-semibold text-white mb-4">
           Visualization Preference
         </h3>
 
@@ -231,20 +231,20 @@ export default function ReportSettingsSection() {
               onClick={() => updateSetting('visualization_mode', option.value)}
               className={`p-4 rounded-lg border-2 transition-all text-left ${
                 settings.visualization_mode === option.value
-                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                  : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                  ? 'border-orange-500 bg-orange-900/20'
+                  : 'border-gray-700/50 hover:border-orange-600/40'
               }`}
             >
-              <div className="font-medium text-gray-900 dark:text-white mb-1">{option.label}</div>
-              <div className="text-xs text-gray-600 dark:text-gray-400">{option.desc}</div>
+              <div className="font-medium text-white mb-1">{option.label}</div>
+              <div className="text-xs text-gray-400">{option.desc}</div>
             </button>
           ))}
         </div>
       </div>
 
       {/* Insight Focus */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg border-2 border-gray-200 dark:border-gray-700 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+      <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-lg border border-gray-700/50 p-6">
+        <h3 className="text-lg font-semibold text-white mb-4">
           Recommendation Focus
         </h3>
 
@@ -259,35 +259,35 @@ export default function ReportSettingsSection() {
               onClick={() => updateSetting('insight_focus', option.value)}
               className={`p-4 rounded-lg border-2 transition-all text-left ${
                 settings.insight_focus === option.value
-                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20'
-                  : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                  ? 'border-orange-500 bg-orange-900/20'
+                  : 'border-gray-700/50 hover:border-orange-600/40'
               }`}
             >
-              <div className="font-medium text-gray-900 dark:text-white mb-1">{option.label}</div>
-              <div className="text-xs text-gray-600 dark:text-gray-400">{option.desc}</div>
+              <div className="font-medium text-white mb-1">{option.label}</div>
+              <div className="text-xs text-gray-400">{option.desc}</div>
             </button>
           ))}
         </div>
       </div>
 
       {/* Advanced Mode */}
-      <div className={`bg-white dark:bg-gray-800 rounded-lg border-2 p-6 ${
+      <div className={`bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-lg border-2 p-6 ${
         settings.advanced_mode_unlocked
-          ? 'border-indigo-200 dark:border-indigo-800'
+          ? 'border-orange-600/30'
           : 'border-gray-200 dark:border-gray-700'
       }`}>
         <div className="flex items-start justify-between mb-4">
           <div className="flex items-start space-x-3">
             {settings.advanced_mode_unlocked ? (
-              <Unlock className="h-5 w-5 text-indigo-600 dark:text-indigo-400 mt-0.5" />
+              <Unlock className="h-5 w-5 text-orange-500 mt-0.5" />
             ) : (
               <Lock className="h-5 w-5 text-gray-400 mt-0.5" />
             )}
             <div>
-              <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-1">
+              <h3 className="text-lg font-semibold text-white mb-1">
                 Advanced Mode
               </h3>
-              <p className="text-sm text-gray-600 dark:text-gray-400">
+              <p className="text-sm text-gray-400">
                 Deeper analytical interpretation with multi-factor correlation
               </p>
             </div>
@@ -298,8 +298,8 @@ export default function ReportSettingsSection() {
               onClick={() => updateSetting('advanced_mode_enabled', !settings.advanced_mode_enabled)}
               className={`px-4 py-2 rounded-lg font-medium transition-colors ${
                 settings.advanced_mode_enabled
-                  ? 'bg-indigo-600 text-white hover:bg-indigo-700'
-                  : 'bg-gray-200 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-300 dark:hover:bg-gray-600'
+                  ? 'bg-gradient-to-r from-orange-600 to-orange-500 text-white hover:from-orange-500 hover:to-orange-600 shadow-lg shadow-orange-600/20'
+                  : 'bg-gray-800/50 border border-gray-700/30 text-gray-300 hover:border-orange-600/30'
               }`}
             >
               {settings.advanced_mode_enabled ? 'Enabled' : 'Disabled'}
@@ -310,7 +310,7 @@ export default function ReportSettingsSection() {
         {!settings.advanced_mode_unlocked && (
           <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 border border-gray-200 dark:border-gray-700">
             <div className="flex items-start space-x-3">
-              <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+              <Info className="h-5 w-5 text-orange-500 flex-shrink-0 mt-0.5" />
               <div className="text-sm text-gray-700 dark:text-gray-300">
                 <p className="font-medium mb-1">Advanced Mode is locked</p>
                 <p>
@@ -324,7 +324,7 @@ export default function ReportSettingsSection() {
 
         {settings.advanced_mode_enabled && (
           <div className="mt-4 pt-4 border-t border-gray-200 dark:border-gray-700">
-            <h4 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">
+            <h4 className="text-sm font-semibold text-white mb-3">
               Interpretation Priority
             </h4>
             <div className="grid grid-cols-3 gap-3">
@@ -339,7 +339,7 @@ export default function ReportSettingsSection() {
                   className={`p-3 rounded-lg border-2 transition-all text-center text-sm ${
                     settings.interpretation_priority === option.value
                       ? 'border-indigo-500 bg-indigo-50 dark:bg-indigo-900/20'
-                      : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                      : 'border-gray-700/50 hover:border-orange-600/40'
                   }`}
                 >
                   {option.label}
@@ -351,18 +351,18 @@ export default function ReportSettingsSection() {
       </div>
 
       {/* Additional Options */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg border-2 border-gray-200 dark:border-gray-700 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+      <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-lg border border-gray-700/50 p-6">
+        <h3 className="text-lg font-semibold text-white mb-4">
           Additional Options
         </h3>
 
         <div className="space-y-4">
           <label className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg cursor-pointer">
             <div>
-              <div className="font-medium text-gray-900 dark:text-white mb-1">
+              <div className="font-medium text-white mb-1">
                 Second Opinion Default
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">
+              <div className="text-sm text-gray-400">
                 Automatically show second interpretation for all reports
               </div>
             </div>
@@ -376,10 +376,10 @@ export default function ReportSettingsSection() {
 
           <label className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg cursor-pointer">
             <div>
-              <div className="font-medium text-gray-900 dark:text-white mb-1">
+              <div className="font-medium text-white mb-1">
                 Save to History
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">
+              <div className="text-sm text-gray-400">
                 Automatically save all generated reports for later review
               </div>
             </div>
@@ -393,10 +393,10 @@ export default function ReportSettingsSection() {
 
           <label className="flex items-center justify-between p-4 bg-gray-50 dark:bg-gray-900 rounded-lg cursor-pointer">
             <div>
-              <div className="font-medium text-gray-900 dark:text-white mb-1">
+              <div className="font-medium text-white mb-1">
                 Allow Caregiver View
               </div>
-              <div className="text-sm text-gray-600 dark:text-gray-400">
+              <div className="text-sm text-gray-400">
                 Enable linked caregivers or healthcare professionals to view reports
               </div>
             </div>
@@ -411,11 +411,11 @@ export default function ReportSettingsSection() {
       </div>
 
       {/* Auto-refresh Frequency */}
-      <div className="bg-white dark:bg-gray-800 rounded-lg border-2 border-gray-200 dark:border-gray-700 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 dark:text-white mb-4">
+      <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-lg border border-gray-700/50 p-6">
+        <h3 className="text-lg font-semibold text-white mb-4">
           Report Refresh Frequency
         </h3>
-        <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+        <p className="text-sm text-gray-400 mb-4">
           How often should reports be regenerated based on new data?
         </p>
 
@@ -432,8 +432,8 @@ export default function ReportSettingsSection() {
               onClick={() => updateSetting('auto_refresh_frequency', option.value)}
               className={`p-3 rounded-lg border-2 transition-all text-center text-sm ${
                 settings.auto_refresh_frequency === option.value
-                  ? 'border-blue-500 bg-blue-50 dark:bg-blue-900/20 font-medium'
-                  : 'border-gray-200 dark:border-gray-700 hover:border-gray-300 dark:hover:border-gray-600'
+                  ? 'border-orange-500 bg-orange-900/20 font-medium'
+                  : 'border-gray-700/50 hover:border-orange-600/40'
               }`}
             >
               {option.label}
@@ -445,7 +445,7 @@ export default function ReportSettingsSection() {
       {/* Info Box */}
       <div className="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-lg p-4">
         <div className="flex items-start space-x-3">
-          <Info className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-0.5" />
+          <Info className="h-5 w-5 text-orange-500 flex-shrink-0 mt-0.5" />
           <div className="text-sm text-gray-700 dark:text-gray-300">
             <p className="font-medium mb-1">All settings are automatically saved</p>
             <p>

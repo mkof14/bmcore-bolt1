@@ -210,7 +210,7 @@ export default function QuestionnairesSection() {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center h-64">
-        <div className="text-gray-600 dark:text-gray-400">Loading questionnaires...</div>
+        <div className="text-gray-400">Loading questionnaires...</div>
       </div>
     );
   }
@@ -219,29 +219,29 @@ export default function QuestionnairesSection() {
     <div className="flex flex-col lg:flex-row gap-6 h-full">
       {/* Sidebar */}
       <div className="lg:w-64 flex-shrink-0">
-        <div className="bg-white dark:bg-gray-800 rounded-lg border-2 border-gray-200 dark:border-gray-700 p-4 sticky top-4">
-          <div className="mb-4 pb-4 border-b border-gray-200 dark:border-gray-700">
-            <h3 className="font-semibold text-gray-900 dark:text-white mb-3">Settings</h3>
+        <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-lg border border-gray-700/50 p-4 sticky top-4">
+          <div className="mb-4 pb-4 border-b border-gray-700/50">
+            <h3 className="font-semibold text-white mb-3">Settings</h3>
 
             <button
               onClick={toggleUnitSystem}
-              className="w-full flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-900 rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors mb-2"
+              className="w-full flex items-center justify-between p-2 bg-gray-800/50 border border-gray-700/30 rounded-lg hover:border-orange-600/30 transition-colors mb-2"
             >
               <div className="flex items-center space-x-2">
-                <Ruler className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-                <span className="text-sm text-gray-700 dark:text-gray-300">Units</span>
+                <Ruler className="h-4 w-4 text-gray-400" />
+                <span className="text-sm text-gray-300">Units</span>
               </div>
-              <span className="text-sm font-medium text-blue-600 dark:text-blue-400">
+              <span className="text-sm font-medium text-orange-500">
                 {unitSystem === 'metric' ? 'Metric' : 'Imperial'}
               </span>
             </button>
 
-            <div className="flex items-center justify-between p-2 bg-gray-50 dark:bg-gray-900 rounded-lg">
+            <div className="flex items-center justify-between p-2 bg-gray-800/50 border border-gray-700/30 rounded-lg">
               <div className="flex items-center space-x-2">
-                <Globe className="h-4 w-4 text-gray-600 dark:text-gray-400" />
-                <span className="text-sm text-gray-700 dark:text-gray-300">Language</span>
+                <Globe className="h-4 w-4 text-gray-400" />
+                <span className="text-sm text-gray-300">Language</span>
               </div>
-              <span className="text-sm font-medium text-blue-600 dark:text-blue-400">
+              <span className="text-sm font-medium text-orange-500">
                 {language.toUpperCase()}
               </span>
             </div>
@@ -266,10 +266,10 @@ export default function QuestionnairesSection() {
                   disabled={section.locked}
                   className={`w-full flex items-center justify-between p-3 rounded-lg transition-colors text-left ${
                     currentSection === section.id
-                      ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400'
+                      ? 'bg-blue-100 dark:bg-blue-900/30 text-orange-500'
                       : section.locked
-                      ? 'bg-gray-50 dark:bg-gray-900 text-gray-400 dark:text-gray-600 cursor-not-allowed'
-                      : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-700 dark:text-gray-300'
+                      ? 'bg-gray-800/50 border border-gray-700/30 text-gray-400 dark:text-gray-600 cursor-not-allowed'
+                      : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-300'
                   }`}
                 >
                   <div className="flex items-center space-x-2 flex-1">
@@ -294,7 +294,7 @@ export default function QuestionnairesSection() {
 
       {/* Main Content */}
       <div className="flex-1">
-        <div className="bg-white dark:bg-gray-800 rounded-lg border-2 border-gray-200 dark:border-gray-700 p-6">
+        <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-lg border-2 border-gray-700/50 p-6">
           {currentSection === 'categories' && (
             <CategoriesForm
               data={responses.categories}
@@ -382,17 +382,17 @@ function CategoriesForm({ data, onChange }: any) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Categories</h2>
-        <p className="text-gray-600 dark:text-gray-400">Tell us which health areas are most important to you</p>
+        <h2 className="text-2xl font-bold text-white mb-2">Categories</h2>
+        <p className="text-gray-400">Tell us which health areas are most important to you</p>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label className="block text-sm font-medium text-gray-300 mb-2">
           Which areas of health are most important for you right now? <span className="text-red-500">*</span>
         </label>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {healthAreas.map(area => (
-            <label key={area} className="flex items-center space-x-2 p-3 bg-gray-50 dark:bg-gray-900 rounded-lg cursor-pointer hover:bg-gray-100 dark:hover:bg-gray-800">
+            <label key={area} className="flex items-center space-x-2 p-3 bg-gray-800/50 border border-gray-700/30 rounded-lg cursor-pointer hover:border-orange-600/30">
               <input
                 type="checkbox"
                 checked={(data.primary_health_areas || []).includes(area)}
@@ -413,13 +413,13 @@ function CategoriesForm({ data, onChange }: any) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label className="block text-sm font-medium text-gray-300 mb-2">
           What is your primary health priority? <span className="text-red-500">*</span>
         </label>
         <select
           value={data.primary_priority || ''}
           onChange={(e) => onChange('primary_priority', e.target.value)}
-          className="w-full px-4 py-2 border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+          className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
         >
           <option value="">Select priority...</option>
           <option value="prevention">Prevention</option>
@@ -436,31 +436,31 @@ function PersonalInfoForm({ data, onChange, unitSystem }: any) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Personal Information</h2>
-        <p className="text-gray-600 dark:text-gray-400">Help us personalize your experience</p>
+        <h2 className="text-2xl font-bold text-white mb-2">Personal Information</h2>
+        <p className="text-gray-400">Help us personalize your experience</p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             Full Name <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
             value={data.full_name || ''}
             onChange={(e) => onChange('full_name', e.target.value)}
-            className="w-full px-4 py-2 border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             Biological Sex <span className="text-red-500">*</span>
           </label>
           <select
             value={data.biological_sex || ''}
             onChange={(e) => onChange('biological_sex', e.target.value)}
-            className="w-full px-4 py-2 border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
           >
             <option value="">Select...</option>
             <option value="male">Male</option>
@@ -469,50 +469,50 @@ function PersonalInfoForm({ data, onChange, unitSystem }: any) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             Date of Birth <span className="text-red-500">*</span>
           </label>
           <input
             type="date"
             value={data.date_of_birth || ''}
             onChange={(e) => onChange('date_of_birth', e.target.value)}
-            className="w-full px-4 py-2 border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             Country <span className="text-red-500">*</span>
           </label>
           <input
             type="text"
             value={data.country || ''}
             onChange={(e) => onChange('country', e.target.value)}
-            className="w-full px-4 py-2 border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             Height ({unitSystem === 'metric' ? 'cm' : 'inches'}) <span className="text-red-500">*</span>
           </label>
           <input
             type="number"
             value={data.height || ''}
             onChange={(e) => onChange('height', e.target.value)}
-            className="w-full px-4 py-2 border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             Weight ({unitSystem === 'metric' ? 'kg' : 'lbs'}) <span className="text-red-500">*</span>
           </label>
           <input
             type="number"
             value={data.weight || ''}
             onChange={(e) => onChange('weight', e.target.value)}
-            className="w-full px-4 py-2 border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
           />
         </div>
       </div>
@@ -524,12 +524,12 @@ function MedicalHistoryForm({ data, onChange }: any) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Medical History</h2>
-        <p className="text-gray-600 dark:text-gray-400">Your medical background helps us provide better insights</p>
+        <h2 className="text-2xl font-bold text-white mb-2">Medical History</h2>
+        <p className="text-gray-400">Your medical background helps us provide better insights</p>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label className="block text-sm font-medium text-gray-300 mb-2">
           Do you currently have any diagnosed medical conditions? <span className="text-red-500">*</span>
         </label>
         <div className="flex space-x-4">
@@ -556,14 +556,14 @@ function MedicalHistoryForm({ data, onChange }: any) {
 
       {data.has_diagnosed_conditions && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             Which conditions?
           </label>
           <textarea
             value={data.conditions_list || ''}
             onChange={(e) => onChange('conditions_list', e.target.value)}
             rows={4}
-            className="w-full px-4 py-2 border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
             placeholder="List your conditions..."
           />
         </div>
@@ -576,12 +576,12 @@ function MedicationsForm({ data, onChange }: any) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Medications</h2>
-        <p className="text-gray-600 dark:text-gray-400">Current medications and supplements</p>
+        <h2 className="text-2xl font-bold text-white mb-2">Medications</h2>
+        <p className="text-gray-400">Current medications and supplements</p>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label className="block text-sm font-medium text-gray-300 mb-2">
           Are you currently taking any prescription medications? <span className="text-red-500">*</span>
         </label>
         <div className="flex space-x-4">
@@ -608,14 +608,14 @@ function MedicationsForm({ data, onChange }: any) {
 
       {data.taking_medications && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             List medications
           </label>
           <textarea
             value={data.medications_list || ''}
             onChange={(e) => onChange('medications_list', e.target.value)}
             rows={4}
-            className="w-full px-4 py-2 border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
             placeholder="Medication name, dosage, frequency..."
           />
         </div>
@@ -628,12 +628,12 @@ function AllergiesForm({ data, onChange }: any) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Allergies</h2>
-        <p className="text-gray-600 dark:text-gray-400">Known allergies and reactions</p>
+        <h2 className="text-2xl font-bold text-white mb-2">Allergies</h2>
+        <p className="text-gray-400">Known allergies and reactions</p>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label className="block text-sm font-medium text-gray-300 mb-2">
           Do you have any known allergies? <span className="text-red-500">*</span>
         </label>
         <div className="flex space-x-4">
@@ -660,14 +660,14 @@ function AllergiesForm({ data, onChange }: any) {
 
       {data.has_allergies && (
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             Describe your allergies
           </label>
           <textarea
             value={data.allergies_list || ''}
             onChange={(e) => onChange('allergies_list', e.target.value)}
             rows={4}
-            className="w-full px-4 py-2 border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
             placeholder="Type of allergy, severity, reactions..."
           />
         </div>
@@ -680,25 +680,25 @@ function VitalSignsForm({ data, onChange, unitSystem }: any) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Vital Signs</h2>
-        <p className="text-gray-600 dark:text-gray-400">Recent measurements (all optional)</p>
+        <h2 className="text-2xl font-bold text-white mb-2">Vital Signs</h2>
+        <p className="text-gray-400">Recent measurements (all optional)</p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             Resting Heart Rate (bpm)
           </label>
           <input
             type="number"
             value={data.resting_heart_rate || ''}
             onChange={(e) => onChange('resting_heart_rate', e.target.value)}
-            className="w-full px-4 py-2 border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             Blood Pressure ({unitSystem === 'metric' ? 'mmHg' : 'mmHg'})
           </label>
           <input
@@ -706,7 +706,7 @@ function VitalSignsForm({ data, onChange, unitSystem }: any) {
             value={data.blood_pressure || ''}
             onChange={(e) => onChange('blood_pressure', e.target.value)}
             placeholder="120/80"
-            className="w-full px-4 py-2 border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
           />
         </div>
       </div>
@@ -718,19 +718,19 @@ function LifestyleForm({ data, onChange }: any) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Lifestyle</h2>
-        <p className="text-gray-600 dark:text-gray-400">Daily habits and routines</p>
+        <h2 className="text-2xl font-bold text-white mb-2">Lifestyle</h2>
+        <p className="text-gray-400">Daily habits and routines</p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             Smoking Status
           </label>
           <select
             value={data.smoking_status || ''}
             onChange={(e) => onChange('smoking_status', e.target.value)}
-            className="w-full px-4 py-2 border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
           >
             <option value="">Select...</option>
             <option value="never">Never</option>
@@ -740,13 +740,13 @@ function LifestyleForm({ data, onChange }: any) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             Alcohol Consumption
           </label>
           <select
             value={data.alcohol_consumption || ''}
             onChange={(e) => onChange('alcohol_consumption', e.target.value)}
-            className="w-full px-4 py-2 border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
           >
             <option value="">Select...</option>
             <option value="none">None</option>
@@ -757,19 +757,19 @@ function LifestyleForm({ data, onChange }: any) {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             Exercise Frequency (per week)
           </label>
           <input
             type="number"
             value={data.exercise_frequency || ''}
             onChange={(e) => onChange('exercise_frequency', e.target.value)}
-            className="w-full px-4 py-2 border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+          <label className="block text-sm font-medium text-gray-300 mb-2">
             Sleep Duration (hours per night)
           </label>
           <input
@@ -777,7 +777,7 @@ function LifestyleForm({ data, onChange }: any) {
             step="0.5"
             value={data.sleep_duration || ''}
             onChange={(e) => onChange('sleep_duration', e.target.value)}
-            className="w-full px-4 py-2 border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
           />
         </div>
       </div>
@@ -789,18 +789,18 @@ function PsychologicalHealthForm({ data, onChange }: any) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Psychological Health</h2>
-        <p className="text-gray-600 dark:text-gray-400">Mental and emotional wellbeing</p>
+        <h2 className="text-2xl font-bold text-white mb-2">Psychological Health</h2>
+        <p className="text-gray-400">Mental and emotional wellbeing</p>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label className="block text-sm font-medium text-gray-300 mb-2">
           How would you describe your current mood stability?
         </label>
         <select
           value={data.mood_stability || ''}
           onChange={(e) => onChange('mood_stability', e.target.value)}
-          className="w-full px-4 py-2 border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900"
+          className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900"
         >
           <option value="">Select...</option>
           <option value="very_stable">Very Stable</option>
@@ -811,7 +811,7 @@ function PsychologicalHealthForm({ data, onChange }: any) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label className="block text-sm font-medium text-gray-300 mb-2">
           Do you experience prolonged stress?
         </label>
         <div className="flex space-x-4">
@@ -843,25 +843,25 @@ function MensSexualHealthForm({ data, onChange }: any) {
   return (
     <div className="space-y-6">
       <div className="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
-        <p className="text-sm text-gray-700 dark:text-gray-300">
+        <p className="text-sm text-gray-300">
           <strong>Confidentiality Notice:</strong> All responses are encrypted and private.
           This information is used only to provide personalized wellness guidance.
         </p>
       </div>
 
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Men's Sexual Health</h2>
-        <p className="text-gray-600 dark:text-gray-400">Supportive guidance for hormonal and sexual wellbeing</p>
+        <h2 className="text-2xl font-bold text-white mb-2">Men's Sexual Health</h2>
+        <p className="text-gray-400">Supportive guidance for hormonal and sexual wellbeing</p>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label className="block text-sm font-medium text-gray-300 mb-2">
           Is your sexual interest stable, increasing, or decreasing?
         </label>
         <select
           value={data.sexual_interest_trend || ''}
           onChange={(e) => onChange('sexual_interest_trend', e.target.value)}
-          className="w-full px-4 py-2 border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-900"
+          className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900"
         >
           <option value="">Select...</option>
           <option value="increasing">Increasing</option>
@@ -871,7 +871,7 @@ function MensSexualHealthForm({ data, onChange }: any) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label className="block text-sm font-medium text-gray-300 mb-2">
           Do you feel confident in your sexual function?
         </label>
         <div className="flex space-x-4">
@@ -903,19 +903,19 @@ function WomensSexualHealthForm({ data, onChange }: any) {
   return (
     <div className="space-y-6">
       <div className="bg-blue-50 dark:bg-blue-900/20 border-2 border-blue-200 dark:border-blue-800 rounded-lg p-4 mb-6">
-        <p className="text-sm text-gray-700 dark:text-gray-300">
+        <p className="text-sm text-gray-300">
           <strong>Confidentiality Notice:</strong> All responses are encrypted and private.
           This information is used only to provide personalized wellness guidance.
         </p>
       </div>
 
       <div>
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Women's Sexual Health</h2>
-        <p className="text-gray-600 dark:text-gray-400">Supportive guidance for hormonal and sexual wellbeing</p>
+        <h2 className="text-2xl font-bold text-white mb-2">Women's Sexual Health</h2>
+        <p className="text-gray-400">Supportive guidance for hormonal and sexual wellbeing</p>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label className="block text-sm font-medium text-gray-300 mb-2">
           Have you noticed changes in sexual desire or interest?
         </label>
         <div className="flex space-x-4">
@@ -941,7 +941,7 @@ function WomensSexualHealthForm({ data, onChange }: any) {
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+        <label className="block text-sm font-medium text-gray-300 mb-2">
           Would you like AI guidance related to hormonal support or sexual wellbeing?
         </label>
         <div className="flex space-x-4">
@@ -973,10 +973,10 @@ function LockedSectionMessage({ section }: { section: string }) {
   return (
     <div className="flex flex-col items-center justify-center py-12 px-4">
       <Lock className="h-16 w-16 text-gray-400 mb-4" />
-      <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+      <h3 className="text-xl font-bold text-white mb-2">
         {section} Locked
       </h3>
-      <p className="text-center text-gray-600 dark:text-gray-400 max-w-md mb-6">
+      <p className="text-center text-gray-400 max-w-md mb-6">
         This questionnaire becomes available only after you activate and pay for the corresponding category.
       </p>
       <button className="px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors">

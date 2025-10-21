@@ -75,13 +75,13 @@ export default function NewsManager() {
   }
 
   if (loading) {
-    return <div className="text-center py-12 text-gray-600 dark:text-gray-400">Loading news...</div>;
+    return <div className="text-center py-12 text-gray-400">Loading news...</div>;
   }
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">News Management</h1>
+        <h1 className="text-3xl font-bold text-white">News Management</h1>
         <button
           className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
         >
@@ -94,12 +94,12 @@ export default function NewsManager() {
         {news.map((item) => (
           <div
             key={item.id}
-            className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6"
+            className="bg-gray-800/50 border border-gray-700/30 border border-gray-700/50 rounded-xl p-6"
           >
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">{item.title}</h3>
+                  <h3 className="text-xl font-bold text-white">{item.title}</h3>
                   <span
                     className={`px-3 py-1 text-xs font-medium rounded-full ${
                       item.status === 'published'
@@ -113,7 +113,7 @@ export default function NewsManager() {
                     Priority: {item.priority}
                   </span>
                 </div>
-                <p className="text-gray-600 dark:text-gray-400 mb-3">{item.excerpt}</p>
+                <p className="text-gray-400 mb-3">{item.excerpt}</p>
                 <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-500">
                   <span>{new Date(item.created_at).toLocaleDateString()}</span>
                 </div>
@@ -125,9 +125,9 @@ export default function NewsManager() {
                   title={item.status === 'published' ? 'Unpublish' : 'Publish'}
                 >
                   {item.status === 'published' ? (
-                    <EyeOff className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                    <EyeOff className="h-5 w-5 text-gray-400" />
                   ) : (
-                    <Eye className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                    <Eye className="h-5 w-5 text-gray-400" />
                   )}
                 </button>
                 <button className="p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-lg transition-colors">
@@ -147,7 +147,7 @@ export default function NewsManager() {
 
       {news.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-gray-600 dark:text-gray-400">No news items yet. Create your first one!</p>
+          <p className="text-gray-400">No news items yet. Create your first one!</p>
         </div>
       )}
     </div>

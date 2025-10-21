@@ -83,8 +83,8 @@ export default function Reports({ onNavigate }: ReportsProps) {
     return (
       <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors pt-16 flex items-center justify-center">
         <div className="text-center">
-          <Clock className="h-12 w-12 text-blue-600 dark:text-blue-400 mx-auto mb-4 animate-spin" />
-          <p className="text-gray-600 dark:text-gray-400">Loading your reports...</p>
+          <Clock className="h-12 w-12 text-orange-500 mx-auto mb-4 animate-spin" />
+          <p className="text-gray-400">Loading your reports...</p>
         </div>
       </div>
     );
@@ -95,35 +95,35 @@ export default function Reports({ onNavigate }: ReportsProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-8">
           <div className="flex items-center justify-between mb-4">
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white">
+            <h1 className="text-4xl font-bold text-white">
               My Reports
             </h1>
             <button
               onClick={() => setShowCreateFlow(true)}
-              className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+              className="inline-flex items-center px-4 py-2 bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-600 shadow-lg shadow-orange-600/20 text-white rounded-lg transition-colors"
             >
               <Plus className="h-5 w-5 mr-2" />
               Create Report
             </button>
           </div>
-          <p className="text-xl text-gray-600 dark:text-gray-400">
+          <p className="text-xl text-gray-400">
             Reports transform data into understanding: what's happening now, why, and what to do next.
           </p>
         </div>
 
         {reports.length === 0 ? (
-          <div className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-12 text-center border-2 border-dashed border-blue-200 dark:border-blue-800">
-            <FileText className="h-16 w-16 text-blue-600 dark:text-blue-400 mx-auto mb-4" />
-            <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">
+          <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-xl p-12 text-center border-2 border-dashed border-gray-700/50">
+            <FileText className="h-16 w-16 text-orange-500 mx-auto mb-4" />
+            <h3 className="text-2xl font-bold text-white mb-2">
               No reports yet
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
+            <p className="text-gray-400 mb-6 max-w-md mx-auto">
               Create your first report to get a personalized explanation of your state
               and specific steps for improvement.
             </p>
             <button
               onClick={() => setShowCreateFlow(true)}
-              className="inline-flex items-center px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors font-semibold"
+              className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-600 shadow-lg shadow-orange-600/20 text-white rounded-lg transition-colors font-semibold"
             >
               <Plus className="h-5 w-5 mr-2" />
               Create First Report
@@ -137,18 +137,18 @@ export default function Reports({ onNavigate }: ReportsProps) {
                 <div
                   key={report.id}
                   onClick={() => setSelectedReport(report)}
-                  className="bg-white dark:bg-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-800 hover:border-blue-300 dark:hover:border-blue-700 transition-all cursor-pointer group"
+                  className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-xl p-6 border border-gray-700/50 hover:border-blue-300 dark:hover:border-blue-700 transition-all cursor-pointer group"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-start space-x-3">
                       <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <Icon className="h-6 w-6 text-blue-600 dark:text-blue-400" />
+                        <Icon className="h-6 w-6 text-orange-500" />
                       </div>
                       <div>
-                        <h3 className="font-bold text-gray-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                        <h3 className="font-bold text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
                           {report.topic || getReportTypeLabel(report.report_type)}
                         </h3>
-                        <p className="text-sm text-gray-600 dark:text-gray-400">
+                        <p className="text-sm text-gray-400">
                           {new Date(report.created_at).toLocaleDateString('ru-RU', {
                             day: 'numeric',
                             month: 'long',
@@ -167,7 +167,7 @@ export default function Reports({ onNavigate }: ReportsProps) {
                   </p>
 
                   <div className="flex items-center justify-between">
-                    <div className="flex items-center space-x-4 text-xs text-gray-600 dark:text-gray-400">
+                    <div className="flex items-center space-x-4 text-xs text-gray-400">
                       {report.insights && Array.isArray(report.insights) && (
                         <span>{report.insights.length} insights</span>
                       )}
@@ -264,11 +264,11 @@ function CreateReportFlow({ onBack, onComplete }: CreateReportFlowProps) {
     return (
       <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors pt-16 flex items-center justify-center">
         <div className="text-center max-w-md">
-          <Zap className="h-16 w-16 text-blue-600 dark:text-blue-400 mx-auto mb-6 animate-pulse" />
-          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+          <Zap className="h-16 w-16 text-orange-500 mx-auto mb-6 animate-pulse" />
+          <h2 className="text-2xl font-bold text-white mb-4">
             Creating your report
           </h2>
-          <div className="space-y-2 text-gray-600 dark:text-gray-400">
+          <div className="space-y-2 text-gray-400">
             <p>✓ Gathering latest data</p>
             <p>✓ Analyzing trends</p>
             <p>✓ Forming insights</p>
@@ -285,16 +285,16 @@ function CreateReportFlow({ onBack, onComplete }: CreateReportFlowProps) {
         <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
           <button
             onClick={onBack}
-            className="mb-6 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+            className="mb-6 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
           >
             ← Back
           </button>
 
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+          <h1 className="text-3xl font-bold text-white mb-4">
             Report Settings
           </h1>
 
-          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6 mb-8 border border-blue-200 dark:border-blue-800">
+          <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6 mb-8 border border-gray-700/50">
             <p className="text-gray-700 dark:text-gray-300">
               We'll gather your latest data and present the observations in a clear format: what's happening now,
               why, and what gentle step will help next.
@@ -303,7 +303,7 @@ function CreateReportFlow({ onBack, onComplete }: CreateReportFlowProps) {
 
           {reportType === 'thematic' && (
             <div className="mb-6">
-              <label className="block text-sm font-semibold text-gray-900 dark:text-white mb-2">
+              <label className="block text-sm font-semibold text-white mb-2">
                 Report Topic
               </label>
               <input
@@ -311,12 +311,12 @@ function CreateReportFlow({ onBack, onComplete }: CreateReportFlowProps) {
                 value={topic}
                 onChange={(e) => setTopic(e.target.value)}
                 placeholder="For example: Why am I not sleeping well?"
-                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white"
+                className="w-full px-4 py-3 rounded-lg border border-gray-300 dark:border-gray-700 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 text-white"
               />
             </div>
           )}
 
-          <div className="bg-white dark:bg-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-800 mb-6">
+          <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-xl p-6 border border-gray-700/50 mb-6">
             <label className="flex items-start space-x-3 cursor-pointer">
               <input
                 type="checkbox"
@@ -325,10 +325,10 @@ function CreateReportFlow({ onBack, onComplete }: CreateReportFlowProps) {
                 className="mt-1 h-5 w-5 text-blue-600 rounded"
               />
               <div>
-                <p className="font-semibold text-gray-900 dark:text-white">
+                <p className="font-semibold text-white">
                   Include second opinion
                 </p>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
+                <p className="text-sm text-gray-400">
                   Get two different explanations: physiological and behavioral
                 </p>
               </div>
@@ -337,7 +337,7 @@ function CreateReportFlow({ onBack, onComplete }: CreateReportFlowProps) {
 
           <button
             onClick={handleCreate}
-            className="w-full py-4 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+            className="w-full py-4 bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-600 shadow-lg shadow-orange-600/20 text-white rounded-lg font-semibold transition-colors"
           >
             Create Report
           </button>
@@ -351,12 +351,12 @@ function CreateReportFlow({ onBack, onComplete }: CreateReportFlowProps) {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <button
           onClick={onBack}
-          className="mb-6 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+          className="mb-6 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
         >
           ← Back
         </button>
 
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-8">
+        <h1 className="text-3xl font-bold text-white mb-8">
           Choose Report Type
         </h1>
 
@@ -366,13 +366,13 @@ function CreateReportFlow({ onBack, onComplete }: CreateReportFlowProps) {
               setReportType('general');
               setStep('options');
             }}
-            className="bg-white dark:bg-gray-900 rounded-xl p-6 border-2 border-gray-200 dark:border-gray-800 hover:border-blue-500 dark:hover:border-blue-500 transition-all text-left group"
+            className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-xl p-6 border-2 border-gray-200 dark:border-gray-800 hover:border-blue-500 dark:hover:border-blue-500 transition-all text-left group"
           >
-            <FileText className="h-12 w-12 text-blue-600 dark:text-blue-400 mb-4 group-hover:scale-110 transition-transform" />
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+            <FileText className="h-12 w-12 text-orange-500 mb-4 group-hover:scale-110 transition-transform" />
+            <h3 className="text-xl font-bold text-white mb-2">
               General State Report
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 text-sm">
+            <p className="text-gray-400 text-sm">
               Learn what's happening with your body overall: sleep, energy, recovery, load adaptation
             </p>
           </button>
@@ -382,13 +382,13 @@ function CreateReportFlow({ onBack, onComplete }: CreateReportFlowProps) {
               setReportType('thematic');
               setStep('options');
             }}
-            className="bg-white dark:bg-gray-900 rounded-xl p-6 border-2 border-gray-200 dark:border-gray-800 hover:border-purple-500 dark:hover:border-purple-500 transition-all text-left group"
+            className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-xl p-6 border-2 border-gray-200 dark:border-gray-800 hover:border-purple-500 dark:hover:border-purple-500 transition-all text-left group"
           >
             <Heart className="h-12 w-12 text-purple-600 dark:text-purple-400 mb-4 group-hover:scale-110 transition-transform" />
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+            <h3 className="text-xl font-bold text-white mb-2">
               Explore Specific Topic
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 text-sm">
+            <p className="text-gray-400 text-sm">
               Deep analysis of one area: sleep, stress, recovery, nutrition, glucose
             </p>
           </button>
@@ -398,14 +398,14 @@ function CreateReportFlow({ onBack, onComplete }: CreateReportFlowProps) {
               setReportType('dynamic');
               setStep('options');
             }}
-            className="bg-white dark:bg-gray-900 rounded-xl p-6 border-2 border-gray-200 dark:border-gray-800 hover:border-green-500 dark:hover:border-green-500 transition-all text-left group"
+            className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-xl p-6 border-2 border-gray-200 dark:border-gray-800 hover:border-green-500 dark:hover:border-green-500 transition-all text-left group"
             disabled={reports.length < 2}
           >
             <TrendingUp className="h-12 w-12 text-green-600 dark:text-green-400 mb-4 group-hover:scale-110 transition-transform" />
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+            <h3 className="text-xl font-bold text-white mb-2">
               View Dynamics
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 text-sm">
+            <p className="text-gray-400 text-sm">
               Compare state with previous reports and see trends
             </p>
             {reports.length < 2 && (
@@ -420,13 +420,13 @@ function CreateReportFlow({ onBack, onComplete }: CreateReportFlowProps) {
               setReportType('device_enhanced');
               setStep('options');
             }}
-            className="bg-white dark:bg-gray-900 rounded-xl p-6 border-2 border-gray-200 dark:border-gray-800 hover:border-teal-500 dark:hover:border-teal-500 transition-all text-left group"
+            className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-xl p-6 border-2 border-gray-200 dark:border-gray-800 hover:border-teal-500 dark:hover:border-teal-500 transition-all text-left group"
           >
             <Activity className="h-12 w-12 text-teal-600 dark:text-teal-400 mb-4 group-hover:scale-110 transition-transform" />
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+            <h3 className="text-xl font-bold text-white mb-2">
               Report with Device Data
             </h3>
-            <p className="text-gray-600 dark:text-gray-400 text-sm">
+            <p className="text-gray-400 text-sm">
               Complete analysis with automatic integration of metrics from your devices
             </p>
           </button>
@@ -462,7 +462,7 @@ function ReportView({ report, onBack, onNavigate }: ReportViewProps) {
       <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <button
           onClick={onBack}
-          className="mb-6 text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
+          className="mb-6 text-gray-400 hover:text-gray-900 dark:hover:text-white transition-colors"
         >
           ← Back to Reports List
         </button>
@@ -470,10 +470,10 @@ function ReportView({ report, onBack, onNavigate }: ReportViewProps) {
         <div className="mb-8">
           <div className="flex items-start justify-between mb-4">
             <div>
-              <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
+              <h1 className="text-3xl font-bold text-white mb-2">
                 {report.topic || 'State Report'}
               </h1>
-              <p className="text-gray-600 dark:text-gray-400">
+              <p className="text-gray-400">
                 {new Date(report.created_at).toLocaleDateString('ru-RU', {
                   day: 'numeric',
                   month: 'long',
@@ -486,7 +486,7 @@ function ReportView({ report, onBack, onNavigate }: ReportViewProps) {
             <div className="flex space-x-2">
               <button
                 onClick={handleExportPDF}
-                className="inline-flex items-center px-4 py-2 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 text-gray-900 dark:text-white rounded-lg transition-colors"
+                className="inline-flex items-center px-4 py-2 bg-gray-200 dark:bg-gray-800 hover:bg-gray-300 dark:hover:bg-gray-700 text-white rounded-lg transition-colors"
               >
                 <Download className="h-5 w-5 mr-2" />
                 PDF
@@ -503,8 +503,8 @@ function ReportView({ report, onBack, onNavigate }: ReportViewProps) {
         </div>
 
         <div className="space-y-8">
-          <section className="bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+          <section className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-xl p-6 border border-gray-700/50">
+            <h2 className="text-xl font-bold text-white mb-4">
               Brief Summary
             </h2>
             <p className="text-gray-700 dark:text-gray-300 leading-relaxed">
@@ -513,14 +513,14 @@ function ReportView({ report, onBack, onNavigate }: ReportViewProps) {
           </section>
 
           {report.insights && Array.isArray(report.insights) && report.insights.length > 0 && (
-            <section className="bg-white dark:bg-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-800">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+            <section className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-xl p-6 border border-gray-700/50">
+              <h2 className="text-xl font-bold text-white mb-4">
                 Key Insights
               </h2>
               <ul className="space-y-3">
                 {report.insights.map((insight, idx) => (
                   <li key={idx} className="flex items-start space-x-3">
-                    <span className="flex-shrink-0 w-6 h-6 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-blue-600 dark:text-blue-400 text-sm font-semibold">
+                    <span className="flex-shrink-0 w-6 h-6 bg-blue-100 dark:bg-blue-900/30 rounded-full flex items-center justify-center text-orange-500 text-sm font-semibold">
                       {idx + 1}
                     </span>
                     <span className="text-gray-700 dark:text-gray-300">{insight}</span>
@@ -530,8 +530,8 @@ function ReportView({ report, onBack, onNavigate }: ReportViewProps) {
             </section>
           )}
 
-          <section className="bg-white dark:bg-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-800">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+          <section className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-xl p-6 border border-gray-700/50">
+            <h2 className="text-xl font-bold text-white mb-4">
               Detailed Analysis
             </h2>
             <p className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
@@ -541,13 +541,13 @@ function ReportView({ report, onBack, onNavigate }: ReportViewProps) {
 
           {report.recommendations && Array.isArray(report.recommendations) && report.recommendations.length > 0 && (
             <section className="bg-gradient-to-br from-green-50 to-teal-50 dark:from-green-900/20 dark:to-teal-900/20 rounded-xl p-6 border border-green-200 dark:border-green-800">
-              <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+              <h2 className="text-xl font-bold text-white mb-4">
                 Gentle Steps for Improvement
               </h2>
               <div className="space-y-4">
                 {report.recommendations.map((rec, idx) => (
                   <div key={idx} className="bg-white dark:bg-gray-800 rounded-lg p-4">
-                    <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                    <h3 className="font-semibold text-white mb-2">
                       {rec.title}
                     </h3>
                     <p className="text-sm text-gray-700 dark:text-gray-300">
@@ -562,7 +562,7 @@ function ReportView({ report, onBack, onNavigate }: ReportViewProps) {
           {report.second_opinion_a && report.second_opinion_b && (
             <section className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-6 border border-purple-200 dark:border-purple-800">
               <div className="flex items-center justify-between mb-4">
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white">
+                <h2 className="text-xl font-bold text-white">
                   Second Opinion
                 </h2>
                 <div className="flex space-x-2">
@@ -601,7 +601,7 @@ function ReportView({ report, onBack, onNavigate }: ReportViewProps) {
 
               {(showOpinion === 'a' || showOpinion === 'both') && (
                 <div className="bg-white dark:bg-gray-800 rounded-lg p-4 mb-4">
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                  <h3 className="font-semibold text-white mb-2">
                     Opinion A (Physiology)
                   </h3>
                   <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
@@ -612,7 +612,7 @@ function ReportView({ report, onBack, onNavigate }: ReportViewProps) {
 
               {(showOpinion === 'b' || showOpinion === 'both') && (
                 <div className="bg-white dark:bg-gray-800 rounded-lg p-4">
-                  <h3 className="font-semibold text-gray-900 dark:text-white mb-2">
+                  <h3 className="font-semibold text-white mb-2">
                     Opinion B (Lifestyle)
                   </h3>
                   <p className="text-sm text-gray-700 dark:text-gray-300 leading-relaxed">
@@ -624,7 +624,7 @@ function ReportView({ report, onBack, onNavigate }: ReportViewProps) {
           )}
 
           <section className="bg-gradient-to-br from-teal-50 to-cyan-50 dark:from-teal-900/20 dark:to-cyan-900/20 rounded-xl p-6 border-2 border-teal-200 dark:border-teal-800">
-            <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+            <h2 className="text-xl font-bold text-white mb-2">
               Want to turn recommendations into a plan?
             </h2>
             <p className="text-gray-700 dark:text-gray-300 mb-4">

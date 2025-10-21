@@ -77,13 +77,13 @@ export default function BlogManager() {
   }
 
   if (loading) {
-    return <div className="text-center py-12 text-gray-600 dark:text-gray-400">Loading posts...</div>;
+    return <div className="text-center py-12 text-gray-400">Loading posts...</div>;
   }
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Blog Management</h1>
+        <h1 className="text-3xl font-bold text-white">Blog Management</h1>
         <button
           onClick={() => {
             setEditingPost(null);
@@ -100,12 +100,12 @@ export default function BlogManager() {
         {posts.map((post) => (
           <div
             key={post.id}
-            className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6"
+            className="bg-gray-800/50 border border-gray-700/30 border border-gray-700/50 rounded-xl p-6"
           >
             <div className="flex items-start justify-between">
               <div className="flex-1">
                 <div className="flex items-center gap-3 mb-2">
-                  <h3 className="text-xl font-bold text-gray-900 dark:text-white">{post.title}</h3>
+                  <h3 className="text-xl font-bold text-white">{post.title}</h3>
                   <span
                     className={`px-3 py-1 text-xs font-medium rounded-full ${
                       post.status === 'published'
@@ -116,7 +116,7 @@ export default function BlogManager() {
                     {post.status}
                   </span>
                 </div>
-                <p className="text-gray-600 dark:text-gray-400 mb-3">{post.excerpt}</p>
+                <p className="text-gray-400 mb-3">{post.excerpt}</p>
                 <div className="flex items-center gap-4 text-sm text-gray-500 dark:text-gray-500">
                   <span>{post.category}</span>
                   <span>•</span>
@@ -130,9 +130,9 @@ export default function BlogManager() {
                   title={post.status === 'published' ? 'Unpublish' : 'Publish'}
                 >
                   {post.status === 'published' ? (
-                    <EyeOff className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                    <EyeOff className="h-5 w-5 text-gray-400" />
                   ) : (
-                    <Eye className="h-5 w-5 text-gray-600 dark:text-gray-400" />
+                    <Eye className="h-5 w-5 text-gray-400" />
                   )}
                 </button>
                 <button
@@ -158,7 +158,7 @@ export default function BlogManager() {
 
       {posts.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-gray-600 dark:text-gray-400">No blog posts yet. Create your first one!</p>
+          <p className="text-gray-400">No blog posts yet. Create your first one!</p>
         </div>
       )}
     </div>
