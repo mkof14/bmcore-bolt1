@@ -24,7 +24,7 @@ export default function PrivacyPolicy({ onNavigate }: PrivacyPolicyProps) {
         <div className="prose prose-lg max-w-none dark:prose-invert">
           <div className="bg-orange-50 dark:bg-orange-900/20 border border-orange-200 dark:border-orange-800 rounded-xl p-6 mb-8">
             <p className="text-gray-900 dark:text-gray-100 font-medium mb-0">
-              BioMath Core, LLC ("BioMath Core," "we," "us," or "our") is committed to protecting your privacy and ensuring the security of your personal and health information. This Privacy Policy explains how we collect, use, disclose, and safeguard your data when you use our wellness intelligence platform.
+              BioMath Core ("we," "us," or "our") is committed to protecting your privacy and ensuring the security of your personal and health information. This Privacy Policy explains how we collect, use, disclose, and safeguard your data when you use our wellness intelligence platform.
             </p>
           </div>
 
@@ -292,7 +292,7 @@ export default function PrivacyPolicy({ onNavigate }: PrivacyPolicyProps) {
             </p>
             <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6">
               <p className="text-gray-700 dark:text-gray-300 mb-2">
-                <strong>BioMath Core, LLC</strong><br />
+                <strong>BioMath Core</strong><br />
                 Privacy Officer<br />
                 Charlotte, NC, USA
               </p>
