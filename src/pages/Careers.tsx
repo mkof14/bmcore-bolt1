@@ -21,6 +21,7 @@ interface CareerPosting {
 export default function Careers({ onNavigate }: CareersProps) {
   const [jobs, setJobs] = useState<CareerPosting[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
     loadJobs();
@@ -28,16 +29,26 @@ export default function Careers({ onNavigate }: CareersProps) {
 
   async function loadJobs() {
     try {
-      const { data, error } = await supabase
+      setLoading(true);
+      setError('');
+
+      const { data, error: fetchError } = await supabase
         .from('career_postings')
-        .select('*')
+        .select('id, title, slug, department, location, employment_type, description, salary_range')
         .eq('status', 'active')
         .order('created_at', { ascending: false });
 
-      if (error) throw error;
+      if (fetchError) {
+        console.error('Supabase error:', fetchError);
+        setError(`Database error: ${fetchError.message}`);
+        return;
+      }
+
+      console.log('Loaded jobs:', data);
       setJobs(data || []);
-    } catch (error) {
-      console.error('Error loading jobs:', error);
+    } catch (err) {
+      console.error('Error loading jobs:', err);
+      setError(`Failed to load: ${err instanceof Error ? err.message : 'Unknown error'}`);
     } finally {
       setLoading(false);
     }
@@ -76,22 +87,38 @@ export default function Careers({ onNavigate }: CareersProps) {
           </div>
         </div>
 
-        {loading ? (
+        {loading && (
           <div className="text-center py-12">
             <p className="text-gray-600 dark:text-gray-400">Loading positions...</p>
           </div>
-        ) : jobs.length === 0 ? (
+        )}
+
+        {error && (
+          <div className="text-center py-12">
+            <p className="text-red-600 dark:text-red-400 font-semibold mb-2">Error Loading Positions</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">{error}</p>
+            <button
+              onClick={loadJobs}
+              className="mt-4 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+            >
+              Try Again
+            </button>
+          </div>
+        )}
+
+        {!loading && !error && jobs.length === 0 && (
           <div className="text-center py-12">
             <p className="text-gray-600 dark:text-gray-400 mb-4">No open positions at the moment.</p>
             <p className="text-sm text-gray-500 dark:text-gray-500">Check back soon or send us your CV at careers@biomathcore.com</p>
           </div>
-        ) : (
+        )}
+
+        {!loading && !error && jobs.length > 0 && (
           <div className="space-y-4">
             {jobs.map((job) => (
               <div
                 key={job.id}
                 className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6 hover:shadow-lg transition-shadow cursor-pointer"
-                onClick={() => onNavigate(`careers/${job.slug}`)}
               >
                 <div className="flex items-start justify-between mb-4">
                   <div>

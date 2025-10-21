@@ -13,13 +13,13 @@ interface NewsItem {
   slug: string;
   excerpt: string;
   image_url: string;
-  priority: number;
   published_at: string;
 }
 
 export default function News({ onNavigate }: NewsProps) {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
     loadNews();
@@ -27,18 +27,28 @@ export default function News({ onNavigate }: NewsProps) {
 
   async function loadNews() {
     try {
-      const { data, error } = await supabase
+      setLoading(true);
+      setError('');
+
+      const { data, error: fetchError } = await supabase
         .from('news_items')
-        .select('*')
+        .select('id, title, slug, excerpt, image_url, published_at')
         .eq('status', 'published')
         .order('priority', { ascending: false })
         .order('published_at', { ascending: false })
         .limit(20);
 
-      if (error) throw error;
+      if (fetchError) {
+        console.error('Supabase error:', fetchError);
+        setError(`Database error: ${fetchError.message}`);
+        return;
+      }
+
+      console.log('Loaded news:', data);
       setNews(data || []);
-    } catch (error) {
-      console.error('Error loading news:', error);
+    } catch (err) {
+      console.error('Error loading news:', err);
+      setError(`Failed to load: ${err instanceof Error ? err.message : 'Unknown error'}`);
     } finally {
       setLoading(false);
     }
@@ -59,22 +69,38 @@ export default function News({ onNavigate }: NewsProps) {
           </p>
         </div>
 
-        {loading ? (
+        {loading && (
           <div className="text-center py-12">
             <p className="text-gray-600 dark:text-gray-400">Loading news...</p>
           </div>
-        ) : news.length === 0 ? (
+        )}
+
+        {error && (
+          <div className="text-center py-12">
+            <p className="text-red-600 dark:text-red-400 font-semibold mb-2">Error Loading News</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">{error}</p>
+            <button
+              onClick={loadNews}
+              className="mt-4 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+            >
+              Try Again
+            </button>
+          </div>
+        )}
+
+        {!loading && !error && news.length === 0 && (
           <div className="text-center py-12">
             <p className="text-gray-600 dark:text-gray-400 mb-4">No news available yet.</p>
             <p className="text-sm text-gray-500 dark:text-gray-500">Stay tuned for updates!</p>
           </div>
-        ) : (
+        )}
+
+        {!loading && !error && news.length > 0 && (
           <div className="space-y-6">
             {news.map((item) => (
               <article
                 key={item.id}
                 className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
-                onClick={() => onNavigate(`news/${item.slug}`)}
               >
                 <div className="md:flex">
                   {item.image_url && (

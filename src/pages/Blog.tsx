@@ -1,4 +1,4 @@
-import { BookOpen, Calendar, User, ArrowRight } from 'lucide-react';
+import { BookOpen, Calendar, ArrowRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import BackButton from '../components/BackButton';
@@ -12,16 +12,15 @@ interface BlogPost {
   title: string;
   slug: string;
   excerpt: string;
-  author_id: string;
   featured_image: string;
   category: string;
-  tags: string[];
   published_at: string;
 }
 
 export default function Blog({ onNavigate }: BlogProps) {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string>('');
 
   useEffect(() => {
     loadPosts();
@@ -29,17 +28,27 @@ export default function Blog({ onNavigate }: BlogProps) {
 
   async function loadPosts() {
     try {
-      const { data, error } = await supabase
+      setLoading(true);
+      setError('');
+
+      const { data, error: fetchError } = await supabase
         .from('blog_posts')
-        .select('*')
+        .select('id, title, slug, excerpt, featured_image, category, published_at')
         .eq('status', 'published')
         .order('published_at', { ascending: false })
         .limit(12);
 
-      if (error) throw error;
+      if (fetchError) {
+        console.error('Supabase error:', fetchError);
+        setError(`Database error: ${fetchError.message}`);
+        return;
+      }
+
+      console.log('Loaded posts:', data);
       setPosts(data || []);
-    } catch (error) {
-      console.error('Error loading posts:', error);
+    } catch (err) {
+      console.error('Error loading posts:', err);
+      setError(`Failed to load: ${err instanceof Error ? err.message : 'Unknown error'}`);
     } finally {
       setLoading(false);
     }
@@ -60,22 +69,38 @@ export default function Blog({ onNavigate }: BlogProps) {
           </p>
         </div>
 
-        {loading ? (
+        {loading && (
           <div className="text-center py-12">
             <p className="text-gray-600 dark:text-gray-400">Loading articles...</p>
           </div>
-        ) : posts.length === 0 ? (
+        )}
+
+        {error && (
+          <div className="text-center py-12">
+            <p className="text-red-600 dark:text-red-400 font-semibold mb-2">Error Loading Articles</p>
+            <p className="text-sm text-gray-600 dark:text-gray-400">{error}</p>
+            <button
+              onClick={loadPosts}
+              className="mt-4 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
+            >
+              Try Again
+            </button>
+          </div>
+        )}
+
+        {!loading && !error && posts.length === 0 && (
           <div className="text-center py-12">
             <p className="text-gray-600 dark:text-gray-400 mb-4">No articles published yet.</p>
             <p className="text-sm text-gray-500 dark:text-gray-500">Check back soon for new content!</p>
           </div>
-        ) : (
+        )}
+
+        {!loading && !error && posts.length > 0 && (
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
             {posts.map((post) => (
               <article
                 key={post.id}
                 className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl overflow-hidden hover:shadow-lg transition-shadow cursor-pointer"
-                onClick={() => onNavigate(`blog/${post.slug}`)}
               >
                 {post.featured_image && (
                   <div className="aspect-video bg-gray-200 dark:bg-gray-800">
