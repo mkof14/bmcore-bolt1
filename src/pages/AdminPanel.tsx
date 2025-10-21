@@ -1,6 +1,9 @@
 import {  Settings, Users, FileText, Newspaper, Briefcase, FolderOpen, BarChart3, Shield, Menu, X, LayoutDashboard } from 'lucide-react';
 import { useState } from 'react';
 import BackButton from '../components/BackButton';
+import BlogManager from '../components/admin/BlogManager';
+import NewsManager from '../components/admin/NewsManager';
+import CareersManager from '../components/admin/CareersManager';
 
 interface AdminPanelProps {
   onNavigate: (page: string) => void;
@@ -75,9 +78,9 @@ export default function AdminPanel({ onNavigate }: AdminPanelProps) {
 
             {activeSection === 'dashboard' && <DashboardSection />}
             {activeSection === 'users' && <UserManagementSection />}
-            {activeSection === 'blog' && <BlogManagementSection />}
-            {activeSection === 'news' && <NewsManagementSection />}
-            {activeSection === 'careers' && <CareersManagementSection />}
+            {activeSection === 'blog' && <BlogManager />}
+            {activeSection === 'news' && <NewsManager />}
+            {activeSection === 'careers' && <CareersManager />}
             {activeSection === 'marketing' && <MarketingDocumentsSection />}
             {activeSection === 'analytics' && <AnalyticsSection />}
             {activeSection === 'access' && <AccessControlSection />}
@@ -123,56 +126,6 @@ function UserManagementSection() {
   );
 }
 
-function BlogManagementSection() {
-  return (
-    <div>
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">Blog Management</h1>
-      <div className="flex gap-4 mb-6">
-        <button className="px-4 py-2 bg-orange-600 dark:bg-orange-700 text-white rounded-lg hover:bg-orange-700 dark:hover:bg-orange-600 transition-colors">
-          Create New Post
-        </button>
-        <button className="px-4 py-2 bg-gray-200 dark:bg-gray-800 text-gray-700 dark:text-gray-300 rounded-lg hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors">
-          View Drafts
-        </button>
-      </div>
-      <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6">
-        <p className="text-gray-600 dark:text-gray-400">Blog posts will appear here. Use database queries to fetch and manage posts.</p>
-      </div>
-    </div>
-  );
-}
-
-function NewsManagementSection() {
-  return (
-    <div>
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">News Management</h1>
-      <div className="flex gap-4 mb-6">
-        <button className="px-4 py-2 bg-orange-600 dark:bg-orange-700 text-white rounded-lg hover:bg-orange-700 dark:hover:bg-orange-600 transition-colors">
-          Create News Item
-        </button>
-      </div>
-      <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6">
-        <p className="text-gray-600 dark:text-gray-400">News items will appear here. Connect to database to manage announcements.</p>
-      </div>
-    </div>
-  );
-}
-
-function CareersManagementSection() {
-  return (
-    <div>
-      <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-6">Careers Management</h1>
-      <div className="flex gap-4 mb-6">
-        <button className="px-4 py-2 bg-orange-600 dark:bg-orange-700 text-white rounded-lg hover:bg-orange-700 dark:hover:bg-orange-600 transition-colors">
-          Post New Job
-        </button>
-      </div>
-      <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6">
-        <p className="text-gray-600 dark:text-gray-400">Job postings management interface. Connect to database to manage career opportunities.</p>
-      </div>
-    </div>
-  );
-}
 
 function MarketingDocumentsSection() {
   return (
