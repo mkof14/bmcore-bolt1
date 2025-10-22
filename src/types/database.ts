@@ -460,3 +460,48 @@ export interface EmailLog {
   metadata: Record<string, unknown>;
   created_at: string;
 }
+
+export interface EmailTemplateVersion {
+  id: string;
+  template_id: string;
+  version: number;
+  subject_en: string;
+  subject_ru: string | null;
+  body_en: string;
+  body_ru: string | null;
+  preview_text: string | null;
+  variable_schema: Array<{
+    key: string;
+    type: 'string' | 'number' | 'boolean' | 'date' | 'array' | 'object';
+    required?: boolean;
+  }>;
+  status: 'draft' | 'published';
+  created_by: string | null;
+  created_at: string;
+  published_at: string | null;
+}
+
+export interface EmailSend {
+  id: string;
+  template_id: string | null;
+  template_version: number | null;
+  recipient_user_id: string | null;
+  recipient_email: string;
+  subject: string;
+  body_html: string;
+  body_text: string | null;
+  variables_used: Record<string, unknown>;
+  send_type: 'transactional' | 'marketing' | 'test';
+  status: 'pending' | 'sent' | 'delivered' | 'opened' | 'clicked' | 'bounced' | 'failed';
+  provider: string | null;
+  provider_message_id: string | null;
+  sent_at: string | null;
+  delivered_at: string | null;
+  opened_at: string | null;
+  clicked_at: string | null;
+  bounced_at: string | null;
+  bounce_reason: string | null;
+  error_message: string | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}

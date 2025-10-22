@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Mail, Plus, Edit2, Trash2, Send, Eye, Search, Filter } from 'lucide-react';
+import { Mail, Plus, Edit2, Trash2, Send, Eye, Search, Filter, Download, Upload, RefreshCw } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { EMAIL_TEMPLATES, seedEmailTemplates } from '../../lib/emailTemplates';
+import { createEmailProvider, renderTemplate, htmlToPlainText } from '../../lib/emailProvider';
 
 interface EmailTemplate {
   id: string;
@@ -73,6 +75,79 @@ export default function EmailTemplatesManager() {
     loadLogs();
   }, []);
 
+  const handleSeedTemplates = async () => {
+    if (!confirm('This will add/update all 38 default email templates. Continue?')) return;
+
+    try {
+      setLoading(true);
+      const results = await seedEmailTemplates(supabase);
+      const successCount = results.filter(r => r.success).length;
+      alert(`Successfully seeded ${successCount}/${results.length} templates!`);
+      loadTemplates();
+    } catch (error) {
+      console.error('Error seeding templates:', error);
+      alert('Failed to seed templates');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handleExportTemplates = async () => {
+    try {
+      const { data, error } = await supabase
+        .from('email_templates')
+        .select('*');
+
+      if (error) throw error;
+
+      const exportData = {
+        version: '1.0',
+        exported_at: new Date().toISOString(),
+        templates: data,
+      };
+
+      const blob = new Blob([JSON.stringify(exportData, null, 2)], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = `email-templates-${new Date().toISOString().split('T')[0]}.json`;
+      a.click();
+      URL.revokeObjectURL(url);
+    } catch (error) {
+      console.error('Error exporting templates:', error);
+      alert('Failed to export templates');
+    }
+  };
+
+  const handleImportTemplates = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    try {
+      const text = await file.text();
+      const importData = JSON.parse(text);
+
+      if (!importData.templates || !Array.isArray(importData.templates)) {
+        throw new Error('Invalid template file format');
+      }
+
+      const { error } = await supabase
+        .from('email_templates')
+        .upsert(importData.templates, { onConflict: 'slug' });
+
+      if (error) throw error;
+
+      alert(`Successfully imported ${importData.templates.length} templates!`);
+      loadTemplates();
+    } catch (error) {
+      console.error('Error importing templates:', error);
+      alert('Failed to import templates');
+    }
+
+    // Reset file input
+    event.target.value = '';
+  };
+
   const loadTemplates = async () => {
     try {
       const { data, error } = await supabase
@@ -92,7 +167,7 @@ export default function EmailTemplatesManager() {
   const loadLogs = async () => {
     try {
       const { data, error } = await supabase
-        .from('email_logs')
+        .from('email_sends')
         .select('*')
         .order('created_at', { ascending: false })
         .limit(100);
@@ -215,22 +290,43 @@ export default function EmailTemplatesManager() {
     }
 
     try {
-      const { error } = await supabase
-        .from('email_logs')
+      const emailProvider = createEmailProvider();
+
+      // Send the email using the configured provider
+      const result = await emailProvider.send({
+        to: sendFormData.recipientEmail,
+        subject: sendFormData.customSubject,
+        html: sendFormData.customBody,
+        text: htmlToPlainText(sendFormData.customBody),
+      });
+
+      // Log the send attempt
+      const { error: logError } = await supabase
+        .from('email_sends')
         .insert({
           template_id: selectedTemplate.id,
           recipient_email: sendFormData.recipientEmail,
           subject: sendFormData.customSubject,
-          body: sendFormData.customBody,
-          status: 'sent',
-          sent_at: new Date().toISOString(),
+          body_html: sendFormData.customBody,
+          body_text: htmlToPlainText(sendFormData.customBody),
+          variables_used: {},
+          send_type: 'test',
+          status: result.success ? 'sent' : 'failed',
+          provider: emailProvider.name,
+          provider_message_id: result.messageId,
+          sent_at: result.success ? new Date().toISOString() : null,
+          error_message: result.error || null,
         });
 
-      if (error) throw error;
+      if (logError) console.error('Error logging email:', logError);
 
-      alert('Email sent successfully!');
-      setShowSendModal(false);
-      loadLogs();
+      if (result.success) {
+        alert(`Email sent successfully via ${emailProvider.name}!`);
+        setShowSendModal(false);
+        loadLogs();
+      } else {
+        alert(`Failed to send email: ${result.error}`);
+      }
     } catch (error) {
       console.error('Error sending email:', error);
       alert('Failed to send email');
@@ -251,13 +347,40 @@ export default function EmailTemplatesManager() {
           <Mail className="h-8 w-8 text-orange-500" />
           Email Templates
         </h1>
-        <button
-          onClick={openCreateModal}
-          className="px-4 py-2 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-lg hover:from-orange-500 hover:to-orange-600 transition-all duration-300 shadow-lg shadow-orange-600/20 flex items-center gap-2"
-        >
-          <Plus className="h-5 w-5" />
-          Create Template
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={handleSeedTemplates}
+            className="px-4 py-2 bg-gradient-to-r from-green-600 to-green-500 text-white rounded-lg hover:from-green-500 hover:to-green-600 transition-all duration-300 flex items-center gap-2"
+            title="Seed 38 default templates"
+          >
+            <RefreshCw className="h-5 w-5" />
+            Seed Templates
+          </button>
+          <button
+            onClick={handleExportTemplates}
+            className="px-4 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg hover:from-blue-500 hover:to-blue-600 transition-all duration-300 flex items-center gap-2"
+          >
+            <Download className="h-5 w-5" />
+            Export
+          </button>
+          <label className="px-4 py-2 bg-gradient-to-r from-purple-600 to-purple-500 text-white rounded-lg hover:from-purple-500 hover:to-purple-600 transition-all duration-300 flex items-center gap-2 cursor-pointer">
+            <Upload className="h-5 w-5" />
+            Import
+            <input
+              type="file"
+              accept=".json"
+              onChange={handleImportTemplates}
+              className="hidden"
+            />
+          </label>
+          <button
+            onClick={openCreateModal}
+            className="px-4 py-2 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-lg hover:from-orange-500 hover:to-orange-600 transition-all duration-300 shadow-lg shadow-orange-600/20 flex items-center gap-2"
+          >
+            <Plus className="h-5 w-5" />
+            Create Template
+          </button>
+        </div>
       </div>
 
       <div className="mb-6 flex gap-4 border-b border-gray-700/50">
