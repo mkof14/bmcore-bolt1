@@ -31,8 +31,8 @@ export default function MemberSidebar({ currentSection, onSectionChange }: Membe
       title: 'Main',
       items: [
         { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-        { id: 'ai-assistant', label: 'AI Health Advisor', icon: Sparkles },
-        { id: 'devices', label: 'Connect Devices', icon: Watch },
+        { id: 'ai-assistant', label: 'AI Advisor', icon: Sparkles },
+        { id: 'devices', label: 'Devices', icon: Watch },
       ]
     },
     {
@@ -46,25 +46,25 @@ export default function MemberSidebar({ currentSection, onSectionChange }: Membe
     {
       title: 'Health & Analysis',
       items: [
-        { id: 'questionnaires', label: 'Health Questionnaires', icon: ClipboardList },
-        { id: 'reports', label: 'Reports & AI Analysis', icon: FileText },
-        { id: 'second-opinion', label: 'AI Health Second Opinion', icon: Scale },
+        { id: 'questionnaires', label: 'Questionnaires', icon: ClipboardList },
+        { id: 'reports', label: 'Reports', icon: FileText },
+        { id: 'second-opinion', label: 'Second Opinion', icon: Scale },
       ]
     },
     {
       title: 'Data & Documents',
       items: [
-        { id: 'medical-files', label: 'Medical Files & Documents', icon: FolderLock },
-        { id: 'black-box', label: 'Black Box (Storage)', icon: FolderLock },
+        { id: 'medical-files', label: 'Medical Files', icon: FolderLock },
+        { id: 'black-box', label: 'Black Box', icon: FolderLock },
       ]
     },
     {
       title: 'Account',
       items: [
-        { id: 'referral', label: 'Referral Program', icon: Users },
-        { id: 'billing', label: 'Billing & Subscription', icon: CreditCard },
+        { id: 'referral', label: 'Referral', icon: Users },
+        { id: 'billing', label: 'Billing', icon: CreditCard },
         { id: 'profile', label: 'Profile', icon: User },
-        { id: 'settings', label: 'Report Settings', icon: Settings },
+        { id: 'settings', label: 'Settings', icon: Settings },
       ]
     }
   ];
