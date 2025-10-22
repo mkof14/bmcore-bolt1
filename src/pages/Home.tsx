@@ -51,13 +51,13 @@ export default function Home({ onNavigate }: HomeProps) {
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white mb-6">
               Welcome to BioMath Core
             </h1>
-            <p className="text-3xl md:text-4xl lg:text-5xl font-medium text-orange-600 dark:text-orange-500 mb-8">
+            <p className="text-3xl md:text-4xl lg:text-5xl font-medium text-blue-500 dark:text-blue-400 mb-8">
               Where data meets daily life.
             </p>
             <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-orange-700 dark:text-orange-400 mb-12">
               All of Health. One Platform.
             </h2>
-            <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 mb-12 max-w-5xl mx-auto leading-relaxed">
+            <p className="text-sm md:text-base text-gray-500 dark:text-gray-400 mb-12 max-w-5xl mx-auto leading-relaxed">
               From sleep to cognition, from movement to mood — BioMath Core brings clarity to your
               health journey. Track, understand, and optimize your wellbeing through intelligent, real-time insights tailored to you.
             </p>
