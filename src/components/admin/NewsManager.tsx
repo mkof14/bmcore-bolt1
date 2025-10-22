@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Eye, EyeOff } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import NewsItemForm from './NewsItemForm';
 
 interface NewsItem {
   id: string;
@@ -18,6 +19,8 @@ interface NewsItem {
 export default function NewsManager() {
   const [news, setNews] = useState<NewsItem[]>([]);
   const [loading, setLoading] = useState(true);
+  const [showForm, setShowForm] = useState(false);
+  const [editingItem, setEditingItem] = useState<NewsItem | null>(null);
 
   useEffect(() => {
     loadNews();
@@ -83,6 +86,10 @@ export default function NewsManager() {
       <div className="flex items-center justify-between mb-6">
         <h1 className="text-3xl font-bold text-white">News Management</h1>
         <button
+          onClick={() => {
+            setEditingItem(null);
+            setShowForm(true);
+          }}
           className="flex items-center gap-2 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors"
         >
           <Plus className="h-5 w-5" />
@@ -130,7 +137,13 @@ export default function NewsManager() {
                     <Eye className="h-5 w-5 text-gray-400" />
                   )}
                 </button>
-                <button className="p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-lg transition-colors">
+                <button
+                  onClick={() => {
+                    setEditingItem(item);
+                    setShowForm(true);
+                  }}
+                  className="p-2 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                >
                   <Edit2 className="h-5 w-5 text-blue-600 dark:text-blue-400" />
                 </button>
                 <button
@@ -149,6 +162,17 @@ export default function NewsManager() {
         <div className="text-center py-12">
           <p className="text-gray-400">No news items yet. Create your first one!</p>
         </div>
+      )}
+
+      {showForm && (
+        <NewsItemForm
+          item={editingItem}
+          onClose={() => {
+            setShowForm(false);
+            setEditingItem(null);
+          }}
+          onSave={loadNews}
+        />
       )}
     </div>
   );

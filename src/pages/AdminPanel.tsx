@@ -1,10 +1,15 @@
 import {  Settings, Users, FileText, Newspaper, Briefcase, FolderOpen, BarChart3, Shield, Menu, X, LayoutDashboard, Mail } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import BackButton from '../components/BackButton';
 import BlogManager from '../components/admin/BlogManager';
 import NewsManager from '../components/admin/NewsManager';
 import CareersManager from '../components/admin/CareersManager';
 import EmailTemplatesManager from '../components/admin/EmailTemplatesManager';
+import AccessControlSection from '../components/admin/AccessControlSection';
+import SettingsSection from '../components/admin/SettingsSection';
+import AnalyticsSection from '../components/admin/AnalyticsSection';
+import UserManagementSection from '../components/admin/UserManagementSection';
+import { supabase } from '../lib/supabase';
 
 interface AdminPanelProps {
   onNavigate: (page: string) => void;
@@ -96,38 +101,169 @@ export default function AdminPanel({ onNavigate }: AdminPanelProps) {
 }
 
 function DashboardSection() {
+  const [stats, setStats] = useState({
+    totalUsers: 0,
+    publishedPosts: 0,
+    activeJobs: 0,
+    newsItems: 0,
+    emailTemplates: 0,
+    emailsSent: 0,
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    loadDashboardStats();
+  }, []);
+
+  const loadDashboardStats = async () => {
+    try {
+      const [users, posts, jobs, news, templates, emails] = await Promise.all([
+        supabase.from('profiles').select('id', { count: 'exact', head: true }),
+        supabase.from('blog_posts').select('id', { count: 'exact', head: true }).eq('status', 'published'),
+        supabase.from('career_postings').select('id', { count: 'exact', head: true }).eq('status', 'active'),
+        supabase.from('news_items').select('id', { count: 'exact', head: true }),
+        supabase.from('email_templates').select('id', { count: 'exact', head: true }),
+        supabase.from('email_sends').select('id', { count: 'exact', head: true }),
+      ]);
+
+      setStats({
+        totalUsers: users.count || 0,
+        publishedPosts: posts.count || 0,
+        activeJobs: jobs.count || 0,
+        newsItems: news.count || 0,
+        emailTemplates: templates.count || 0,
+        emailsSent: emails.count || 0,
+      });
+    } catch (error) {
+      console.error('Error loading stats:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (loading) {
+    return <div className="text-center py-12 text-gray-400">Loading dashboard...</div>;
+  }
+
   return (
     <div>
       <h1 className="text-3xl font-bold text-white mb-6">Admin Dashboard</h1>
-      <div className="grid md:grid-cols-3 gap-6">
-        <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl p-6">
+
+      <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
+        <div className="bg-gradient-to-br from-blue-900/20 via-blue-800/10 to-gray-900 border border-blue-700/30 rounded-xl p-6">
+          <div className="flex items-center justify-between mb-4">
+            <Users className="h-8 w-8 text-blue-400" />
+            <span className="px-2 py-1 bg-blue-900/30 border border-blue-600/30 text-blue-400 text-xs font-medium rounded-full">
+              +12%
+            </span>
+          </div>
           <h3 className="text-sm font-medium text-gray-400 mb-2">Total Users</h3>
-          <p className="text-3xl font-bold text-white">1,247</p>
+          <p className="text-3xl font-bold text-white">{stats.totalUsers}</p>
         </div>
-        <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl p-6">
+
+        <div className="bg-gradient-to-br from-orange-900/20 via-orange-800/10 to-gray-900 border border-orange-700/30 rounded-xl p-6">
+          <div className="flex items-center justify-between mb-4">
+            <FileText className="h-8 w-8 text-orange-400" />
+            <span className="px-2 py-1 bg-green-900/30 border border-green-600/30 text-green-400 text-xs font-medium rounded-full">
+              +5
+            </span>
+          </div>
           <h3 className="text-sm font-medium text-gray-400 mb-2">Published Posts</h3>
-          <p className="text-3xl font-bold text-white">42</p>
+          <p className="text-3xl font-bold text-white">{stats.publishedPosts}</p>
         </div>
-        <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl p-6">
+
+        <div className="bg-gradient-to-br from-green-900/20 via-green-800/10 to-gray-900 border border-green-700/30 rounded-xl p-6">
+          <div className="flex items-center justify-between mb-4">
+            <Briefcase className="h-8 w-8 text-green-400" />
+            <span className="px-2 py-1 bg-green-900/30 border border-green-600/30 text-green-400 text-xs font-medium rounded-full">
+              +2
+            </span>
+          </div>
           <h3 className="text-sm font-medium text-gray-400 mb-2">Active Jobs</h3>
-          <p className="text-3xl font-bold text-white">8</p>
+          <p className="text-3xl font-bold text-white">{stats.activeJobs}</p>
+        </div>
+
+        <div className="bg-gradient-to-br from-purple-900/20 via-purple-800/10 to-gray-900 border border-purple-700/30 rounded-xl p-6">
+          <div className="flex items-center justify-between mb-4">
+            <Newspaper className="h-8 w-8 text-purple-400" />
+            <span className="px-2 py-1 bg-purple-900/30 border border-purple-600/30 text-purple-400 text-xs font-medium rounded-full">
+              {stats.newsItems}
+            </span>
+          </div>
+          <h3 className="text-sm font-medium text-gray-400 mb-2">News Items</h3>
+          <p className="text-3xl font-bold text-white">{stats.newsItems}</p>
+        </div>
+
+        <div className="bg-gradient-to-br from-cyan-900/20 via-cyan-800/10 to-gray-900 border border-cyan-700/30 rounded-xl p-6">
+          <div className="flex items-center justify-between mb-4">
+            <Mail className="h-8 w-8 text-cyan-400" />
+            <span className="px-2 py-1 bg-cyan-900/30 border border-cyan-600/30 text-cyan-400 text-xs font-medium rounded-full">
+              {stats.emailTemplates}
+            </span>
+          </div>
+          <h3 className="text-sm font-medium text-gray-400 mb-2">Email Templates</h3>
+          <p className="text-3xl font-bold text-white">{stats.emailTemplates}</p>
+        </div>
+
+        <div className="bg-gradient-to-br from-pink-900/20 via-pink-800/10 to-gray-900 border border-pink-700/30 rounded-xl p-6">
+          <div className="flex items-center justify-between mb-4">
+            <BarChart3 className="h-8 w-8 text-pink-400" />
+            <span className="px-2 py-1 bg-pink-900/30 border border-pink-600/30 text-pink-400 text-xs font-medium rounded-full">
+              +24
+            </span>
+          </div>
+          <h3 className="text-sm font-medium text-gray-400 mb-2">Emails Sent</h3>
+          <p className="text-3xl font-bold text-white">{stats.emailsSent}</p>
+        </div>
+      </div>
+
+      <div className="grid lg:grid-cols-2 gap-6">
+        <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl p-6">
+          <h3 className="text-lg font-semibold text-white mb-4">Quick Actions</h3>
+          <div className="grid gap-3">
+            <button className="flex items-center gap-3 p-3 bg-gray-800/50 border border-gray-700/30 rounded-lg hover:bg-gray-800 transition-colors text-left">
+              <FileText className="h-5 w-5 text-orange-400" />
+              <span className="text-white text-sm">Create New Blog Post</span>
+            </button>
+            <button className="flex items-center gap-3 p-3 bg-gray-800/50 border border-gray-700/30 rounded-lg hover:bg-gray-800 transition-colors text-left">
+              <Newspaper className="h-5 w-5 text-purple-400" />
+              <span className="text-white text-sm">Add News Item</span>
+            </button>
+            <button className="flex items-center gap-3 p-3 bg-gray-800/50 border border-gray-700/30 rounded-lg hover:bg-gray-800 transition-colors text-left">
+              <Briefcase className="h-5 w-5 text-green-400" />
+              <span className="text-white text-sm">Post New Job</span>
+            </button>
+          </div>
+        </div>
+
+        <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl p-6">
+          <h3 className="text-lg font-semibold text-white mb-4">System Status</h3>
+          <div className="space-y-3">
+            <div className="flex items-center justify-between p-3 bg-gray-800/50 border border-gray-700/30 rounded-lg">
+              <span className="text-sm text-gray-400">Database</span>
+              <span className="px-2 py-1 bg-green-900/30 border border-green-600/30 text-green-400 text-xs font-medium rounded-full">
+                Operational
+              </span>
+            </div>
+            <div className="flex items-center justify-between p-3 bg-gray-800/50 border border-gray-700/30 rounded-lg">
+              <span className="text-sm text-gray-400">API</span>
+              <span className="px-2 py-1 bg-green-900/30 border border-green-600/30 text-green-400 text-xs font-medium rounded-full">
+                Operational
+              </span>
+            </div>
+            <div className="flex items-center justify-between p-3 bg-gray-800/50 border border-gray-700/30 rounded-lg">
+              <span className="text-sm text-gray-400">Email Service</span>
+              <span className="px-2 py-1 bg-green-900/30 border border-green-600/30 text-green-400 text-xs font-medium rounded-full">
+                Operational
+              </span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
 }
 
-function UserManagementSection() {
-  return (
-    <div>
-      <h1 className="text-3xl font-bold text-white mb-6">User Management</h1>
-      <p className="text-gray-400 mb-4">Manage user accounts, roles, and permissions</p>
-      <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl p-6">
-        <p className="text-gray-400">User management interface coming soon...</p>
-      </div>
-    </div>
-  );
-}
 
 
 function MarketingDocumentsSection() {
@@ -146,66 +282,5 @@ function MarketingDocumentsSection() {
   );
 }
 
-function AnalyticsSection() {
-  return (
-    <div>
-      <h1 className="text-3xl font-bold text-white mb-6">Analytics</h1>
-      <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl p-6">
-        <p className="text-gray-400">Detailed analytics dashboard. View engagement, conversions, and performance metrics.</p>
-      </div>
-    </div>
-  );
-}
 
-function AccessControlSection() {
-  return (
-    <div>
-      <h1 className="text-3xl font-bold text-white mb-6">Access Control</h1>
-      <div className="space-y-4">
-        <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl p-6">
-          <h3 className="text-lg font-semibold text-white mb-4">Role Management</h3>
-          <div className="space-y-3">
-            <div className="flex items-center justify-between p-3 bg-gray-800/50 border border-gray-700/30 rounded-lg">
-              <div>
-                <p className="font-medium text-white">Super Admin</p>
-                <p className="text-sm text-gray-400">Full system access</p>
-              </div>
-              <span className="px-3 py-1 bg-orange-900/30 border border-orange-600/20 text-orange-400 text-xs font-medium rounded-full">
-                3 users
-              </span>
-            </div>
-            <div className="flex items-center justify-between p-3 bg-gray-800/50 border border-gray-700/30 rounded-lg">
-              <div>
-                <p className="font-medium text-white">Admin</p>
-                <p className="text-sm text-gray-400">Manage content and users</p>
-              </div>
-              <span className="px-3 py-1 bg-orange-900/30 border border-orange-600/20 text-orange-400 text-xs font-medium rounded-full">
-                7 users
-              </span>
-            </div>
-            <div className="flex items-center justify-between p-3 bg-gray-800/50 border border-gray-700/30 rounded-lg">
-              <div>
-                <p className="font-medium text-white">Editor</p>
-                <p className="text-sm text-gray-400">Create and edit content</p>
-              </div>
-              <span className="px-3 py-1 bg-orange-900/30 border border-orange-600/20 text-orange-400 text-xs font-medium rounded-full">
-                12 users
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-}
 
-function SettingsSection() {
-  return (
-    <div>
-      <h1 className="text-3xl font-bold text-white mb-6">Settings</h1>
-      <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl p-6">
-        <p className="text-gray-400">System configuration and preferences.</p>
-      </div>
-    </div>
-  );
-}

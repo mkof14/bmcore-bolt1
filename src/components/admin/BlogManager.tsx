@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Plus, Edit2, Trash2, Eye, EyeOff } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import BlogPostForm from './BlogPostForm';
 
 interface BlogPost {
   id: string;
@@ -160,6 +161,17 @@ export default function BlogManager() {
         <div className="text-center py-12">
           <p className="text-gray-400">No blog posts yet. Create your first one!</p>
         </div>
+      )}
+
+      {showForm && (
+        <BlogPostForm
+          post={editingPost}
+          onClose={() => {
+            setShowForm(false);
+            setEditingPost(null);
+          }}
+          onSave={loadPosts}
+        />
       )}
     </div>
   );
