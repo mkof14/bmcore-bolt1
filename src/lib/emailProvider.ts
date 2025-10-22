@@ -251,3 +251,59 @@ export function htmlToPlainText(html: string): string {
     .replace(/\n\s*\n\s*\n/g, '\n\n')
     .trim();
 }
+
+// Send email using template
+export async function sendEmail(params: {
+  to: string;
+  templateId: string;
+  variables: Record<string, any>;
+}): Promise<EmailResponse> {
+  const provider = createEmailProvider();
+
+  try {
+    const { supabase } = await import('./supabase');
+
+    const { data: template, error } = await supabase
+      .from('email_templates')
+      .select('*')
+      .eq('slug', params.templateId)
+      .eq('status', 'active')
+      .single();
+
+    if (error || !template) {
+      console.error('Template not found:', params.templateId);
+      return {
+        success: false,
+        error: 'Email template not found'
+      };
+    }
+
+    const subject = renderTemplate(template.subject_en, params.variables);
+    const html = renderTemplate(template.body_en, params.variables);
+
+    const result = await provider.send({
+      to: params.to,
+      subject,
+      html,
+      text: htmlToPlainText(html)
+    });
+
+    await supabase.from('email_logs').insert({
+      template_id: template.id,
+      recipient_email: params.to,
+      subject,
+      body: html,
+      status: result.success ? 'sent' : 'failed',
+      sent_at: result.success ? new Date().toISOString() : null,
+      error_message: result.error
+    });
+
+    return result;
+  } catch (error: any) {
+    console.error('Error sending email:', error);
+    return {
+      success: false,
+      error: error.message
+    };
+  }
+}

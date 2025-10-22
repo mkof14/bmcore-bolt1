@@ -1,6 +1,9 @@
 import { useState } from 'react';
-import { Shield, ChevronDown } from 'lucide-react';
+import { Shield, ChevronDown, Check, Zap, Users } from 'lucide-react';
 import BackButton from '../components/BackButton';
+import PaymentConfirmationModal from '../components/PaymentConfirmationModal';
+import { createSubscription } from '../lib/subscriptionService';
+import { supabase } from '../lib/supabase';
 
 interface PricingProps {
   onNavigate: (page: string) => void;
@@ -9,6 +12,10 @@ interface PricingProps {
 export default function Pricing({ onNavigate }: PricingProps) {
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
   const [openFAQ, setOpenFAQ] = useState<number | null>(null);
+  const [selectedPlan, setSelectedPlan] = useState<any>(null);
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [isProcessing, setIsProcessing] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const plans = [
     {
@@ -226,7 +233,7 @@ export default function Pricing({ onNavigate }: PricingProps) {
                     </ul>
 
                     <button
-                      onClick={() => onNavigate('signup')}
+                      onClick={() => handleSelectPlan(plan)}
                       className={`w-full py-3 rounded-lg font-semibold transition-all ${
                         isPopular
                           ? 'bg-orange-500 hover:bg-orange-600 text-white'
@@ -365,8 +372,136 @@ export default function Pricing({ onNavigate }: PricingProps) {
               </button>
             </div>
           </section>
+
+          <section className="mb-20">
+            <h2 className="text-4xl font-bold text-center mb-12">Why Choose BioMath Core?</h2>
+
+            <div className="grid md:grid-cols-3 gap-6 max-w-6xl mx-auto">
+              <div className="bg-gradient-to-b from-gray-900 to-gray-950 rounded-xl p-8 border border-gray-800">
+                <div className="w-12 h-12 bg-orange-500/20 rounded-lg flex items-center justify-center mb-4">
+                  <Zap className="w-6 h-6 text-orange-500" />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3">Real-Time Insights</h3>
+                <p className="text-gray-400">
+                  Get instant feedback on your health data with AI-powered analysis that learns from your patterns.
+                </p>
+              </div>
+
+              <div className="bg-gradient-to-b from-gray-900 to-gray-950 rounded-xl p-8 border border-gray-800">
+                <div className="w-12 h-12 bg-blue-500/20 rounded-lg flex items-center justify-center mb-4">
+                  <Shield className="w-6 h-6 text-blue-400" />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3">HIPAA Compliant</h3>
+                <p className="text-gray-400">
+                  Your health data is protected with enterprise-grade security and full HIPAA compliance.
+                </p>
+              </div>
+
+              <div className="bg-gradient-to-b from-gray-900 to-gray-950 rounded-xl p-8 border border-gray-800">
+                <div className="w-12 h-12 bg-cyan-500/20 rounded-lg flex items-center justify-center mb-4">
+                  <Users className="w-6 h-6 text-cyan-400" />
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3">Expert Support</h3>
+                <p className="text-gray-400">
+                  Access to health data specialists and priority support to help you understand your insights.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section className="mb-20">
+            <div className="max-w-4xl mx-auto bg-gradient-to-r from-orange-500/10 to-blue-500/10 border border-orange-500/30 rounded-2xl p-12 text-center">
+              <h2 className="text-3xl font-bold text-white mb-4">Ready to Transform Your Health?</h2>
+              <p className="text-xl text-gray-300 mb-8">
+                Join thousands of users who are taking control of their health with data-driven insights.
+              </p>
+              <div className="flex items-center justify-center gap-4">
+                <button
+                  onClick={() => handleSelectPlan(plans[1])}
+                  className="px-8 py-4 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-semibold transition-all"
+                >
+                  Start Your Free Trial
+                </button>
+                <button
+                  onClick={() => onNavigate('contact')}
+                  className="px-8 py-4 bg-gray-800 hover:bg-gray-700 text-white rounded-lg font-semibold transition-all border border-gray-700"
+                >
+                  Contact Sales
+                </button>
+              </div>
+            </div>
+          </section>
         </div>
       </div>
+
+      {error && (
+        <div className="fixed bottom-4 right-4 bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg">
+          {error}
+        </div>
+      )}
+
+      {selectedPlan && (
+        <PaymentConfirmationModal
+          isOpen={showConfirmation}
+          onClose={() => {
+            setShowConfirmation(false);
+            setSelectedPlan(null);
+          }}
+          onConfirm={handleConfirmPayment}
+          plan={{
+            name: selectedPlan.name,
+            price: billingPeriod === 'monthly' ? selectedPlan.monthlyPrice : selectedPlan.yearlyPrice,
+            billingPeriod,
+            categories: selectedPlan.categories,
+            features: selectedPlan.features
+          }}
+          isProcessing={isProcessing}
+        />
+      )}
     </div>
   );
+
+  async function handleSelectPlan(plan: any) {
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      onNavigate('signin');
+      return;
+    }
+
+    setSelectedPlan(plan);
+    setShowConfirmation(true);
+    setError(null);
+  }
+
+  async function handleConfirmPayment() {
+    if (!selectedPlan) return;
+
+    setIsProcessing(true);
+    setError(null);
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not authenticated');
+
+      const result = await createSubscription(
+        user.id,
+        selectedPlan.id,
+        billingPeriod
+      );
+
+      if (!result.success) {
+        throw new Error(result.error || 'Failed to create subscription');
+      }
+
+      setShowConfirmation(false);
+      setSelectedPlan(null);
+
+      onNavigate('member-zone');
+    } catch (err: any) {
+      setError(err.message || 'Payment failed. Please try again.');
+    } finally {
+      setIsProcessing(false);
+    }
+  }
 }
