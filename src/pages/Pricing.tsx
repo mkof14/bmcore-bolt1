@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { Check, Star, Layers, Crown, ArrowRight, CheckCircle } from 'lucide-react';
 import BackButton from '../components/BackButton';
 
+// VERSION: 2025-10-22-REDESIGN-DARK-THEME-v3
+
 interface PricingProps {
   onNavigate: (page: string) => void;
 }
@@ -115,6 +117,9 @@ export default function Pricing({ onNavigate }: PricingProps) {
 
   return (
     <div className="min-h-screen bg-gray-950 transition-colors">
+      <div className="fixed top-16 right-4 z-50 bg-green-500 text-white px-3 py-1 rounded-full text-xs font-bold shadow-lg">
+        NEW v3
+      </div>
       <div className="pt-20 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <BackButton onNavigate={onNavigate} />
