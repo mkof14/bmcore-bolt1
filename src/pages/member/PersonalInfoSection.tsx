@@ -137,13 +137,20 @@ export default function PersonalInfoSection() {
 
     try {
       const { data: user } = await supabase.auth.getUser();
-      if (!user.user) return;
+      if (!user.user) {
+        alert('Please sign in to upload photos');
+        return;
+      }
+
+      console.log('Starting upload for user:', user.user.id);
 
       const fileExt = file.name.split('.').pop();
       const fileName = `${user.user.id}-${Date.now()}.${fileExt}`;
       const filePath = `avatars/${fileName}`;
 
-      const { error: uploadError } = await supabase.storage
+      console.log('Uploading to:', filePath);
+
+      const { data, error: uploadError } = await supabase.storage
         .from('profiles')
         .upload(filePath, file, {
           cacheControl: '3600',
@@ -151,19 +158,26 @@ export default function PersonalInfoSection() {
         });
 
       if (uploadError) {
-        console.error('Upload error:', uploadError);
-        alert(`Upload failed: ${uploadError.message}. You can enter an image URL instead.`);
+        console.error('Upload error details:', uploadError);
+        console.error('Error message:', uploadError.message);
+        console.error('Error status:', uploadError.statusCode);
+
+        alert('Storage upload is not available right now. Please paste an image URL in the field below instead.');
         return;
       }
+
+      console.log('Upload successful:', data);
 
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const publicUrl = `${supabaseUrl}/storage/v1/object/public/profiles/${filePath}`;
 
+      console.log('Generated public URL:', publicUrl);
+
       setProfile({ ...profile, avatar_url: publicUrl });
       alert('Photo uploaded successfully!');
     } catch (error) {
-      console.error('Error uploading file:', error);
-      alert('Upload failed. You can enter an image URL instead.');
+      console.error('Unexpected error during upload:', error);
+      alert('Upload failed. Please paste an image URL in the field below instead.');
     }
   };
 
