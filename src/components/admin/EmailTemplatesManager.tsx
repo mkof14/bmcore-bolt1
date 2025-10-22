@@ -13,7 +13,7 @@ interface EmailTemplate {
   subject_ru: string | null;
   body_en: string;
   body_ru: string | null;
-  variables: string[];
+  variable_schema: Array<{ key: string; type: string; required: boolean }>;
   status: 'draft' | 'active' | 'archived';
   description: string | null;
   created_at: string;
@@ -198,6 +198,7 @@ export default function EmailTemplatesManager() {
 
   const openEditModal = (template: EmailTemplate) => {
     setSelectedTemplate(template);
+    const variableKeys = template.variable_schema?.map(v => v.key).join(', ') || '';
     setFormData({
       name: template.name,
       slug: template.slug,
@@ -206,7 +207,7 @@ export default function EmailTemplatesManager() {
       subject_ru: template.subject_ru || '',
       body_en: template.body_en,
       body_ru: template.body_ru || '',
-      variables: template.variables.join(', '),
+      variables: variableKeys,
       status: template.status,
       description: template.description || '',
     });
@@ -230,6 +231,12 @@ export default function EmailTemplatesManager() {
         .map(v => v.trim())
         .filter(v => v);
 
+      const variableSchema = variablesArray.map(key => ({
+        key,
+        type: 'string',
+        required: true
+      }));
+
       const templateData = {
         name: formData.name,
         slug: formData.slug,
@@ -238,7 +245,7 @@ export default function EmailTemplatesManager() {
         subject_ru: formData.subject_ru || null,
         body_en: formData.body_en,
         body_ru: formData.body_ru || null,
-        variables: variablesArray,
+        variable_schema: variableSchema,
         status: formData.status,
         description: formData.description || null,
       };
@@ -470,9 +477,9 @@ export default function EmailTemplatesManager() {
                         <p className="text-sm text-gray-400">
                           <span className="font-medium">Subject:</span> {template.subject_en}
                         </p>
-                        {template.variables.length > 0 && (
+                        {template.variable_schema && template.variable_schema.length > 0 && (
                           <p className="text-sm text-gray-500 mt-1">
-                            <span className="font-medium">Variables:</span> {template.variables.join(', ')}
+                            <span className="font-medium">Variables:</span> {template.variable_schema.map(v => v.key).join(', ')}
                           </p>
                         )}
                       </div>
@@ -736,7 +743,7 @@ export default function EmailTemplatesManager() {
 
                 <div className="bg-blue-900/20 border border-blue-600/30 rounded-lg p-4">
                   <p className="text-sm text-blue-400">
-                    Available variables: {selectedTemplate.variables.join(', ')}
+                    Available variables: {selectedTemplate.variable_schema?.map(v => v.key).join(', ') || 'none'}
                   </p>
                 </div>
               </div>
