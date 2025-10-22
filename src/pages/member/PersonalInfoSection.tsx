@@ -152,13 +152,12 @@ export default function PersonalInfoSection() {
 
       if (uploadError) {
         console.error('Upload error:', uploadError);
-        alert('Upload failed. Using direct URL instead. Enter image URL below.');
+        alert(`Upload failed: ${uploadError.message}. You can enter an image URL instead.`);
         return;
       }
 
-      const { data: { publicUrl } } = supabase.storage
-        .from('profiles')
-        .getPublicUrl(filePath);
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const publicUrl = `${supabaseUrl}/storage/v1/object/public/profiles/${filePath}`;
 
       setProfile({ ...profile, avatar_url: publicUrl });
       alert('Photo uploaded successfully!');
