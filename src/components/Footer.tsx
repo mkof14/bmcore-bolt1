@@ -15,10 +15,9 @@ export default function Footer({ onNavigate }: FooterProps) {
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center mb-4">
               <img
-                src="/bmcore-logo11.png"
+                src="/biomathcore_emblem_1024.png"
                 alt="BioMath Core Logo"
                 className="w-12 h-12 mr-3 object-contain"
-                style={{ mixBlendMode: 'screen' }}
               />
               <span className="text-3xl font-bold">
                 <span className="text-blue-500">BioMath</span>
