@@ -33,9 +33,10 @@ export default function PersonalInfoSection() {
         .from('profiles')
         .select('*')
         .eq('id', user.user.id)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
+
       if (data) {
         setProfile(data);
         const fields = Object.entries(data.custom_fields || {}).map(([key, value]) => ({
@@ -43,9 +44,34 @@ export default function PersonalInfoSection() {
           value: String(value),
         }));
         setCustomFields(fields);
+      } else {
+        const newProfile = {
+          id: user.user.id,
+          name: null,
+          avatar_url: null,
+          country: null,
+          timezone: 'UTC',
+          locale: 'en',
+          marketing_optin: false,
+          custom_fields: {},
+        };
+        setProfile(newProfile);
       }
     } catch (error) {
       console.error('Error loading profile:', error);
+      const { data: user } = await supabase.auth.getUser();
+      if (user.user) {
+        setProfile({
+          id: user.user.id,
+          name: null,
+          avatar_url: null,
+          country: null,
+          timezone: 'UTC',
+          locale: 'en',
+          marketing_optin: false,
+          custom_fields: {},
+        });
+      }
     } finally {
       setLoading(false);
     }
@@ -63,7 +89,8 @@ export default function PersonalInfoSection() {
 
       const { error } = await supabase
         .from('profiles')
-        .update({
+        .upsert({
+          id: profile.id,
           name: profile.name,
           country: profile.country,
           timezone: profile.timezone,
@@ -71,8 +98,7 @@ export default function PersonalInfoSection() {
           marketing_optin: profile.marketing_optin,
           custom_fields: customFieldsObj,
           avatar_url: profile.avatar_url,
-        })
-        .eq('id', profile.id);
+        });
 
       if (error) throw error;
       alert('Profile updated successfully!');

@@ -130,7 +130,10 @@ export default function MyReportsSection() {
           </button>
         </div>
 
-        <button className="px-6 py-2 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-lg hover:from-orange-500 hover:to-orange-600 transition-all flex items-center gap-2">
+        <button
+          onClick={() => alert('Generate New Report: This will redirect to the Reports generation page.')}
+          className="px-6 py-2 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-lg hover:from-orange-500 hover:to-orange-600 transition-all flex items-center gap-2"
+        >
           <Plus className="h-5 w-5" />
           Generate New Report
         </button>
@@ -176,11 +179,17 @@ export default function MyReportsSection() {
               </div>
 
               <div className="flex gap-2">
-                <button className="flex-1 p-2 bg-blue-900/30 border border-blue-600/30 text-blue-400 rounded-lg hover:bg-blue-900/50 transition-colors flex items-center justify-center gap-2">
+                <button
+                  onClick={() => alert(`Viewing report: ${report.report_title}`)}
+                  className="flex-1 p-2 bg-blue-900/30 border border-blue-600/30 text-blue-400 rounded-lg hover:bg-blue-900/50 transition-colors flex items-center justify-center gap-2"
+                >
                   <Eye className="h-4 w-4" />
                   View
                 </button>
-                <button className="p-2 bg-green-900/30 border border-green-600/30 text-green-400 rounded-lg hover:bg-green-900/50 transition-colors">
+                <button
+                  onClick={() => alert(`Downloading report: ${report.report_title}`)}
+                  className="p-2 bg-green-900/30 border border-green-600/30 text-green-400 rounded-lg hover:bg-green-900/50 transition-colors"
+                >
                   <Download className="h-4 w-4" />
                 </button>
               </div>
