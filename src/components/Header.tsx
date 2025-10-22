@@ -25,7 +25,7 @@ export default function Header({ onNavigate, currentPage }: HeaderProps) {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center cursor-pointer" onClick={() => onNavigate('home')}>
-            <span className="text-xl font-bold">
+            <span className="text-2xl font-bold">
               <span className="text-blue-500">BioMath</span>
               <span className="text-gray-900 dark:text-white"> Core</span>
             </span>

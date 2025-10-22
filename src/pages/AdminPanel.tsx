@@ -1,9 +1,10 @@
-import {  Settings, Users, FileText, Newspaper, Briefcase, FolderOpen, BarChart3, Shield, Menu, X, LayoutDashboard } from 'lucide-react';
+import {  Settings, Users, FileText, Newspaper, Briefcase, FolderOpen, BarChart3, Shield, Menu, X, LayoutDashboard, Mail } from 'lucide-react';
 import { useState } from 'react';
 import BackButton from '../components/BackButton';
 import BlogManager from '../components/admin/BlogManager';
 import NewsManager from '../components/admin/NewsManager';
 import CareersManager from '../components/admin/CareersManager';
+import EmailTemplatesManager from '../components/admin/EmailTemplatesManager';
 
 interface AdminPanelProps {
   onNavigate: (page: string) => void;
@@ -19,6 +20,7 @@ export default function AdminPanel({ onNavigate }: AdminPanelProps) {
     { id: 'blog', label: 'Blog Management', icon: FileText },
     { id: 'news', label: 'News Management', icon: Newspaper },
     { id: 'careers', label: 'Careers Management', icon: Briefcase },
+    { id: 'email', label: 'Email Templates', icon: Mail },
     { id: 'marketing', label: 'Marketing Documents', icon: FolderOpen },
     { id: 'analytics', label: 'Analytics', icon: BarChart3 },
     { id: 'access', label: 'Access Control', icon: Shield },
@@ -65,7 +67,7 @@ export default function AdminPanel({ onNavigate }: AdminPanelProps) {
                   }`}
                 >
                   <Icon className="h-5 w-5 flex-shrink-0" />
-                  {sidebarOpen && <span className="font-medium">{item.label}</span>}
+                  {sidebarOpen && <span className="font-medium whitespace-nowrap">{item.label}</span>}
                 </button>
               );
             })}
@@ -81,6 +83,7 @@ export default function AdminPanel({ onNavigate }: AdminPanelProps) {
             {activeSection === 'blog' && <BlogManager />}
             {activeSection === 'news' && <NewsManager />}
             {activeSection === 'careers' && <CareersManager />}
+            {activeSection === 'email' && <EmailTemplatesManager />}
             {activeSection === 'marketing' && <MarketingDocumentsSection />}
             {activeSection === 'analytics' && <AnalyticsSection />}
             {activeSection === 'access' && <AccessControlSection />}

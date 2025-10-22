@@ -426,3 +426,37 @@ export interface SyncLog {
   started_at: string;
   completed_at: string | null;
 }
+
+export interface EmailTemplate {
+  id: string;
+  name: string;
+  slug: string;
+  category: 'welcome' | 'payment_success' | 'payment_failed' | 'password_reset' | 'billing_invoice' | 'subscription_update' | 'general' | 'promotion' | 'notification';
+  subject_en: string;
+  subject_ru: string | null;
+  body_en: string;
+  body_ru: string | null;
+  variables: string[];
+  status: 'draft' | 'active' | 'archived';
+  description: string | null;
+  created_by: string | null;
+  updated_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface EmailLog {
+  id: string;
+  template_id: string | null;
+  recipient_user_id: string | null;
+  recipient_email: string;
+  subject: string;
+  body: string;
+  status: 'pending' | 'sent' | 'failed' | 'bounced';
+  sent_at: string | null;
+  opened_at: string | null;
+  clicked_at: string | null;
+  error_message: string | null;
+  metadata: Record<string, unknown>;
+  created_at: string;
+}
