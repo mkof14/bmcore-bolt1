@@ -272,13 +272,33 @@ export default function AIHealthAdvisorSection() {
                 </div>
               </div>
               <div className="flex gap-2">
-                <button className="p-2 text-gray-400 hover:bg-gray-800 rounded-lg transition-colors" title="Voice Input">
+                <button
+                  onClick={() => alert('Voice input feature coming soon!')}
+                  className="p-2 text-gray-400 hover:bg-gray-800 rounded-lg transition-colors"
+                  title="Voice Input"
+                >
                   <Mic className="h-4 w-4" />
                 </button>
-                <button className="p-2 text-gray-400 hover:bg-gray-800 rounded-lg transition-colors" title="Text to Speech">
+                <button
+                  onClick={() => alert('Text-to-speech feature coming soon!')}
+                  className="p-2 text-gray-400 hover:bg-gray-800 rounded-lg transition-colors"
+                  title="Text to Speech"
+                >
                   <Volume2 className="h-4 w-4" />
                 </button>
-                <button className="p-2 text-gray-400 hover:bg-gray-800 rounded-lg transition-colors" title="Export Chat">
+                <button
+                  onClick={() => {
+                    const chatText = messages.map(m => `${m.role}: ${m.content}`).join('\n\n');
+                    const blob = new Blob([chatText], { type: 'text/plain' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `chat-${currentConversation.id}.txt`;
+                    a.click();
+                  }}
+                  className="p-2 text-gray-400 hover:bg-gray-800 rounded-lg transition-colors"
+                  title="Export Chat"
+                >
                   <Download className="h-4 w-4" />
                 </button>
               </div>

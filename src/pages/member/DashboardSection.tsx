@@ -29,6 +29,7 @@ export default function DashboardSection({ onBack }: DashboardSectionProps = {})
   const [activeGoals, setActiveGoals] = useState<UserGoal[]>([]);
   const [todayHabits, setTodayHabits] = useState<Array<{ habit: Habit; completion: HabitCompletion | null }>>([]);
   const [latestReport, setLatestReport] = useState<HealthReport | null>(null);
+  const [showCreateGoal, setShowCreateGoal] = useState(false);
 
   useEffect(() => {
     loadDashboardData();
@@ -97,6 +98,31 @@ export default function DashboardSection({ onBack }: DashboardSectionProps = {})
       console.error('Error loading dashboard:', error);
     } finally {
       setLoading(false);
+    }
+  }
+
+  async function createGoal(goalData: { title: string; description: string; priority: string }) {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { error } = await supabase
+        .from('user_goals')
+        .insert({
+          user_id: user.id,
+          title: goalData.title,
+          description: goalData.description,
+          priority: goalData.priority,
+          status: 'active',
+          start_date: new Date().toISOString().split('T')[0]
+        });
+
+      if (error) throw error;
+      setShowCreateGoal(false);
+      loadDashboardData();
+    } catch (error) {
+      console.error('Error creating goal:', error);
+      alert('Failed to create goal');
     }
   }
 
@@ -206,13 +232,15 @@ export default function DashboardSection({ onBack }: DashboardSectionProps = {})
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <GoalsCard goals={activeGoals} />
+        <GoalsCard goals={activeGoals} onCreateGoal={() => setShowCreateGoal(true)} />
         <HabitsCard habits={todayHabits} onToggle={toggleHabitCompletion} />
       </div>
 
       {latestReport && <LatestReportCard report={latestReport} />}
 
       <QuickActionsCard />
+
+      {showCreateGoal && <CreateGoalModal onClose={() => setShowCreateGoal(false)} onCreate={createGoal} />}
     </div>
   );
 }
@@ -359,7 +387,7 @@ function TodaySnapshotCard({ snapshot }: { snapshot: DailySnapshot }) {
   );
 }
 
-function GoalsCard({ goals }: { goals: UserGoal[] }) {
+function GoalsCard({ goals, onCreateGoal }: { goals: UserGoal[]; onCreateGoal: () => void }) {
   return (
     <div className="bg-white dark:bg-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-800">
       <div className="flex items-center justify-between mb-4">
@@ -380,7 +408,10 @@ function GoalsCard({ goals }: { goals: UserGoal[] }) {
           <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
             No active goals yet
           </p>
-          <button className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold transition-colors">
+          <button
+            onClick={onCreateGoal}
+            className="inline-flex items-center px-4 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg text-sm font-semibold transition-colors"
+          >
             <Plus className="h-4 w-4 mr-2" />
             Create First Goal
           </button>
@@ -587,6 +618,88 @@ function QuickActionsCard() {
             History
           </span>
         </button>
+      </div>
+    </div>
+  );
+}
+
+function CreateGoalModal({ onClose, onCreate }: { onClose: () => void; onCreate: (data: any) => void }) {
+  const [formData, setFormData] = useState({
+    title: '',
+    description: '',
+    priority: 'medium'
+  });
+
+  const handleSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (formData.title) {
+      onCreate(formData);
+    }
+  };
+
+  return (
+    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
+      <div className="bg-white dark:bg-gray-900 rounded-xl max-w-md w-full p-6 border border-gray-200 dark:border-gray-800">
+        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Create New Goal</h2>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Goal Title
+            </label>
+            <input
+              type="text"
+              value={formData.title}
+              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="e.g., Improve sleep quality"
+              required
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Description (optional)
+            </label>
+            <textarea
+              value={formData.description}
+              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+              rows={3}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+              placeholder="Describe your goal..."
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Priority
+            </label>
+            <select
+              value={formData.priority}
+              onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
+              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            >
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+
+          <div className="flex gap-3 pt-4">
+            <button
+              type="submit"
+              className="flex-1 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+            >
+              Create Goal
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-6 py-2 bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
       </div>
     </div>
   );

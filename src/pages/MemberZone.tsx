@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { LogOut } from 'lucide-react';
+import { LogOut, ArrowLeft } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import MemberSidebar from '../components/MemberSidebar';
 import DashboardSection from './member/DashboardSection';
@@ -14,6 +14,9 @@ import MedicalFilesSection from './member/MedicalFilesSection';
 import BlackBoxSection from './member/BlackBoxSection';
 import SecondOpinionSection from './member/SecondOpinionSection';
 import BillingSection from './member/BillingSection';
+import SystemSection from './member/SystemSection';
+import ReferralSection from './member/ReferralSection';
+import MyReportsSection from './member/MyReportsSection';
 import {
   Sparkles,
   Watch,
@@ -60,21 +63,7 @@ export default function MemberZone({ onNavigate, onSignOut }: MemberZoneProps) {
         return <SupportSection />;
 
       case 'system':
-        return (
-          <PlaceholderSection
-            title="System"
-            description="System settings and integrations"
-            icon={Settings2}
-            comingSoon
-            features={[
-              'API keys management',
-              'Webhooks configuration',
-              'Integration settings',
-              'Data export options',
-              'System logs'
-            ]}
-          />
-        );
+        return <SystemSection />;
 
       case 'catalog':
         return (
@@ -96,8 +85,7 @@ export default function MemberZone({ onNavigate, onSignOut }: MemberZoneProps) {
         return <QuestionnairesSection />;
 
       case 'reports':
-        onNavigate('reports');
-        return null;
+        return <MyReportsSection />;
 
       case 'second-opinion':
         return <SecondOpinionSection />;
@@ -109,21 +97,7 @@ export default function MemberZone({ onNavigate, onSignOut }: MemberZoneProps) {
         return <BlackBoxSection />;
 
       case 'referral':
-        return (
-          <PlaceholderSection
-            title="Referral Program"
-            description="Invite friends and earn rewards"
-            icon={Users}
-            comingSoon
-            features={[
-              'Unique referral link',
-              'Track referrals and earnings',
-              'Earn credits for each referral',
-              'Bonus tiers for multiple referrals',
-              'Referral leaderboard'
-            ]}
-          />
-        );
+        return <ReferralSection />;
 
       case 'billing':
         return <BillingSection />;
@@ -148,7 +122,14 @@ export default function MemberZone({ onNavigate, onSignOut }: MemberZoneProps) {
 
       <div className="ml-64 transition-all duration-300">
         <div className="max-w-7xl mx-auto px-6 py-8">
-          <div className="flex justify-end mb-6">
+          <div className="flex justify-between items-center mb-6">
+            <button
+              onClick={() => onNavigate('home')}
+              className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700/50 hover:border-orange-600/50 text-gray-300 rounded-lg transition-all duration-300"
+            >
+              <ArrowLeft className="h-5 w-5" />
+              <span>Back to Home</span>
+            </button>
             <button
               onClick={handleSignOut}
               className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700/50 hover:border-orange-600/50 text-gray-300 rounded-lg transition-all duration-300"
