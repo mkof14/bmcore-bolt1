@@ -13,16 +13,7 @@ export default function Footer({ onNavigate }: FooterProps) {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
           <div className="col-span-1 md:col-span-2">
-            <div className="flex items-center mb-4">
-              <img
-                src="/biomathcore_emblem_1024.png"
-                alt="BioMath Core Logo"
-                className="w-32 h-32 mr-4 object-contain"
-                style={{
-                  filter: 'brightness(0) saturate(100%) invert(48%) sepia(79%) saturate(2476%) hue-rotate(346deg) brightness(98%) contrast(97%)',
-                  mixBlendMode: 'screen'
-                }}
-              />
+            <div className="mb-4">
               <span className="text-3xl font-bold">
                 <span className="text-blue-500">BioMath</span>
                 <span className="text-white"> Core</span>
