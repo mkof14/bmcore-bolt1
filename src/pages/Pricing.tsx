@@ -216,21 +216,18 @@ export default function Pricing({ onNavigate }: PricingProps) {
                       </div>
                     </div>
 
-                    <div className="mb-6 relative h-40 rounded-xl overflow-hidden bg-black flex flex-col items-center justify-center">
+                    <div className={`mb-6 relative h-40 rounded-xl overflow-hidden flex flex-col items-center justify-center ${
+                      plan.id === 'core' ? 'border-2 border-orange-500 bg-gradient-to-br from-orange-950/50 via-black to-orange-950/30' : 'bg-gradient-to-br from-blue-900/20 to-cyan-900/20 border border-blue-500/30'
+                    }`}>
                       {plan.id === 'core' ? (
                         <>
-                          <div className="absolute inset-0" style={{
-                            background: 'radial-gradient(ellipse at center, rgba(251, 146, 60, 0.3) 0%, rgba(249, 115, 22, 0.2) 30%, rgba(234, 88, 12, 0.1) 60%, transparent 100%)',
-                          }}>
-                            <div className="absolute inset-0" style={{
-                              background: 'conic-gradient(from 0deg at 50% 50%, rgba(251, 146, 60, 0.4) 0deg, rgba(249, 115, 22, 0.3) 120deg, rgba(234, 88, 12, 0.2) 240deg, rgba(251, 146, 60, 0.4) 360deg)',
-                              animation: 'spin 8s linear infinite',
-                              borderRadius: '50%',
-                              filter: 'blur(40px)',
-                            }}></div>
+                          <div className="absolute inset-0 opacity-60">
+                            <div className="absolute top-0 left-0 w-32 h-32 bg-orange-500/30 rounded-full blur-3xl"></div>
+                            <div className="absolute bottom-0 right-0 w-40 h-40 bg-orange-600/20 rounded-full blur-3xl"></div>
+                            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-orange-400/20 rounded-full blur-2xl animate-pulse"></div>
                           </div>
                           <span className="relative text-2xl font-bold z-10 text-white" style={{
-                            textShadow: '0 0 20px rgba(251, 146, 60, 0.5), 0 2px 4px rgba(0,0,0,0.8)'
+                            textShadow: '0 0 20px rgba(251, 146, 60, 0.8), 0 2px 4px rgba(0,0,0,0.8)'
                           }}>{plan.categories}</span>
                         </>
                       ) : (
