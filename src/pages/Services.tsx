@@ -119,10 +119,6 @@ export default function Services({ onNavigate }: ServicesProps) {
       answer: 'Absolutely. All plans include enterprise-grade encryption, secure data storage, and compliance with HIPAA regulations. Your health data is never shared with third parties without your explicit consent.'
     },
     {
-      question: 'Can I get a refund?',
-      answer: 'Yes, we offer a 30-day money-back guarantee on all paid plans. If you\'re not satisfied, contact support for a full refund within the first 30 days of your subscription.'
-    },
-    {
       question: 'Do you offer discounts for annual billing?',
       answer: 'Yes! Annual billing saves you approximately 17% compared to monthly payments. You\'ll see the discounted price when you select yearly billing above.'
     }
