@@ -216,11 +216,24 @@ export default function Pricing({ onNavigate }: PricingProps) {
                       </div>
                     </div>
 
-                    <div className="mb-6 relative h-40 rounded-xl overflow-hidden bg-gradient-to-br from-blue-900/20 to-cyan-900/20 border border-blue-500/30 flex items-center justify-center">
-                      <div className="absolute inset-0" style={{
-                        backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 50%)',
-                      }}></div>
-                      <span className="relative text-2xl font-bold z-10">{plan.categories}</span>
+                    <div className="mb-6 relative h-40 rounded-xl overflow-hidden border border-gray-800 bg-black flex flex-col items-center justify-center">
+                      {plan.id === 'core' ? (
+                        <>
+                          <img
+                            src="/Screenshot 2025-10-22 at 13.22.17.png"
+                            alt="Core Plan"
+                            className="absolute inset-0 w-full h-full object-cover opacity-80"
+                          />
+                          <span className="relative text-2xl font-bold z-10 text-white drop-shadow-lg">{plan.categories}</span>
+                        </>
+                      ) : (
+                        <>
+                          <div className="absolute inset-0" style={{
+                            backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 50%)',
+                          }}></div>
+                          <span className="relative text-2xl font-bold z-10">{plan.categories}</span>
+                        </>
+                      )}
                     </div>
 
                     <ul className="space-y-3 mb-8">
