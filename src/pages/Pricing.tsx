@@ -216,33 +216,22 @@ export default function Pricing({ onNavigate }: PricingProps) {
                       </div>
                     </div>
 
-                    <div className="mb-6 relative h-40 rounded-xl overflow-hidden border border-gray-800 bg-black flex flex-col items-center justify-center">
+                    <div className="mb-6 relative h-40 rounded-xl overflow-hidden bg-black flex flex-col items-center justify-center">
                       {plan.id === 'core' ? (
                         <>
-                          <div className="absolute inset-0 flex items-center justify-center">
-                            <svg width="300" height="300" viewBox="0 0 300 300" className="opacity-70">
-                              <defs>
-                                <radialGradient id="orangeGlow" cx="50%" cy="50%">
-                                  <stop offset="0%" stopColor="#fb923c" stopOpacity="0.8" />
-                                  <stop offset="50%" stopColor="#f97316" stopOpacity="0.6" />
-                                  <stop offset="100%" stopColor="#ea580c" stopOpacity="0.2" />
-                                </radialGradient>
-                              </defs>
-                              <path d="M 150 150 Q 100 100 80 150 Q 60 200 100 220 Q 150 240 180 200 Q 200 170 180 140 Q 160 110 150 150 Z"
-                                    fill="url(#orangeGlow)" transform="rotate(-30 150 150)">
-                                <animateTransform attributeName="transform" type="rotate" from="-30 150 150" to="330 150 150" dur="20s" repeatCount="indefinite"/>
-                              </path>
-                              <path d="M 150 150 Q 120 120 110 150 Q 100 180 120 195 Q 150 210 170 185 Q 185 165 170 145 Q 155 125 150 150 Z"
-                                    fill="url(#orangeGlow)" opacity="0.7" transform="rotate(20 150 150)">
-                                <animateTransform attributeName="transform" type="rotate" from="20 150 150" to="380 150 150" dur="15s" repeatCount="indefinite"/>
-                              </path>
-                              <path d="M 150 150 Q 130 130 125 150 Q 120 170 135 182 Q 150 195 165 177 Q 175 162 165 148 Q 155 135 150 150 Z"
-                                    fill="url(#orangeGlow)" opacity="0.5" transform="rotate(45 150 150)">
-                                <animateTransform attributeName="transform" type="rotate" from="45 150 150" to="405 150 150" dur="18s" repeatCount="indefinite"/>
-                              </path>
-                            </svg>
+                          <div className="absolute inset-0" style={{
+                            background: 'radial-gradient(ellipse at center, rgba(251, 146, 60, 0.3) 0%, rgba(249, 115, 22, 0.2) 30%, rgba(234, 88, 12, 0.1) 60%, transparent 100%)',
+                          }}>
+                            <div className="absolute inset-0" style={{
+                              background: 'conic-gradient(from 0deg at 50% 50%, rgba(251, 146, 60, 0.4) 0deg, rgba(249, 115, 22, 0.3) 120deg, rgba(234, 88, 12, 0.2) 240deg, rgba(251, 146, 60, 0.4) 360deg)',
+                              animation: 'spin 8s linear infinite',
+                              borderRadius: '50%',
+                              filter: 'blur(40px)',
+                            }}></div>
                           </div>
-                          <span className="relative text-2xl font-bold z-10 text-white drop-shadow-lg">{plan.categories}</span>
+                          <span className="relative text-2xl font-bold z-10 text-white" style={{
+                            textShadow: '0 0 20px rgba(251, 146, 60, 0.5), 0 2px 4px rgba(0,0,0,0.8)'
+                          }}>{plan.categories}</span>
                         </>
                       ) : (
                         <>
