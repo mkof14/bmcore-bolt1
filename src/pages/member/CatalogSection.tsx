@@ -241,9 +241,19 @@ export default function CatalogSection({ onSectionChange }: CatalogSectionProps)
 
           <div className="mb-6">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-xs font-medium text-gray-400">
-                {selectedCount} of 20 categories selected
-              </span>
+              <div className="flex items-center gap-3">
+                <span className="text-xs font-medium text-gray-400">
+                  {selectedCount} of 20 categories selected
+                </span>
+                {selectedCount > 0 && (
+                  <button
+                    onClick={() => setSelectedCategories(new Set())}
+                    className="text-[10px] px-2 py-1 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded border border-red-500/30 transition-colors"
+                  >
+                    Clear All
+                  </button>
+                )}
+              </div>
               <span className={`text-xs font-bold ${currentPlan === 'Free' ? 'text-gray-500' : 'bg-gradient-to-r ' + getPlanColor(currentPlan) + ' bg-clip-text text-transparent'}`}>
                 {currentPlan} Plan
               </span>
@@ -261,24 +271,24 @@ export default function CatalogSection({ onSectionChange }: CatalogSectionProps)
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div className={`group/card relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 border-2 rounded-xl p-4 transition-all duration-300 overflow-hidden ${selectedCount <= 3 && selectedCount > 0 ? 'border-orange-500 shadow-lg shadow-orange-500/20' : 'border-gray-700/40 hover:border-orange-600/40'}`}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-5">
+            <div className={`group/card relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 border-2 rounded-lg p-3 transition-all duration-300 overflow-hidden ${selectedCount <= 3 && selectedCount > 0 ? 'border-orange-500 shadow-lg shadow-orange-500/20' : 'border-gray-700/40 hover:border-orange-600/40'}`}>
               <div className="absolute inset-0 bg-gradient-to-br from-orange-900/0 to-orange-900/5 opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
               <div className="relative">
-                <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover/card:shadow-lg group-hover/card:shadow-orange-600/30 transition-all">
-                  <Star className={`h-6 w-6 text-white`} />
+                <div className="w-10 h-10 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center mx-auto mb-2 group-hover/card:shadow-lg group-hover/card:shadow-orange-600/30 transition-all">
+                  <Star className={`h-5 w-5 text-white`} />
                 </div>
-                <h3 className={`text-center font-bold text-lg mb-1 ${selectedCount <= 3 && selectedCount > 0 ? 'text-orange-400' : 'text-white'}`}>Core</h3>
+                <h3 className={`text-center font-bold text-base mb-0.5 ${selectedCount <= 3 && selectedCount > 0 ? 'text-orange-400' : 'text-white'}`}>Core</h3>
                 <div className="text-center">
-                  <div className={`text-2xl font-bold mb-1 ${selectedCount <= 3 && selectedCount > 0 ? 'text-white' : 'text-gray-400'}`}>$19</div>
-                  <p className="text-xs text-gray-500 mb-3">per month</p>
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-center gap-1 text-[10px] text-gray-400">
-                      <CheckCircle className="w-3 h-3 text-orange-600 flex-shrink-0" />
+                  <div className={`text-xl font-bold mb-0.5 ${selectedCount <= 3 && selectedCount > 0 ? 'text-white' : 'text-gray-400'}`}>$19</div>
+                  <p className="text-[10px] text-gray-500 mb-2">per month</p>
+                  <div className="space-y-0.5">
+                    <div className="flex items-center justify-center gap-1 text-[9px] text-gray-400">
+                      <CheckCircle className="w-2.5 h-2.5 text-orange-600 flex-shrink-0" />
                       <span>Any 3 categories</span>
                     </div>
-                    <div className="flex items-center justify-center gap-1 text-[10px] text-gray-400">
-                      <CheckCircle className="w-3 h-3 text-orange-600 flex-shrink-0" />
+                    <div className="flex items-center justify-center gap-1 text-[9px] text-gray-400">
+                      <CheckCircle className="w-2.5 h-2.5 text-orange-600 flex-shrink-0" />
                       <span>Basic AI insights</span>
                     </div>
                   </div>
@@ -286,23 +296,23 @@ export default function CatalogSection({ onSectionChange }: CatalogSectionProps)
               </div>
             </div>
 
-            <div className={`group/card relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 border-2 rounded-xl p-4 transition-all duration-300 overflow-hidden ${selectedCount > 3 && selectedCount <= 10 ? 'border-blue-500 shadow-lg shadow-blue-500/20' : 'border-gray-700/40 hover:border-blue-600/40'}`}>
+            <div className={`group/card relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 border-2 rounded-lg p-3 transition-all duration-300 overflow-hidden ${selectedCount > 3 && selectedCount <= 10 ? 'border-blue-500 shadow-lg shadow-blue-500/20' : 'border-gray-700/40 hover:border-blue-600/40'}`}>
               <div className="absolute inset-0 bg-gradient-to-br from-blue-900/0 to-blue-900/5 opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
               <div className="relative">
-                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover/card:shadow-lg group-hover/card:shadow-blue-600/30 transition-all">
-                  <Layers className={`h-6 w-6 text-white`} />
+                <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mx-auto mb-2 group-hover/card:shadow-lg group-hover/card:shadow-blue-600/30 transition-all">
+                  <Layers className={`h-5 w-5 text-white`} />
                 </div>
-                <h3 className={`text-center font-bold text-lg mb-1 ${selectedCount > 3 && selectedCount <= 10 ? 'text-blue-400' : 'text-white'}`}>Daily</h3>
+                <h3 className={`text-center font-bold text-base mb-0.5 ${selectedCount > 3 && selectedCount <= 10 ? 'text-blue-400' : 'text-white'}`}>Daily</h3>
                 <div className="text-center">
-                  <div className={`text-2xl font-bold mb-1 ${selectedCount > 3 && selectedCount <= 10 ? 'text-white' : 'text-gray-400'}`}>$39</div>
-                  <p className="text-xs text-gray-500 mb-3">per month</p>
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-center gap-1 text-[10px] text-gray-400">
-                      <CheckCircle className="w-3 h-3 text-blue-600 flex-shrink-0" />
+                  <div className={`text-xl font-bold mb-0.5 ${selectedCount > 3 && selectedCount <= 10 ? 'text-white' : 'text-gray-400'}`}>$39</div>
+                  <p className="text-[10px] text-gray-500 mb-2">per month</p>
+                  <div className="space-y-0.5">
+                    <div className="flex items-center justify-center gap-1 text-[9px] text-gray-400">
+                      <CheckCircle className="w-2.5 h-2.5 text-blue-600 flex-shrink-0" />
                       <span>4-10 categories</span>
                     </div>
-                    <div className="flex items-center justify-center gap-1 text-[10px] text-gray-400">
-                      <CheckCircle className="w-3 h-3 text-blue-600 flex-shrink-0" />
+                    <div className="flex items-center justify-center gap-1 text-[9px] text-gray-400">
+                      <CheckCircle className="w-2.5 h-2.5 text-blue-600 flex-shrink-0" />
                       <span>Advanced analytics</span>
                     </div>
                   </div>
@@ -310,23 +320,23 @@ export default function CatalogSection({ onSectionChange }: CatalogSectionProps)
               </div>
             </div>
 
-            <div className={`group/card relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 border-2 rounded-xl p-4 transition-all duration-300 overflow-hidden ${selectedCount > 10 ? 'border-slate-600 shadow-lg shadow-slate-500/20' : 'border-gray-700/40 hover:border-slate-600/40'}`}>
+            <div className={`group/card relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 border-2 rounded-lg p-3 transition-all duration-300 overflow-hidden ${selectedCount > 10 ? 'border-slate-600 shadow-lg shadow-slate-500/20' : 'border-gray-700/40 hover:border-slate-600/40'}`}>
               <div className="absolute inset-0 bg-gradient-to-br from-slate-900/0 to-slate-900/10 opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
               <div className="relative">
-                <div className="w-12 h-12 bg-gradient-to-br from-slate-600 to-slate-700 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover/card:shadow-lg group-hover/card:shadow-slate-600/30 transition-all">
-                  <Crown className={`h-6 w-6 text-white`} />
+                <div className="w-10 h-10 bg-gradient-to-br from-slate-600 to-slate-700 rounded-lg flex items-center justify-center mx-auto mb-2 group-hover/card:shadow-lg group-hover/card:shadow-slate-600/30 transition-all">
+                  <Crown className={`h-5 w-5 text-white`} />
                 </div>
-                <h3 className={`text-center font-bold text-lg mb-1 ${selectedCount > 10 ? 'text-slate-300' : 'text-white'}`}>Max</h3>
+                <h3 className={`text-center font-bold text-base mb-0.5 ${selectedCount > 10 ? 'text-slate-300' : 'text-white'}`}>Max</h3>
                 <div className="text-center">
-                  <div className={`text-2xl font-bold mb-1 ${selectedCount > 10 ? 'text-white' : 'text-gray-400'}`}>$79</div>
-                  <p className="text-xs text-gray-500 mb-3">per month</p>
-                  <div className="space-y-1">
-                    <div className="flex items-center justify-center gap-1 text-[10px] text-gray-400">
-                      <CheckCircle className="w-3 h-3 text-slate-600 flex-shrink-0" />
+                  <div className={`text-xl font-bold mb-0.5 ${selectedCount > 10 ? 'text-white' : 'text-gray-400'}`}>$79</div>
+                  <p className="text-[10px] text-gray-500 mb-2">per month</p>
+                  <div className="space-y-0.5">
+                    <div className="flex items-center justify-center gap-1 text-[9px] text-gray-400">
+                      <CheckCircle className="w-2.5 h-2.5 text-slate-600 flex-shrink-0" />
                       <span>All 20 categories</span>
                     </div>
-                    <div className="flex items-center justify-center gap-1 text-[10px] text-gray-400">
-                      <CheckCircle className="w-3 h-3 text-slate-600 flex-shrink-0" />
+                    <div className="flex items-center justify-center gap-1 text-[9px] text-gray-400">
+                      <CheckCircle className="w-2.5 h-2.5 text-slate-600 flex-shrink-0" />
                       <span>Premium features</span>
                     </div>
                   </div>
