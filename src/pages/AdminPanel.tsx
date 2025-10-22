@@ -9,6 +9,7 @@ import AccessControlSection from '../components/admin/AccessControlSection';
 import SettingsSection from '../components/admin/SettingsSection';
 import AnalyticsSection from '../components/admin/AnalyticsSection';
 import UserManagementSection from '../components/admin/UserManagementSection';
+import MarketingDocumentsSection from '../components/admin/MarketingDocumentsSection';
 import { supabase } from '../lib/supabase';
 
 interface AdminPanelProps {
@@ -266,21 +267,6 @@ function DashboardSection() {
 
 
 
-function MarketingDocumentsSection() {
-  return (
-    <div>
-      <h1 className="text-3xl font-bold text-white mb-6">Marketing Documents</h1>
-      <div className="flex gap-4 mb-6">
-        <button className="px-4 py-2 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-lg hover:from-orange-500 hover:to-orange-600 transition-all duration-300 shadow-lg shadow-orange-600/20">
-          Upload Document
-        </button>
-      </div>
-      <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl p-6">
-        <p className="text-gray-400">Marketing materials library. Upload and manage documents, presentations, and assets.</p>
-      </div>
-    </div>
-  );
-}
 
 
 
