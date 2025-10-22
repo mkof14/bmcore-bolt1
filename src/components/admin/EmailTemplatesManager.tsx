@@ -57,9 +57,7 @@ export default function EmailTemplatesManager() {
     slug: '',
     category: 'general',
     subject_en: '',
-    subject_ru: '',
     body_en: '',
-    body_ru: '',
     variables: '',
     status: 'draft',
     description: '',
@@ -186,9 +184,7 @@ export default function EmailTemplatesManager() {
       slug: '',
       category: 'general',
       subject_en: '',
-      subject_ru: '',
       body_en: '',
-      body_ru: '',
       variables: '',
       status: 'draft',
       description: '',
@@ -204,9 +200,7 @@ export default function EmailTemplatesManager() {
       slug: template.slug,
       category: template.category,
       subject_en: template.subject_en,
-      subject_ru: template.subject_ru || '',
       body_en: template.body_en,
-      body_ru: template.body_ru || '',
       variables: variableKeys,
       status: template.status,
       description: template.description || '',
@@ -242,9 +236,9 @@ export default function EmailTemplatesManager() {
         slug: formData.slug,
         category: formData.category,
         subject_en: formData.subject_en,
-        subject_ru: formData.subject_ru || null,
+        subject_ru: null,
         body_en: formData.body_en,
-        body_ru: formData.body_ru || null,
+        body_ru: null,
         variable_schema: variableSchema,
         status: formData.status,
         description: formData.description || null,
@@ -629,44 +623,24 @@ export default function EmailTemplatesManager() {
                   />
                 </div>
 
-                <div className="grid md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-400 mb-2">Subject (English)</label>
-                    <input
-                      type="text"
-                      value={formData.subject_en}
-                      onChange={(e) => setFormData({ ...formData, subject_en: e.target.value })}
-                      className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-400 mb-2">Subject (Russian)</label>
-                    <input
-                      type="text"
-                      value={formData.subject_ru}
-                      onChange={(e) => setFormData({ ...formData, subject_ru: e.target.value })}
-                      className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-                    />
-                  </div>
-                </div>
-
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-2">Body (English)</label>
-                  <textarea
-                    value={formData.body_en}
-                    onChange={(e) => setFormData({ ...formData, body_en: e.target.value })}
-                    rows={6}
+                  <label className="block text-sm font-medium text-gray-400 mb-2">Subject</label>
+                  <input
+                    type="text"
+                    value={formData.subject_en}
+                    onChange={(e) => setFormData({ ...formData, subject_en: e.target.value })}
                     className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-2">Body (Russian)</label>
+                  <label className="block text-sm font-medium text-gray-400 mb-2">Body (HTML)</label>
                   <textarea
-                    value={formData.body_ru}
-                    onChange={(e) => setFormData({ ...formData, body_ru: e.target.value })}
-                    rows={6}
-                    className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    value={formData.body_en}
+                    onChange={(e) => setFormData({ ...formData, body_en: e.target.value })}
+                    rows={12}
+                    className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    placeholder="<!DOCTYPE html><html><body>...</body></html>"
                   />
                 </div>
 
