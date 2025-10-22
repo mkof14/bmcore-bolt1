@@ -248,7 +248,7 @@ export default function CatalogSection({ onSectionChange }: CatalogSectionProps)
                 {selectedCount > 0 && (
                   <button
                     onClick={() => setSelectedCategories(new Set())}
-                    className="text-[10px] px-2 py-1 bg-red-500/20 hover:bg-red-500/30 text-red-400 rounded border border-red-500/30 transition-colors"
+                    className="text-xs px-3 py-1.5 bg-red-500/30 hover:bg-red-500/50 text-red-300 font-semibold rounded-md border border-red-500/50 transition-all hover:scale-105 shadow-sm"
                   >
                     Clear All
                   </button>
