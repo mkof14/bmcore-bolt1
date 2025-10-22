@@ -17,7 +17,7 @@ export default function Footer({ onNavigate }: FooterProps) {
               <img
                 src="/c4ed716861591eaff6ad147477e1e2173f93025ada2a1c419b9f48122b389c17-removebg-preview.png"
                 alt="BioMath Core Logo"
-                className="h-12 w-12"
+                className="h-24 w-24"
               />
               <span className="text-3xl font-bold">
                 <span className="text-blue-500">BioMath</span>
