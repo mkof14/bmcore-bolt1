@@ -40,7 +40,7 @@ interface MemberZoneProps {
 }
 
 export default function MemberZone({ onNavigate, onSignOut }: MemberZoneProps) {
-  const [currentSection, setCurrentSection] = useState('dashboard');
+  const [currentSection, setCurrentSection] = useState('catalog');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
   const handleSignOut = async () => {

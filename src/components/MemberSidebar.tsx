@@ -86,6 +86,7 @@ export default function MemberSidebar({ currentSection, onSectionChange }: Membe
                 {section.items.map((item) => {
                   const Icon = item.icon;
                   const isActive = currentSection === item.id;
+                  const isCatalog = item.id === 'catalog';
 
                   return (
                     <button
@@ -94,13 +95,15 @@ export default function MemberSidebar({ currentSection, onSectionChange }: Membe
                       className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-all duration-300 ${
                         isActive
                           ? 'bg-gradient-to-r from-orange-900/30 to-orange-800/20 border border-orange-600/30 text-orange-500'
+                          : isCatalog
+                          ? 'bg-gradient-to-r from-green-900/20 to-green-800/10 border border-green-600/30 text-green-400 hover:from-green-900/30 hover:to-green-800/20'
                           : 'text-gray-400 hover:bg-gray-800/50 border border-transparent hover:border-gray-700/50'
                       }`}
                       title={isCollapsed ? item.label : ''}
                     >
-                      <Icon className={`h-5 w-5 flex-shrink-0 ${isActive ? 'text-orange-500' : ''}`} />
+                      <Icon className={`h-5 w-5 flex-shrink-0 ${isActive ? 'text-orange-500' : isCatalog ? 'text-green-400' : ''}`} />
                       {!isCollapsed && (
-                        <span className={`text-sm font-medium ${isActive ? 'font-semibold' : ''}`}>
+                        <span className={`text-sm font-medium ${isActive ? 'font-semibold' : isCatalog ? 'font-semibold' : ''}`}>
                           {item.label}
                         </span>
                       )}

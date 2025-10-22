@@ -59,7 +59,7 @@ export default function SignUp({ onNavigate }: SignUpProps) {
 
       setSuccess(true);
       setTimeout(() => {
-        onNavigate('signin');
+        onNavigate('member-zone');
       }, 2000);
     } catch (err: unknown) {
       if (err instanceof Error) {
