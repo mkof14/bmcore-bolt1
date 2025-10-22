@@ -121,6 +121,53 @@ export default function PersonalInfoSection() {
     setCustomFields(customFields.filter((_, i) => i !== index));
   };
 
+  const handleFileUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > 5 * 1024 * 1024) {
+      alert('File size must be less than 5MB');
+      return;
+    }
+
+    if (!file.type.startsWith('image/')) {
+      alert('Please upload an image file');
+      return;
+    }
+
+    try {
+      const { data: user } = await supabase.auth.getUser();
+      if (!user.user) return;
+
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${user.user.id}-${Date.now()}.${fileExt}`;
+      const filePath = `avatars/${fileName}`;
+
+      const { error: uploadError } = await supabase.storage
+        .from('profiles')
+        .upload(filePath, file, {
+          cacheControl: '3600',
+          upsert: true
+        });
+
+      if (uploadError) {
+        console.error('Upload error:', uploadError);
+        alert('Upload failed. Using direct URL instead. Enter image URL below.');
+        return;
+      }
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('profiles')
+        .getPublicUrl(filePath);
+
+      setProfile({ ...profile, avatar_url: publicUrl });
+      alert('Photo uploaded successfully!');
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      alert('Upload failed. You can enter an image URL instead.');
+    }
+  };
+
   if (loading || !profile) {
     return <div className="text-center py-12 text-gray-400">Loading...</div>;
   }
@@ -148,15 +195,29 @@ export default function PersonalInfoSection() {
                     src={profile.avatar_url}
                     alt="Profile"
                     className="w-32 h-32 rounded-full object-cover border-4 border-orange-500/30"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).src = '';
+                      (e.target as HTMLImageElement).style.display = 'none';
+                    }}
                   />
                 ) : (
                   <div className="w-32 h-32 rounded-full bg-gradient-to-br from-orange-600 to-orange-500 flex items-center justify-center">
                     <User className="h-16 w-16 text-white" />
                   </div>
                 )}
-                <button className="absolute bottom-0 right-0 p-2 bg-orange-600 rounded-full hover:bg-orange-700 transition-colors">
+                <input
+                  type="file"
+                  id="avatar-upload"
+                  accept="image/*"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+                <label
+                  htmlFor="avatar-upload"
+                  className="absolute bottom-0 right-0 p-2 bg-orange-600 rounded-full hover:bg-orange-700 transition-colors cursor-pointer"
+                >
                   <Camera className="h-4 w-4 text-white" />
-                </button>
+                </label>
               </div>
               <input
                 type="text"
@@ -165,9 +226,11 @@ export default function PersonalInfoSection() {
                 placeholder="Enter image URL"
                 className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
               />
-              <p className="text-xs text-gray-500 mt-2 text-center">
-                Enter a URL or upload an image
-              </p>
+              <div className="text-xs text-gray-400 mt-2 text-center space-y-1">
+                <p className="font-medium text-gray-300">Two ways to add photo:</p>
+                <p>1. Click camera icon to upload file (max 5MB)</p>
+                <p>2. Paste image URL in the field above</p>
+              </div>
             </div>
           </div>
         </div>
