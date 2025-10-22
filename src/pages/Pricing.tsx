@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { Check, X, ChevronDown, ChevronUp, Shield, TrendingUp, Zap, ArrowRight } from 'lucide-react';
-
-// Updated: 2025-10-20 01:42 - FORCE REFRESH
+import { Check, Star, Layers, Crown, ArrowRight, CheckCircle } from 'lucide-react';
+import BackButton from '../components/BackButton';
 
 interface PricingProps {
   onNavigate: (page: string) => void;
@@ -9,106 +8,71 @@ interface PricingProps {
 
 export default function Pricing({ onNavigate }: PricingProps) {
   const [billingPeriod, setBillingPeriod] = useState<'monthly' | 'yearly'>('monthly');
-  const [openFAQ, setOpenFAQ] = useState<number | null>(null);
 
   const plans = [
     {
       id: 'core',
-      name: 'CORE',
-      description: 'Essential health analytics for individuals',
+      name: 'Core',
+      icon: Star,
+      description: 'Essential health analytics',
       monthlyPrice: 19,
-      yearlyPrice: 19 * 10,
-      icon: Shield,
-      color: 'gray',
+      yearlyPrice: 190,
+      categories: '3',
+      color: 'orange',
       features: [
-        'Basic health dashboard',
-        '3 service categories access',
+        'Any 3 health categories',
+        'Basic AI insights',
         '10 GB Model Archive storage',
         'Monthly health reports',
         'Email support',
         'Data encryption',
-        'Device connectivity (up to 2 devices)'
+        'Up to 2 device connections'
       ]
     },
     {
       id: 'daily',
       name: 'Daily',
-      description: 'Daily insights and comprehensive tracking',
+      icon: Layers,
+      description: 'Daily insights & tracking',
       monthlyPrice: 39,
-      yearlyPrice: 39 * 10,
-      icon: TrendingUp,
+      yearlyPrice: 390,
+      categories: '4-10',
       color: 'blue',
       popular: true,
       features: [
         'Everything in Core',
-        'Customizable categories',
+        '4-10 health categories',
+        'Advanced analytics',
         '50 GB Model Archive storage',
         'Daily health reports',
         'Priority email support',
-        'Device connectivity (up to 5 devices)',
-        'AI Assistant access',
+        'Up to 5 device connections',
+        'AI Health Assistant',
         'Lab results integration',
         'Genetic data analysis'
       ]
     },
     {
       id: 'max',
-      name: 'MAX',
-      description: 'Complete health intelligence platform',
+      name: 'Max',
+      icon: Crown,
+      description: 'Complete health platform',
       monthlyPrice: 79,
-      yearlyPrice: 79 * 10,
-      icon: Zap,
-      color: 'purple',
+      yearlyPrice: 790,
+      categories: 'All 20',
+      color: 'slate',
       features: [
         'Everything in Daily',
-        'All 20 service categories',
+        'All 20 health categories',
+        'Premium AI features',
         '200 GB Model Archive storage',
         'Real-time AI insights',
         '24/7 priority support',
-        'Unlimited device connectivity',
+        'Unlimited device connections',
         'Predictive analytics',
         'Custom report generation',
-        'Family accounts (up to 5 members)'
+        'Family accounts (up to 5)'
       ]
-    }
-  ];
-
-  const comparisonFeatures = [
-    { name: 'Health dashboard', core: 'Basic', daily: 'Advanced', max: 'Advanced' },
-    { name: 'Service categories', core: '3', daily: 'Customizable', max: 'All 20' },
-    { name: 'Model Archive storage', core: '10 GB', daily: '50 GB', max: '200 GB' },
-    { name: 'Health reports', core: 'Monthly', daily: 'Daily', max: 'Real-time' },
-    { name: 'Support', core: 'Email', daily: 'Priority email', max: '24/7 priority' },
-    { name: 'Data encryption', core: true, daily: true, max: true },
-    { name: 'Device connectivity', core: 'Up to 2', daily: 'Up to 5', max: 'Unlimited' },
-    { name: 'AI Assistant', core: false, daily: true, max: true },
-    { name: 'Lab results integration', core: false, daily: true, max: true },
-    { name: 'Genetic data analysis', core: false, daily: true, max: true },
-    { name: 'Predictive analytics', core: false, daily: false, max: true },
-    { name: 'Custom report generation', core: false, daily: false, max: true },
-    { name: 'Family accounts', core: false, daily: false, max: 'Up to 5' }
-  ];
-
-  const faqs = [
-    {
-      question: 'Can I switch plans at any time?',
-      answer: 'Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately, and we\'ll prorate the cost accordingly.'
-    },
-    {
-      question: 'What happens after the 5-day trial?',
-      answer: 'After your 5-day trial ends, you\'ll be automatically charged based on your selected plan and billing period. You can cancel anytime during the trial without being charged.'
-    },
-    {
-      question: 'Is my health data secure?',
-      answer: 'Absolutely. All plans include enterprise-grade encryption, secure data storage, and compliance with HIPAA regulations. Your health data is never shared with third parties without your explicit consent.'
-    },
-    {
-      question: 'Can I get a refund?',
-      answer: 'Yes, we offer a 30-day money-back guarantee on all paid plans. If you\'re not satisfied, contact support for a full refund within the first 30 days of your subscription.'
-    },
-    {
-      question: 'Do you offer discounts for annual billing?',
-      answer: 'Yes! Annual billing saves you approximately 17% compared to monthly payments. You\'ll see the discounted price when you select yearly billing above.'
     }
   ];
 
@@ -116,282 +80,289 @@ export default function Pricing({ onNavigate }: PricingProps) {
     return billingPeriod === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice;
   };
 
-  const getPlanColorClasses = (color: string, isPopular: boolean = false) => {
+  const getSavings = (plan: typeof plans[0]) => {
+    const yearlyTotal = plan.monthlyPrice * 12;
+    const savings = yearlyTotal - plan.yearlyPrice;
+    return savings;
+  };
+
+  const getPlanColors = (color: string) => {
     const colors = {
-      gray: {
-        bg: 'from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-850',
-        border: 'border-gray-300 dark:border-gray-700',
-        button: 'bg-gray-700 hover:bg-gray-800 dark:bg-gray-600 dark:hover:bg-gray-500',
-        icon: 'text-gray-600 dark:text-gray-400'
+      orange: {
+        border: 'border-orange-500',
+        bg: 'from-orange-500 to-orange-600',
+        icon: 'text-orange-500',
+        shadow: 'shadow-orange-500/20',
+        hover: 'hover:border-orange-400'
       },
       blue: {
-        bg: 'from-blue-50 to-indigo-50 dark:from-blue-950/30 dark:to-indigo-950/30',
-        border: 'border-blue-400 dark:border-blue-600',
-        button: 'bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600',
-        icon: 'text-blue-600 dark:text-blue-400'
+        border: 'border-blue-500',
+        bg: 'from-blue-500 to-blue-600',
+        icon: 'text-blue-500',
+        shadow: 'shadow-blue-500/20',
+        hover: 'hover:border-blue-400'
       },
-      purple: {
-        bg: 'from-purple-50 to-pink-50 dark:from-purple-950/30 dark:to-pink-950/30',
-        border: 'border-purple-400 dark:border-purple-600',
-        button: 'bg-purple-600 hover:bg-purple-700 dark:bg-purple-500 dark:hover:bg-purple-600',
-        icon: 'text-purple-600 dark:text-purple-400'
+      slate: {
+        border: 'border-slate-600',
+        bg: 'from-slate-600 to-slate-700',
+        icon: 'text-slate-400',
+        shadow: 'shadow-slate-500/20',
+        hover: 'hover:border-slate-500'
       }
     };
     return colors[color as keyof typeof colors];
   };
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors pt-16">
-      {/* VERSION MARKER - TEMPORARY */}
-      <div className="bg-red-600 text-white text-center py-2 font-bold text-sm">
-        🔴 NEW VERSION LOADED - 2025-10-20 01:45 - CORE $19 / Daily $39 / MAX $79
-      </div>
+    <div className="min-h-screen bg-gray-950 transition-colors">
+      <div className="pt-20 pb-16">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <BackButton onNavigate={onNavigate} />
 
-      {/* Hero Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
-        <div className="max-w-4xl mx-auto text-center">
-          <p className="text-sm font-semibold text-blue-600 dark:text-blue-400 mb-3 tracking-wide uppercase">
-            PRICING PLANS
-          </p>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900 dark:text-white mb-4">
-            Choose Your <span className="text-blue-600 dark:text-blue-400">Plan</span>
-          </h1>
-          <p className="text-lg text-gray-600 dark:text-gray-300 mb-8">
-            Each plan expands the Human Data Model. More categories = deeper insights.
-          </p>
+          <section className="py-16 text-center">
+            <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
+              Build Your Health Plan
+            </h1>
+            <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
+              Choose from 20 comprehensive health categories and 200+ AI-powered services
+            </p>
 
-          {/* Billing Toggle */}
-          <div className="inline-flex items-center bg-white dark:bg-gray-900 rounded-full p-1 border border-gray-300 dark:border-gray-700 shadow-sm">
-            <button
-              onClick={() => setBillingPeriod('monthly')}
-              className={`px-6 py-2 rounded-full text-sm font-semibold transition-all ${
-                billingPeriod === 'monthly'
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'text-gray-600 dark:text-gray-400'
-              }`}
-            >
-              Monthly
-            </button>
-            <button
-              onClick={() => setBillingPeriod('yearly')}
-              className={`px-6 py-2 rounded-full text-sm font-semibold transition-all ${
-                billingPeriod === 'yearly'
-                  ? 'bg-blue-600 text-white shadow-md'
-                  : 'text-gray-600 dark:text-gray-400'
-              }`}
-            >
-              Yearly
-            </button>
-          </div>
-        </div>
-      </section>
+            <div className="inline-flex items-center bg-gray-900 border border-gray-700 rounded-full p-1.5 shadow-lg">
+              <button
+                onClick={() => setBillingPeriod('monthly')}
+                className={`px-8 py-3 rounded-full text-sm font-semibold transition-all ${
+                  billingPeriod === 'monthly'
+                    ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg'
+                    : 'text-gray-400 hover:text-gray-300'
+                }`}
+              >
+                Monthly
+              </button>
+              <button
+                onClick={() => setBillingPeriod('yearly')}
+                className={`px-8 py-3 rounded-full text-sm font-semibold transition-all relative ${
+                  billingPeriod === 'yearly'
+                    ? 'bg-gradient-to-r from-orange-500 to-orange-600 text-white shadow-lg'
+                    : 'text-gray-400 hover:text-gray-300'
+                }`}
+              >
+                Yearly
+                <span className="absolute -top-2 -right-2 bg-green-500 text-white text-[10px] px-2 py-0.5 rounded-full font-bold">
+                  Save
+                </span>
+              </button>
+            </div>
 
-      {/* Pricing Cards */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-7xl mx-auto">
-          <div className="grid md:grid-cols-3 gap-6">
-            {plans.map((plan) => {
-              const Icon = plan.icon;
-              const colors = getPlanColorClasses(plan.color, plan.popular);
-              const price = getPrice(plan);
+            {billingPeriod === 'yearly' && (
+              <p className="mt-4 text-green-400 font-semibold animate-in fade-in">
+                Save up to 17% with annual billing
+              </p>
+            )}
+          </section>
 
-              return (
-                <div
-                  key={plan.id}
-                  className={`relative bg-gradient-to-br ${colors.bg} rounded-xl p-6 border-2 ${colors.border} transition-all hover:shadow-xl ${
-                    plan.popular ? 'ring-2 ring-blue-500 ring-offset-2 dark:ring-offset-gray-950' : ''
-                  }`}
-                >
-                  {plan.popular && (
-                    <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-                      <span className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-4 py-1 rounded-full text-xs font-bold shadow-md">
-                        Most Popular
-                      </span>
-                    </div>
-                  )}
+          <section className="mb-20">
+            <div className="grid md:grid-cols-3 gap-8">
+              {plans.map((plan) => {
+                const Icon = plan.icon;
+                const colors = getPlanColors(plan.color);
+                const price = getPrice(plan);
+                const savings = getSavings(plan);
 
-                  <div className="mb-4">
-                    <Icon className={`h-8 w-8 ${colors.icon} mb-3`} />
-                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
-                      {plan.name}
-                    </h3>
-                    <p className="text-sm text-gray-600 dark:text-gray-400">
-                      {plan.description}
-                    </p>
-                  </div>
-
-                  <div className="mb-6">
-                    <div className="flex items-baseline">
-                      <span className="text-4xl font-bold text-gray-900 dark:text-white">
-                        ${price}
-                      </span>
-                      <span className="ml-2 text-gray-600 dark:text-gray-400">
-                        /{billingPeriod === 'monthly' ? 'month' : 'year'}
-                      </span>
-                    </div>
-                    {billingPeriod === 'yearly' && (
-                      <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">
-                        ${(price / 12).toFixed(0)}/month billed annually
-                      </p>
-                    )}
-                  </div>
-
-                  <button
-                    onClick={() => onNavigate('signup')}
-                    className={`w-full py-2.5 rounded-lg text-white font-semibold transition-all flex items-center justify-center gap-2 mb-6 ${colors.button}`}
+                return (
+                  <div
+                    key={plan.id}
+                    className={`group relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border-2 rounded-2xl p-8 transition-all duration-500 overflow-hidden ${
+                      plan.popular
+                        ? `${colors.border} shadow-xl ${colors.shadow}`
+                        : `border-gray-700/50 ${colors.hover}`
+                    }`}
                   >
-                    <span>Get Started</span>
-                    <ArrowRight className="h-4 w-4" />
-                  </button>
+                    <div className="absolute inset-0 bg-gradient-to-br from-orange-900/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
-                  <div className="space-y-2.5">
-                    {plan.features.map((feature, index) => (
-                      <div key={index} className="flex items-start gap-2">
-                        <Check className={`h-4 w-4 flex-shrink-0 mt-0.5 ${colors.icon}`} />
-                        <span className="text-sm text-gray-700 dark:text-gray-300">
-                          {feature}
+                    {plan.popular && (
+                      <div className="absolute -top-4 left-1/2 transform -translate-x-1/2">
+                        <span className="bg-gradient-to-r from-orange-500 to-orange-600 text-white px-6 py-1.5 rounded-full text-xs font-bold shadow-lg">
+                          Most Popular
                         </span>
                       </div>
-                    ))}
+                    )}
+
+                    <div className="relative">
+                      <div className={`w-16 h-16 bg-gradient-to-br ${colors.bg} rounded-xl flex items-center justify-center mb-6 group-hover:shadow-lg group-hover:${colors.shadow} transition-all`}>
+                        <Icon className="h-8 w-8 text-white" />
+                      </div>
+
+                      <h3 className="text-3xl font-bold text-white mb-2">{plan.name}</h3>
+                      <p className="text-gray-400 mb-6">{plan.description}</p>
+
+                      <div className="mb-6">
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-5xl font-bold text-white">${price}</span>
+                          <span className="text-gray-500">
+                            /{billingPeriod === 'monthly' ? 'month' : 'year'}
+                          </span>
+                        </div>
+                        {billingPeriod === 'yearly' && (
+                          <div className="mt-2">
+                            <p className="text-sm text-gray-400">
+                              ${(price / 12).toFixed(2)}/month billed annually
+                            </p>
+                            <p className="text-xs text-green-400 font-semibold">
+                              Save ${savings}/year
+                            </p>
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="mb-6 p-3 bg-gray-900/50 border border-gray-700/50 rounded-lg">
+                        <div className="text-center">
+                          <span className="text-2xl font-bold bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">
+                            {plan.categories}
+                          </span>
+                          <p className="text-xs text-gray-500 mt-1">health categories</p>
+                        </div>
+                      </div>
+
+                      <button
+                        onClick={() => onNavigate('signup')}
+                        className={`w-full py-4 bg-gradient-to-r ${colors.bg} text-white font-bold rounded-xl hover:opacity-90 transition-all transform hover:scale-105 shadow-lg mb-8 flex items-center justify-center gap-2`}
+                      >
+                        <span>Get Started</span>
+                        <ArrowRight className="h-5 w-5" />
+                      </button>
+
+                      <div className="space-y-3">
+                        {plan.features.map((feature, index) => (
+                          <div key={index} className="flex items-start gap-3">
+                            <CheckCircle className={`h-5 w-5 flex-shrink-0 mt-0.5 ${colors.icon}`} />
+                            <span className="text-sm text-gray-300">{feature}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+
+          <section className="mb-20">
+            <div className="bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-800 rounded-2xl p-12">
+              <div className="flex items-start gap-4 mb-8">
+                <div className="w-12 h-12 bg-blue-500/20 border border-blue-500/30 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <CheckCircle className="h-6 w-6 text-blue-400" />
+                </div>
+                <div>
+                  <h2 className="text-3xl font-bold text-white mb-3">All Plans Include</h2>
+                  <p className="text-gray-400">Enterprise-grade features in every subscription</p>
+                </div>
+              </div>
+
+              <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                <div className="flex items-start gap-3">
+                  <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-white font-semibold mb-1">5-Day Free Trial</h4>
+                    <p className="text-sm text-gray-400">Try before you commit</p>
                   </div>
                 </div>
-              );
-            })}
-          </div>
-        </div>
-      </section>
-
-      {/* Compare All Features */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-900/50">
-        <div className="max-w-5xl mx-auto">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white text-center mb-10">
-            Compare All Features
-          </h2>
-
-          <div className="bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-800 overflow-hidden">
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead>
-                  <tr className="border-b border-gray-200 dark:border-gray-800">
-                    <th className="px-6 py-4 text-left text-sm font-semibold text-gray-900 dark:text-white">
-                      Feature
-                    </th>
-                    <th className="px-6 py-4 text-center text-sm font-semibold text-gray-900 dark:text-white">
-                      Core
-                    </th>
-                    <th className="px-6 py-4 text-center text-sm font-semibold text-blue-600 dark:text-blue-400">
-                      Daily
-                    </th>
-                    <th className="px-6 py-4 text-center text-sm font-semibold text-purple-600 dark:text-purple-400">
-                      Max
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {comparisonFeatures.map((feature, index) => (
-                    <tr
-                      key={index}
-                      className="border-b border-gray-100 dark:border-gray-800 last:border-0"
-                    >
-                      <td className="px-6 py-4 text-sm text-gray-700 dark:text-gray-300">
-                        {feature.name}
-                      </td>
-                      <td className="px-6 py-4 text-center text-sm">
-                        {typeof feature.core === 'boolean' ? (
-                          feature.core ? (
-                            <Check className="h-5 w-5 text-green-500 mx-auto" />
-                          ) : (
-                            <X className="h-5 w-5 text-gray-300 dark:text-gray-700 mx-auto" />
-                          )
-                        ) : (
-                          <span className="text-gray-700 dark:text-gray-300">{feature.core}</span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 text-center text-sm">
-                        {typeof feature.daily === 'boolean' ? (
-                          feature.daily ? (
-                            <Check className="h-5 w-5 text-green-500 mx-auto" />
-                          ) : (
-                            <X className="h-5 w-5 text-gray-300 dark:text-gray-700 mx-auto" />
-                          )
-                        ) : (
-                          <span className="text-gray-700 dark:text-gray-300">{feature.daily}</span>
-                        )}
-                      </td>
-                      <td className="px-6 py-4 text-center text-sm">
-                        {typeof feature.max === 'boolean' ? (
-                          feature.max ? (
-                            <Check className="h-5 w-5 text-green-500 mx-auto" />
-                          ) : (
-                            <X className="h-5 w-5 text-gray-300 dark:text-gray-700 mx-auto" />
-                          )
-                        ) : (
-                          <span className="text-gray-700 dark:text-gray-300">{feature.max}</span>
-                        )}
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* FAQ Section */}
-      <section className="py-16 px-4 sm:px-6 lg:px-8">
-        <div className="max-w-3xl mx-auto">
-          <h2 className="text-3xl font-bold text-gray-900 dark:text-white text-center mb-10">
-            Frequently Asked Questions
-          </h2>
-
-          <div className="space-y-3">
-            {faqs.map((faq, index) => (
-              <div
-                key={index}
-                className="bg-white dark:bg-gray-900 rounded-lg border border-gray-200 dark:border-gray-800 overflow-hidden"
-              >
-                <button
-                  onClick={() => setOpenFAQ(openFAQ === index ? null : index)}
-                  className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-gray-50 dark:hover:bg-gray-850 transition-colors"
-                >
-                  <span className="font-semibold text-gray-900 dark:text-white">
-                    {faq.question}
-                  </span>
-                  {openFAQ === index ? (
-                    <ChevronUp className="h-5 w-5 text-blue-600 dark:text-blue-400 flex-shrink-0" />
-                  ) : (
-                    <ChevronDown className="h-5 w-5 text-gray-400 flex-shrink-0" />
-                  )}
-                </button>
-                {openFAQ === index && (
-                  <div className="px-6 py-4 bg-gray-50 dark:bg-gray-850 border-t border-gray-200 dark:border-gray-800">
-                    <p className="text-gray-700 dark:text-gray-300">{faq.answer}</p>
+                <div className="flex items-start gap-3">
+                  <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-white font-semibold mb-1">HIPAA Compliant</h4>
+                    <p className="text-sm text-gray-400">Your data is secure</p>
                   </div>
-                )}
+                </div>
+                <div className="flex items-start gap-3">
+                  <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-white font-semibold mb-1">Cancel Anytime</h4>
+                    <p className="text-sm text-gray-400">No long-term commitment</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-white font-semibold mb-1">Data Encryption</h4>
+                    <p className="text-sm text-gray-400">Bank-level security</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-white font-semibold mb-1">Easy Upgrades</h4>
+                    <p className="text-sm text-gray-400">Switch plans anytime</p>
+                  </div>
+                </div>
+                <div className="flex items-start gap-3">
+                  <Check className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
+                  <div>
+                    <h4 className="text-white font-semibold mb-1">30-Day Refund</h4>
+                    <p className="text-sm text-gray-400">Money-back guarantee</p>
+                  </div>
+                </div>
               </div>
-            ))}
-          </div>
-        </div>
-      </section>
+            </div>
+          </section>
 
-      {/* Trial Notice */}
-      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
-        <div className="max-w-4xl mx-auto text-center">
-          <div className="bg-white dark:bg-gray-900 rounded-xl p-8 border border-gray-200 dark:border-gray-800 shadow-lg">
-            <p className="text-gray-700 dark:text-gray-300 mb-4">
-              All plans include a <span className="font-bold text-blue-600 dark:text-blue-400">5-day trial</span> with payment details required upfront.
+          <section className="mb-20">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold text-white mb-4">How It Works</h2>
+              <p className="text-xl text-gray-400">Start building your personalized health platform today</p>
+            </div>
+
+            <div className="grid md:grid-cols-3 gap-8">
+              <div className="group relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 border border-gray-700/40 rounded-xl p-6 hover:border-orange-600/40 transition-all duration-300 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-900/0 to-orange-900/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative">
+                  <div className="w-12 h-12 bg-orange-500/20 border border-orange-500/30 rounded-lg flex items-center justify-center mb-4">
+                    <span className="text-2xl font-bold text-orange-400">1</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-2">Choose Categories</h3>
+                  <p className="text-gray-400">Select from 20 health categories that matter to you</p>
+                </div>
+              </div>
+
+              <div className="group relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 border border-gray-700/40 rounded-xl p-6 hover:border-orange-600/40 transition-all duration-300 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-900/0 to-orange-900/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative">
+                  <div className="w-12 h-12 bg-blue-500/20 border border-blue-500/30 rounded-lg flex items-center justify-center mb-4">
+                    <span className="text-2xl font-bold text-blue-400">2</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-2">Connect Data</h3>
+                  <p className="text-gray-400">Link your devices and import health records</p>
+                </div>
+              </div>
+
+              <div className="group relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 border border-gray-700/40 rounded-xl p-6 hover:border-orange-600/40 transition-all duration-300 overflow-hidden">
+                <div className="absolute inset-0 bg-gradient-to-br from-orange-900/0 to-orange-900/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+                <div className="relative">
+                  <div className="w-12 h-12 bg-green-500/20 border border-green-500/30 rounded-lg flex items-center justify-center mb-4">
+                    <span className="text-2xl font-bold text-green-400">3</span>
+                  </div>
+                  <h3 className="text-xl font-bold text-white mb-2">Get Insights</h3>
+                  <p className="text-gray-400">Receive AI-powered health recommendations</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <section className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-2xl p-12 text-center">
+            <h2 className="text-3xl font-bold text-white mb-4">Ready to Transform Your Health?</h2>
+            <p className="text-xl text-gray-300 mb-8 max-w-2xl mx-auto">
+              Join thousands of users optimizing their health with AI-powered insights
             </p>
             <button
-              onClick={() => onNavigate('about')}
-              className="inline-flex items-center text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 font-semibold transition-colors"
+              onClick={() => onNavigate('signup')}
+              className="inline-flex items-center gap-2 px-8 py-4 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white font-bold rounded-xl transition-all transform hover:scale-105 shadow-lg"
             >
-              <span>Learn more about our platform</span>
-              <ArrowRight className="h-4 w-4 ml-2" />
+              <span>Start Your 5-Day Free Trial</span>
+              <ArrowRight className="h-5 w-5" />
             </button>
-          </div>
+            <p className="mt-4 text-sm text-gray-500">No credit card required for trial</p>
+          </section>
         </div>
-      </section>
+      </div>
     </div>
   );
 }
