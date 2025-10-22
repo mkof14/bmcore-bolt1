@@ -64,7 +64,7 @@ export default function MemberSidebar({ currentSection, onSectionChange }: Membe
         { id: 'referral', label: 'Referral Program', icon: Users },
         { id: 'billing', label: 'Billing & Subscription', icon: CreditCard },
         { id: 'profile', label: 'Profile', icon: User },
-        { id: 'settings', label: 'Settings', icon: Settings },
+        { id: 'settings', label: 'Report Settings', icon: Settings },
       ]
     }
   ];

@@ -216,9 +216,17 @@ export default function QuestionnairesSection() {
   }
 
   return (
-    <div className="flex flex-col lg:flex-row gap-6 h-full">
-      {/* Sidebar */}
-      <div className="lg:w-64 flex-shrink-0">
+    <div>
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold text-white mb-2">Health Questionnaires</h1>
+        <p className="text-gray-400">
+          Complete your health profile to receive personalized recommendations and insights
+        </p>
+      </div>
+
+      <div className="flex flex-col lg:flex-row gap-6 h-full">
+        {/* Sidebar */}
+        <div className="lg:w-64 flex-shrink-0">
         <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-lg border border-gray-700/50 p-4 sticky top-4">
           <div className="mb-4 pb-4 border-b border-gray-700/50">
             <h3 className="font-semibold text-white mb-3">Settings</h3>
@@ -367,6 +375,7 @@ export default function QuestionnairesSection() {
             )
           )}
         </div>
+      </div>
       </div>
     </div>
   );

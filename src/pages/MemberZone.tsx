@@ -6,6 +6,14 @@ import DashboardSection from './member/DashboardSection';
 import PlaceholderSection from './member/PlaceholderSection';
 import QuestionnairesSection from './member/QuestionnairesSection';
 import ReportSettingsSection from './member/ReportSettingsSection';
+import AIHealthAdvisorSection from './member/AIHealthAdvisorSection';
+import DevicesSection from './member/DevicesSection';
+import SupportSection from './member/SupportSection';
+import PersonalInfoSection from './member/PersonalInfoSection';
+import MedicalFilesSection from './member/MedicalFilesSection';
+import BlackBoxSection from './member/BlackBoxSection';
+import SecondOpinionSection from './member/SecondOpinionSection';
+import BillingSection from './member/BillingSection';
 import {
   Sparkles,
   Watch,
@@ -43,55 +51,13 @@ export default function MemberZone({ onNavigate, onSignOut }: MemberZoneProps) {
         return <DashboardSection />;
 
       case 'ai-assistant':
-        return (
-          <PlaceholderSection
-            title="AI Health Advisor"
-            description="Your personal AI health advisor with multi-persona support and dual opinion capability"
-            icon={Sparkles}
-            features={[
-              'Chat with AI Health Advisor in real-time',
-              'Switch between Doctor, Nurse, and Coach personas',
-              'Get dual expert opinions on health questions',
-              'Voice input and text-to-speech responses',
-              'Generate reports directly from chat',
-              'Set goals based on AI recommendations'
-            ]}
-          />
-        );
+        return <AIHealthAdvisorSection />;
 
       case 'devices':
-        return (
-          <PlaceholderSection
-            title="Connect Devices"
-            description="Connect your wearables and health sensors for automatic data sync"
-            icon={Watch}
-            features={[
-              'Support for 10+ popular devices (Apple Watch, Oura, Fitbit, etc.)',
-              'Simple 3-step connection process',
-              'Automatic daily sync or real-time for CGM',
-              'Manage connected devices and sync frequency',
-              'View device data history',
-              'Privacy-first token storage'
-            ]}
-          />
-        );
+        return <DevicesSection />;
 
       case 'support':
-        return (
-          <PlaceholderSection
-            title="Support"
-            description="Get help from our support team"
-            icon={HeadphonesIcon}
-            comingSoon
-            features={[
-              '24/7 customer support chat',
-              'Knowledge base and FAQs',
-              'Video tutorials',
-              'Submit support tickets',
-              'Priority support for Pro users'
-            ]}
-          />
-        );
+        return <SupportSection />;
 
       case 'system':
         return (
@@ -134,54 +100,13 @@ export default function MemberZone({ onNavigate, onSignOut }: MemberZoneProps) {
         return null;
 
       case 'second-opinion':
-        return (
-          <PlaceholderSection
-            title="AI Health Second Opinion"
-            description="Get dual expert AI opinions on your health data and questions"
-            icon={Scale}
-            features={[
-              'Parallel analysis from two AI models',
-              'Evidence-based vs contextual perspectives',
-              'Side-by-side comparison view',
-              'Diff analysis of recommendations',
-              'Merge opinions into actionable plan'
-            ]}
-          />
-        );
+        return <SecondOpinionSection />;
 
       case 'medical-files':
-        return (
-          <PlaceholderSection
-            title="Medical Files & Documents"
-            description="Store and organize your medical records securely"
-            icon={FolderLock}
-            comingSoon
-            features={[
-              'Upload medical documents',
-              'Organize by category and date',
-              'OCR text extraction',
-              'Share with healthcare providers',
-              'Encrypted storage'
-            ]}
-          />
-        );
+        return <MedicalFilesSection />;
 
       case 'black-box':
-        return (
-          <PlaceholderSection
-            title="Black Box Storage"
-            description="Secure encrypted storage for your sensitive health data"
-            icon={FolderLock}
-            comingSoon
-            features={[
-              'End-to-end encrypted storage',
-              'Biometric access control',
-              'Emergency access delegation',
-              'Data inheritance planning',
-              'Tamper-proof audit logs'
-            ]}
-          />
-        );
+        return <BlackBoxSection />;
 
       case 'referral':
         return (
@@ -201,38 +126,10 @@ export default function MemberZone({ onNavigate, onSignOut }: MemberZoneProps) {
         );
 
       case 'billing':
-        return (
-          <PlaceholderSection
-            title="Billing & Subscription"
-            description="Manage your subscription and payment methods"
-            icon={CreditCard}
-            comingSoon
-            features={[
-              'View current plan and usage',
-              'Upgrade or downgrade plans',
-              'Manage payment methods',
-              'View billing history',
-              'Download invoices'
-            ]}
-          />
-        );
+        return <BillingSection />;
 
       case 'profile':
-        return (
-          <PlaceholderSection
-            title="Profile"
-            description="Manage your personal information and preferences"
-            icon={User}
-            comingSoon
-            features={[
-              'Edit personal information',
-              'Upload profile photo',
-              'Health profile setup',
-              'Emergency contacts',
-              'Privacy settings'
-            ]}
-          />
-        );
+        return <PersonalInfoSection />;
 
       case 'settings':
         return <ReportSettingsSection />;
