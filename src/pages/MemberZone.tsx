@@ -17,6 +17,7 @@ import BillingSection from './member/BillingSection';
 import SystemSection from './member/SystemSection';
 import ReferralSection from './member/ReferralSection';
 import MyReportsSection from './member/MyReportsSection';
+import CatalogSection from './member/CatalogSection';
 import {
   Sparkles,
   Watch,
@@ -66,20 +67,7 @@ export default function MemberZone({ onNavigate, onSignOut }: MemberZoneProps) {
         return <SystemSection />;
 
       case 'catalog':
-        return (
-          <PlaceholderSection
-            title="Services Catalog"
-            description="Browse all available health services and analyses"
-            icon={BookOpen}
-            features={[
-              'Browse 100+ health services',
-              'Filter by category and price',
-              'View service details and requirements',
-              'Purchase individual services',
-              'Track order status'
-            ]}
-          />
-        );
+        return <CatalogSection />;
 
       case 'questionnaires':
         return <QuestionnairesSection />;
