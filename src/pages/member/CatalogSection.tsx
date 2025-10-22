@@ -1,12 +1,12 @@
 import { useState, useEffect } from 'react';
-import { Check, X, TrendingUp, Sparkles, Zap, ArrowRight, CheckCircle, Info } from 'lucide-react';
+import { Check, X, ArrowRight, CheckCircle, Info, Star, Layers, Crown } from 'lucide-react';
 import { Heart, Brain, Users, Activity, Moon, Shield, Apple, Leaf, Eye, Tablet, Hourglass, Dumbbell, Flower2, User, Droplets, HeartHandshake, Smartphone, Fingerprint, Target, Blend } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { serviceCategories } from '../../data/services';
 
 const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
-  Heart, Brain, Users, Activity, Sparkles, Moon, Shield, Zap, Apple, Leaf,
-  Eye, Tablet, Hourglass, TrendingUp, Dumbbell, Flower2, User, Droplets,
+  Heart, Brain, Users, Activity, Moon, Shield, Apple, Leaf,
+  Eye, Tablet, Hourglass, Dumbbell, Flower2, User, Droplets,
   HeartHandshake, Smartphone, Fingerprint, Target, Blend
 };
 
@@ -42,11 +42,17 @@ interface SubscriptionPlan {
   value_message: string;
 }
 
-export default function CatalogSection() {
+interface CatalogSectionProps {
+  onSectionChange?: (section: string) => void;
+}
+
+export default function CatalogSection({ onSectionChange }: CatalogSectionProps) {
   const [selectedCategories, setSelectedCategories] = useState<Set<string>>(new Set());
   const [plans, setPlans] = useState<SubscriptionPlan[]>([]);
   const [loading, setLoading] = useState(true);
   const [userSubscription, setUserSubscription] = useState<any>(null);
+  const [notification, setNotification] = useState<{ type: 'success' | 'error'; message: string } | null>(null);
+  const [upgrading, setUpgrading] = useState(false);
 
   useEffect(() => {
     loadPlansAndSubscription();
@@ -78,6 +84,46 @@ export default function CatalogSection() {
       console.error('Error loading plans:', error);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const showNotification = (type: 'success' | 'error', message: string) => {
+    setNotification({ type, message });
+    setTimeout(() => setNotification(null), 5000);
+  };
+
+  const handleUpgrade = async () => {
+    if (selectedCount === 0) {
+      showNotification('error', 'Please select at least one category to upgrade');
+      return;
+    }
+
+    setUpgrading(true);
+
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+
+      if (!user) {
+        showNotification('error', 'Please sign in to upgrade');
+        setUpgrading(false);
+        return;
+      }
+
+      const planId = currentPlan === 'Core' ? 'core' : currentPlan === 'Daily' ? 'daily' : 'max';
+
+      showNotification('success', `Redirecting to billing for ${currentPlan} plan upgrade...`);
+
+      setTimeout(() => {
+        if (onSectionChange) {
+          onSectionChange('billing');
+        }
+      }, 1500);
+
+    } catch (error) {
+      console.error('Error upgrading:', error);
+      showNotification('error', 'Failed to process upgrade. Please try again.');
+    } finally {
+      setUpgrading(false);
     }
   };
 
@@ -121,9 +167,24 @@ export default function CatalogSection() {
   progress = Math.min(100, progress);
 
   const getPlanIcon = (plan: string) => {
-    if (plan === 'Core') return <Sparkles className="h-6 w-6" />;
-    if (plan === 'Daily') return <TrendingUp className="h-6 w-6" />;
-    if (plan === 'Max') return <Zap className="h-6 w-6" />;
+    if (plan === 'Core') return (
+      <div className="relative">
+        <Star className="h-5 w-5" />
+        <div className="absolute -top-1 -right-1 w-2 h-2 bg-orange-400 rounded-full"></div>
+      </div>
+    );
+    if (plan === 'Daily') return (
+      <div className="relative">
+        <Layers className="h-5 w-5" />
+        <div className="absolute -top-1 -right-1 w-2 h-2 bg-blue-400 rounded-full"></div>
+      </div>
+    );
+    if (plan === 'Max') return (
+      <div className="relative">
+        <Crown className="h-5 w-5" />
+        <div className="absolute -top-1 -right-1 w-2 h-2 bg-slate-400 rounded-full"></div>
+      </div>
+    );
     return null;
   };
 
@@ -136,6 +197,19 @@ export default function CatalogSection() {
 
   return (
     <div className="space-y-8">
+      {notification && (
+        <div className={`fixed top-20 right-6 z-50 p-4 rounded-lg border-2 shadow-lg animate-in slide-in-from-right ${
+          notification.type === 'success'
+            ? 'bg-green-500/10 border-green-500/50 text-green-400'
+            : 'bg-red-500/10 border-red-500/50 text-red-400'
+        }`}>
+          <div className="flex items-center space-x-3">
+            <CheckCircle className="h-5 w-5" />
+            <span className="font-medium">{notification.message}</span>
+          </div>
+        </div>
+      )}
+
       <section className="text-center mb-8">
         <h1 className="text-5xl font-bold text-white mb-4">
           Build Your Health Plan
@@ -148,38 +222,38 @@ export default function CatalogSection() {
         </p>
       </section>
 
-      <div className="group relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-2xl p-8 hover:border-orange-600/50 transition-all duration-500 overflow-hidden">
+      <div className="group relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-2xl p-6 hover:border-orange-600/50 transition-all duration-500 overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-orange-900/5 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
 
         <div className="relative">
-          <div className="flex items-start justify-between mb-8">
+          <div className="flex items-start justify-between mb-6">
             <div>
-              <h2 className="text-3xl font-bold text-white mb-2">Your Plan Calculator</h2>
-              <p className="text-gray-400">Watch your plan evolve as you select categories</p>
+              <h2 className="text-2xl font-bold text-white mb-1">Your Plan Calculator</h2>
+              <p className="text-gray-400 text-sm">Watch your plan evolve as you select categories</p>
             </div>
             <div className="text-right">
-              <div className="text-5xl font-bold bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">
+              <div className="text-4xl font-bold bg-gradient-to-r from-orange-400 to-orange-600 bg-clip-text text-transparent">
                 ${(currentPrice / 100).toFixed(0)}
               </div>
-              <div className="text-sm text-gray-500">per month</div>
+              <div className="text-xs text-gray-500">per month</div>
             </div>
           </div>
 
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-sm font-medium text-gray-400">
+          <div className="mb-6">
+            <div className="flex items-center justify-between mb-2">
+              <span className="text-xs font-medium text-gray-400">
                 {selectedCount} of 20 categories selected
               </span>
-              <span className={`text-sm font-bold ${currentPlan === 'Free' ? 'text-gray-500' : 'bg-gradient-to-r ' + getPlanColor(currentPlan) + ' bg-clip-text text-transparent'}`}>
+              <span className={`text-xs font-bold ${currentPlan === 'Free' ? 'text-gray-500' : 'bg-gradient-to-r ' + getPlanColor(currentPlan) + ' bg-clip-text text-transparent'}`}>
                 {currentPlan} Plan
               </span>
             </div>
-            <div className="relative h-6 bg-gray-800 rounded-full overflow-hidden shadow-inner">
+            <div className="relative h-4 bg-gray-800 rounded-full overflow-hidden shadow-inner">
               <div
                 className={`absolute inset-y-0 left-0 bg-gradient-to-r ${getPlanColor(currentPlan)} transition-all duration-500 ease-out shadow-lg`}
                 style={{ width: `${progress}%` }}
               />
-              <div className="absolute inset-0 flex items-center justify-between px-4 text-xs font-bold">
+              <div className="absolute inset-0 flex items-center justify-between px-3 text-[10px] font-bold">
                 <span className={selectedCount > 0 ? 'text-white drop-shadow-lg' : 'text-gray-600'}>Core</span>
                 <span className={selectedCount > 3 ? 'text-white drop-shadow-lg' : 'text-gray-600'}>Daily</span>
                 <span className={selectedCount > 10 ? 'text-white drop-shadow-lg' : 'text-gray-600'}>Max</span>
@@ -187,24 +261,24 @@ export default function CatalogSection() {
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-            <div className={`group/card relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 border-2 rounded-xl p-6 transition-all duration-300 overflow-hidden ${selectedCount <= 3 && selectedCount > 0 ? 'border-orange-500 shadow-lg shadow-orange-500/20' : 'border-gray-700/40 hover:border-orange-600/40'}`}>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
+            <div className={`group/card relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 border-2 rounded-xl p-4 transition-all duration-300 overflow-hidden ${selectedCount <= 3 && selectedCount > 0 ? 'border-orange-500 shadow-lg shadow-orange-500/20' : 'border-gray-700/40 hover:border-orange-600/40'}`}>
               <div className="absolute inset-0 bg-gradient-to-br from-orange-900/0 to-orange-900/5 opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
               <div className="relative">
-                <div className="w-16 h-16 bg-gray-900 border border-orange-600/30 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover/card:border-orange-500/50 group-hover/card:shadow-lg group-hover/card:shadow-orange-600/20 transition-all">
-                  <Sparkles className={`h-8 w-8 ${selectedCount <= 3 && selectedCount > 0 ? 'text-orange-400' : 'text-orange-500'}`} />
+                <div className="w-12 h-12 bg-gradient-to-br from-orange-500 to-orange-600 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover/card:shadow-lg group-hover/card:shadow-orange-600/30 transition-all">
+                  <Star className={`h-6 w-6 text-white`} />
                 </div>
-                <h3 className={`text-center font-bold text-2xl mb-2 ${selectedCount <= 3 && selectedCount > 0 ? 'text-orange-400' : 'text-white'}`}>Core</h3>
+                <h3 className={`text-center font-bold text-lg mb-1 ${selectedCount <= 3 && selectedCount > 0 ? 'text-orange-400' : 'text-white'}`}>Core</h3>
                 <div className="text-center">
-                  <div className={`text-3xl font-bold mb-2 ${selectedCount <= 3 && selectedCount > 0 ? 'text-white' : 'text-gray-400'}`}>$19</div>
-                  <p className="text-sm text-gray-500 mb-4">per month</p>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-xs text-gray-400">
-                      <CheckCircle className="w-4 h-4 text-orange-600 flex-shrink-0" />
+                  <div className={`text-2xl font-bold mb-1 ${selectedCount <= 3 && selectedCount > 0 ? 'text-white' : 'text-gray-400'}`}>$19</div>
+                  <p className="text-xs text-gray-500 mb-3">per month</p>
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-center gap-1 text-[10px] text-gray-400">
+                      <CheckCircle className="w-3 h-3 text-orange-600 flex-shrink-0" />
                       <span>Any 3 categories</span>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-gray-400">
-                      <CheckCircle className="w-4 h-4 text-orange-600 flex-shrink-0" />
+                    <div className="flex items-center justify-center gap-1 text-[10px] text-gray-400">
+                      <CheckCircle className="w-3 h-3 text-orange-600 flex-shrink-0" />
                       <span>Basic AI insights</span>
                     </div>
                   </div>
@@ -212,23 +286,23 @@ export default function CatalogSection() {
               </div>
             </div>
 
-            <div className={`group/card relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 border-2 rounded-xl p-6 transition-all duration-300 overflow-hidden ${selectedCount > 3 && selectedCount <= 10 ? 'border-blue-500 shadow-lg shadow-blue-500/20' : 'border-gray-700/40 hover:border-blue-600/40'}`}>
+            <div className={`group/card relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 border-2 rounded-xl p-4 transition-all duration-300 overflow-hidden ${selectedCount > 3 && selectedCount <= 10 ? 'border-blue-500 shadow-lg shadow-blue-500/20' : 'border-gray-700/40 hover:border-blue-600/40'}`}>
               <div className="absolute inset-0 bg-gradient-to-br from-blue-900/0 to-blue-900/5 opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
               <div className="relative">
-                <div className="w-16 h-16 bg-gray-900 border border-blue-600/30 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover/card:border-blue-500/50 group-hover/card:shadow-lg group-hover/card:shadow-blue-600/20 transition-all">
-                  <TrendingUp className={`h-8 w-8 ${selectedCount > 3 && selectedCount <= 10 ? 'text-blue-400' : 'text-blue-500'}`} />
+                <div className="w-12 h-12 bg-gradient-to-br from-blue-500 to-blue-600 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover/card:shadow-lg group-hover/card:shadow-blue-600/30 transition-all">
+                  <Layers className={`h-6 w-6 text-white`} />
                 </div>
-                <h3 className={`text-center font-bold text-2xl mb-2 ${selectedCount > 3 && selectedCount <= 10 ? 'text-blue-400' : 'text-white'}`}>Daily</h3>
+                <h3 className={`text-center font-bold text-lg mb-1 ${selectedCount > 3 && selectedCount <= 10 ? 'text-blue-400' : 'text-white'}`}>Daily</h3>
                 <div className="text-center">
-                  <div className={`text-3xl font-bold mb-2 ${selectedCount > 3 && selectedCount <= 10 ? 'text-white' : 'text-gray-400'}`}>$39</div>
-                  <p className="text-sm text-gray-500 mb-4">per month</p>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-xs text-gray-400">
-                      <CheckCircle className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                  <div className={`text-2xl font-bold mb-1 ${selectedCount > 3 && selectedCount <= 10 ? 'text-white' : 'text-gray-400'}`}>$39</div>
+                  <p className="text-xs text-gray-500 mb-3">per month</p>
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-center gap-1 text-[10px] text-gray-400">
+                      <CheckCircle className="w-3 h-3 text-blue-600 flex-shrink-0" />
                       <span>4-10 categories</span>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-gray-400">
-                      <CheckCircle className="w-4 h-4 text-blue-600 flex-shrink-0" />
+                    <div className="flex items-center justify-center gap-1 text-[10px] text-gray-400">
+                      <CheckCircle className="w-3 h-3 text-blue-600 flex-shrink-0" />
                       <span>Advanced analytics</span>
                     </div>
                   </div>
@@ -236,24 +310,24 @@ export default function CatalogSection() {
               </div>
             </div>
 
-            <div className={`group/card relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 border-2 rounded-xl p-6 transition-all duration-300 overflow-hidden ${selectedCount > 10 ? 'border-slate-600 shadow-lg shadow-slate-500/20' : 'border-gray-700/40 hover:border-slate-600/40'}`}>
+            <div className={`group/card relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 border-2 rounded-xl p-4 transition-all duration-300 overflow-hidden ${selectedCount > 10 ? 'border-slate-600 shadow-lg shadow-slate-500/20' : 'border-gray-700/40 hover:border-slate-600/40'}`}>
               <div className="absolute inset-0 bg-gradient-to-br from-slate-900/0 to-slate-900/10 opacity-0 group-hover/card:opacity-100 transition-opacity"></div>
               <div className="relative">
-                <div className="w-16 h-16 bg-gray-900 border border-slate-600/30 rounded-lg flex items-center justify-center mx-auto mb-4 group-hover/card:border-slate-500/50 group-hover/card:shadow-lg group-hover/card:shadow-slate-600/20 transition-all">
-                  <Zap className={`h-8 w-8 ${selectedCount > 10 ? 'text-slate-400' : 'text-slate-500'}`} />
+                <div className="w-12 h-12 bg-gradient-to-br from-slate-600 to-slate-700 rounded-lg flex items-center justify-center mx-auto mb-3 group-hover/card:shadow-lg group-hover/card:shadow-slate-600/30 transition-all">
+                  <Crown className={`h-6 w-6 text-white`} />
                 </div>
-                <h3 className={`text-center font-bold text-2xl mb-2 ${selectedCount > 10 ? 'text-slate-300' : 'text-white'}`}>Max</h3>
+                <h3 className={`text-center font-bold text-lg mb-1 ${selectedCount > 10 ? 'text-slate-300' : 'text-white'}`}>Max</h3>
                 <div className="text-center">
-                  <div className={`text-3xl font-bold mb-2 ${selectedCount > 10 ? 'text-white' : 'text-gray-400'}`}>$79</div>
-                  <p className="text-sm text-gray-500 mb-4">per month</p>
-                  <div className="space-y-2">
-                    <div className="flex items-center gap-2 text-xs text-gray-400">
-                      <CheckCircle className="w-4 h-4 text-slate-600 flex-shrink-0" />
+                  <div className={`text-2xl font-bold mb-1 ${selectedCount > 10 ? 'text-white' : 'text-gray-400'}`}>$79</div>
+                  <p className="text-xs text-gray-500 mb-3">per month</p>
+                  <div className="space-y-1">
+                    <div className="flex items-center justify-center gap-1 text-[10px] text-gray-400">
+                      <CheckCircle className="w-3 h-3 text-slate-600 flex-shrink-0" />
                       <span>All 20 categories</span>
                     </div>
-                    <div className="flex items-center gap-2 text-xs text-gray-400">
-                      <CheckCircle className="w-4 h-4 text-slate-600 flex-shrink-0" />
-                      <span>Premium AI features</span>
+                    <div className="flex items-center justify-center gap-1 text-[10px] text-gray-400">
+                      <CheckCircle className="w-3 h-3 text-slate-600 flex-shrink-0" />
+                      <span>Premium features</span>
                     </div>
                   </div>
                 </div>
@@ -262,22 +336,26 @@ export default function CatalogSection() {
           </div>
 
           {selectedCount > 0 && (
-            <div className={`relative p-6 rounded-xl border-2 transition-all duration-300 overflow-hidden ${
+            <div className={`relative p-4 rounded-xl border-2 transition-all duration-300 overflow-hidden ${
               currentPlan === 'Core' ? 'border-orange-500 bg-orange-500/10' :
               currentPlan === 'Daily' ? 'border-blue-500 bg-blue-500/10' :
               'border-slate-600 bg-slate-500/10'
             }`}>
               <div className="flex items-center justify-between">
-                <div className="flex items-center space-x-4">
+                <div className="flex items-center space-x-3">
                   {getPlanIcon(currentPlan)}
                   <div>
-                    <div className="font-bold text-xl text-white">{currentPlan} Plan Selected</div>
-                    <div className="text-sm text-gray-300">{selectedCount} categories • ${(currentPrice / 100).toFixed(0)}/month</div>
+                    <div className="font-bold text-base text-white">{currentPlan} Plan Selected</div>
+                    <div className="text-xs text-gray-300">{selectedCount} categories • ${(currentPrice / 100).toFixed(0)}/month</div>
                   </div>
                 </div>
-                <button className={`flex items-center space-x-2 px-8 py-4 bg-gradient-to-r ${getPlanColor(currentPlan)} text-white font-bold rounded-lg hover:opacity-90 transition-all transform hover:scale-105 shadow-lg`}>
-                  <span>Upgrade Now</span>
-                  <ArrowRight className="h-5 w-5" />
+                <button
+                  onClick={handleUpgrade}
+                  disabled={upgrading}
+                  className={`flex items-center space-x-2 px-6 py-3 bg-gradient-to-r ${getPlanColor(currentPlan)} text-white font-bold rounded-lg hover:opacity-90 transition-all transform hover:scale-105 shadow-lg disabled:opacity-50 disabled:cursor-not-allowed`}
+                >
+                  <span>{upgrading ? 'Processing...' : 'Upgrade Now'}</span>
+                  {!upgrading && <ArrowRight className="h-4 w-4" />}
                 </button>
               </div>
             </div>

@@ -67,7 +67,7 @@ export default function MemberZone({ onNavigate, onSignOut }: MemberZoneProps) {
         return <SystemSection />;
 
       case 'catalog':
-        return <CatalogSection />;
+        return <CatalogSection onSectionChange={setCurrentSection} />;
 
       case 'questionnaires':
         return <QuestionnairesSection />;
