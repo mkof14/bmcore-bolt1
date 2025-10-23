@@ -6,6 +6,7 @@ import AIAssistantButton from './components/AIAssistantButton';
 import AIHealthAssistant from './components/AIHealthAssistantV2';
 import CookieBanner from './components/CookieBanner';
 import PWAInstallPrompt, { PWAUpdatePrompt } from './components/PWAInstallPrompt';
+import CommandPalette from './components/CommandPalette';
 import { LoadingPage } from './components/LoadingSpinner';
 import { analytics, identifyUser } from './lib/analytics';
 import { performanceMonitor } from './lib/performance';
@@ -56,6 +57,7 @@ function App() {
   const [categoryFilter, setCategoryFilter] = useState<string>('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const { isUpdateAvailable, updateServiceWorker } = useServiceWorker();
 
   useEffect(() => {
@@ -83,6 +85,19 @@ function App() {
   useEffect(() => {
     analytics.page(currentPage);
   }, [currentPage]);
+
+  useEffect(() => {
+    const handleOpenCommandPalette = () => setIsCommandPaletteOpen(true);
+    const handleOpenAIAssistant = () => setIsAssistantOpen(true);
+
+    window.addEventListener('open-command-palette', handleOpenCommandPalette);
+    window.addEventListener('open-ai-assistant', handleOpenAIAssistant);
+
+    return () => {
+      window.removeEventListener('open-command-palette', handleOpenCommandPalette);
+      window.removeEventListener('open-ai-assistant', handleOpenAIAssistant);
+    };
+  }, []);
 
   const handleNavigate = (page: string, data?: string) => {
     if (page === 'member' && !isAuthenticated) {
@@ -228,6 +243,15 @@ function App() {
       {isUpdateAvailable && (
         <PWAUpdatePrompt onUpdate={updateServiceWorker} />
       )}
+
+      <CommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        onNavigate={(page) => {
+          handleNavigate(page);
+          setIsCommandPaletteOpen(false);
+        }}
+      />
     </div>
   );
 }
