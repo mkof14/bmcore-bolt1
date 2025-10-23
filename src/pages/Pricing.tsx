@@ -219,10 +219,21 @@ export default function Pricing({ onNavigate }: PricingProps) {
                       <p className="text-gray-400 text-sm">{plan.description}</p>
                     </div>
 
-                    <div className="mb-8">
+                    <div className="mb-6">
                       <div className="flex items-baseline gap-1">
                         <span className="text-5xl font-bold">${price}</span>
                         <span className="text-gray-400">/{billingPeriod === 'monthly' ? 'month' : 'year'}</span>
+                      </div>
+                    </div>
+
+                    <div className="mb-6 bg-gradient-to-br from-blue-600 to-blue-800 rounded-xl p-8 flex flex-col items-center shadow-lg">
+                      <div className="w-24 h-24 bg-white/10 rounded-full flex items-center justify-center mb-4 backdrop-blur-sm">
+                        <span className="text-5xl font-bold text-white">
+                          {plan.id === 'core' ? '3' : plan.id === 'daily' ? '10' : '20'}
+                        </span>
+                      </div>
+                      <div className="text-white font-bold text-xl">
+                        {plan.categories}
                       </div>
                     </div>
 
