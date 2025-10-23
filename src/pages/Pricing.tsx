@@ -230,12 +230,13 @@ export default function Pricing({ onNavigate }: PricingProps) {
                       <div className="relative w-full h-full flex items-center justify-center p-6">
                         <img
                           src={
-                            plan.id === 'core' ? '/Copilot_20251022_204924.png' :
-                            plan.id === 'daily' ? '/Copilot_20251022_205256.png' :
-                            '/Copilot_20251022_205411.png'
+                            plan.id === 'core' ? '/Copilot_20251022_204924_optimized.png' :
+                            plan.id === 'daily' ? '/Copilot_20251022_205256_optimized.png' :
+                            '/Copilot_20251022_205411_optimized.png'
                           }
                           alt={`${plan.name} Plan`}
                           className="w-auto h-full object-contain"
+                          loading="eager"
                         />
                       </div>
                     </div>
