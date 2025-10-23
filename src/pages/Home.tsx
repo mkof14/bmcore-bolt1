@@ -94,7 +94,7 @@ export default function Home({ onNavigate }: HomeProps) {
 
       <HealthCategories onNavigate={onNavigate} />
 
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-900/50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-100 dark:bg-gray-900/50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
@@ -110,14 +110,14 @@ export default function Home({ onNavigate }: HomeProps) {
             {coreValues.map((value, index) => {
               const Icon = value.icon;
               return (
-                <div key={index} className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-8">
+                <div key={index} className="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-8">
                   <div className="w-14 h-14 bg-blue-500/10 rounded-xl flex items-center justify-center mb-6">
-                    <Icon className="h-7 w-7 text-blue-400" />
+                    <Icon className="h-7 w-7 text-blue-500 dark:text-blue-400" />
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-3">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
                     {value.title}
                   </h3>
-                  <p className="text-gray-400">
+                  <p className="text-gray-600 dark:text-gray-400">
                     {value.description}
                   </p>
                 </div>
@@ -127,13 +127,13 @@ export default function Home({ onNavigate }: HomeProps) {
         </div>
       </section>
 
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 to-gray-950">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
               How It Works
             </h2>
-            <p className="text-xl text-gray-400">
+            <p className="text-xl text-gray-600 dark:text-gray-400">
               Simple, supportive, effective
             </p>
           </div>
@@ -141,14 +141,14 @@ export default function Home({ onNavigate }: HomeProps) {
           <div className="grid md:grid-cols-3 gap-8">
             {howItWorks.map((item, index) => (
               <div key={index} className="relative">
-                <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-8 h-full">
+                <div className="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-8 h-full">
                   <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center text-white text-2xl font-bold mb-6">
                     {item.step}
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-3">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
                     {item.title}
                   </h3>
-                  <p className="text-gray-400">
+                  <p className="text-gray-600 dark:text-gray-400">
                     {item.description}
                   </p>
                 </div>
@@ -163,29 +163,29 @@ export default function Home({ onNavigate }: HomeProps) {
         </div>
       </section>
 
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-900/50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-100 dark:bg-gray-900/50">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-white mb-4">
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
               Who Is This For?
             </h2>
-            <p className="text-xl text-gray-400">
+            <p className="text-xl text-gray-600 dark:text-gray-400">
               BioMath Core is designed for people who want understanding, not overwhelm
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-4">
             {whoItsFor.map((item, index) => (
-              <div key={index} className="flex items-start space-x-3 p-4 bg-gray-900/50 backdrop-blur border border-gray-800 rounded-lg">
+              <div key={index} className="flex items-start space-x-3 p-4 bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-lg">
                 <Check className="h-6 w-6 text-orange-500 flex-shrink-0 mt-0.5" />
-                <span className="text-gray-300">{item}</span>
+                <span className="text-gray-700 dark:text-gray-300">{item}</span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 to-gray-950">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950">
         <div className="max-w-7xl mx-auto space-y-12">
           <div>
             <img

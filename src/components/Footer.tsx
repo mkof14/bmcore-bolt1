@@ -9,7 +9,7 @@ export default function Footer({ onNavigate }: FooterProps) {
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <footer className="bg-gray-950 border-t border-gray-800 transition-colors">
+    <footer className="bg-gray-950 dark:bg-gray-950 border-t border-gray-800 dark:border-gray-800 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
           <div className="col-span-1 md:col-span-2">
@@ -156,7 +156,7 @@ export default function Footer({ onNavigate }: FooterProps) {
             <h3 className="text-sm font-semibold text-white mb-4">Legal & Safety</h3>
             <ul className="space-y-2">
               <li>
-                <button onClick={() => onNavigate('trust-safety')} className="text-sm text-orange-500 hover:text-orange-400 transition-colors font-semibold">
+                <button onClick={() => onNavigate('trust-safety')} className="text-sm text-gray-400 hover:text-orange-500 transition-colors">
                   Trust & Safety
                 </button>
               </li>
