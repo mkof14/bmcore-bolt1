@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Activity, Mail, Lock, User, AlertCircle, CheckCircle, Gift } from 'lucide-react';
+import { Mail, Lock, User, AlertCircle, CheckCircle, Gift } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import BackButton from '../components/BackButton';
 
@@ -79,10 +79,11 @@ export default function SignUp({ onNavigate }: SignUpProps) {
       </div>
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 dark:bg-blue-500 rounded-full mb-4">
-            <Activity className="h-8 w-8 text-white" />
+          <div className="flex items-center justify-center gap-3 mb-6">
+            <img src="/logo-header.png" alt="BioMath Core" className="h-12 w-12" />
+            <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">BioMath Core</h1>
           </div>
-          <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">Create Your Account</h1>
+          <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Create Your Account</h2>
           <p className="text-gray-600 dark:text-gray-300">Start your wellness journey with BioMath Core</p>
         </div>
 
