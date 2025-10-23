@@ -276,13 +276,6 @@ export default function Home({ onNavigate }: HomeProps) {
           </div>
         </div>
       </section>
-
-      <CTASection
-        variant="gradient"
-        onPrimaryClick={() => onNavigate('signup')}
-        onSecondaryClick={() => onNavigate('pricing')}
-        showStats={true}
-      />
     </div>
   );
 }
