@@ -28,7 +28,7 @@ export default function Header({ onNavigate, currentPage }: HeaderProps) {
             <img
               src="/logo-header.png"
               alt="BioMath Core Logo"
-              className="h-10 w-10 object-contain"
+              className="h-12 w-12 object-contain"
             />
             <span className="text-2xl font-bold">
               <span className="text-blue-500">BioMath</span>
