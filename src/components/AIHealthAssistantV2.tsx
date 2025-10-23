@@ -352,7 +352,7 @@ export default function AIHealthAssistantV2({ isOpen, onClose }: AIHealthAssista
 
             <div className="relative flex items-center justify-between">
               <div className="flex items-center space-x-4">
-                <div className="w-14 h-14 bg-gradient-to-br from-orange-600 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg shadow-orange-600/50 p-2">
+                <div className="w-20 h-20 flex items-center justify-center">
                   <img
                     src="/Copilot_20251022_203134.png"
                     alt="AI Health Advisor"
