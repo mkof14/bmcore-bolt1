@@ -89,22 +89,6 @@ export default function TrustSignals() {
             </div>
           ))}
         </div>
-
-        <div className="mt-12 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-8 text-center">
-          <h3 className="text-2xl font-bold text-white mb-4">
-            Trusted by Leading Healthcare Organizations
-          </h3>
-          <div className="flex flex-wrap justify-center items-center gap-8 opacity-80">
-            <div className="text-white font-semibold text-lg">HealthTech Inc</div>
-            <div className="text-white font-semibold text-lg">GenomicsLab</div>
-            <div className="text-white font-semibold text-lg">MedCare Solutions</div>
-            <div className="text-white font-semibold text-lg">University Medical</div>
-            <div className="text-white font-semibold text-lg">Heart Health Center</div>
-          </div>
-          <p className="text-blue-100 mt-4">
-            And 500+ more healthcare providers worldwide
-          </p>
-        </div>
       </div>
     </div>
   );
