@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Activity, Mail, Lock, AlertCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import BackButton from '../components/BackButton';
 
 interface SignInProps {
   onNavigate: (page: string) => void;
@@ -42,6 +43,9 @@ export default function SignIn({ onNavigate, onSignIn }: SignInProps) {
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-950 dark:to-gray-900 transition-colors flex items-center justify-center px-4 py-16">
       <div className="max-w-md w-full">
+        <div className="mb-4">
+          <BackButton onNavigate={onNavigate} />
+        </div>
         <div className="text-center mb-8">
           <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-600 dark:bg-blue-500 rounded-full mb-4">
             <Activity className="h-8 w-8 text-white" />

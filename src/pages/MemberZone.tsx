@@ -102,7 +102,7 @@ export default function MemberZone({ onNavigate, onSignOut }: MemberZoneProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 transition-colors pt-16">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors pt-16">
       <MemberSidebar
         currentSection={currentSection}
         onSectionChange={setCurrentSection}
