@@ -76,6 +76,57 @@ export function downloadDataAsJSON(data: UserDataExport, filename?: string) {
   URL.revokeObjectURL(url);
 }
 
+export function downloadDataAsCSV(data: UserDataExport, filename?: string) {
+  const flattenedData = flattenObject(data);
+  const csv = objectToCSV(flattenedData);
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = filename || `biomath-data-export-${new Date().toISOString().split('T')[0]}.csv`;
+  document.body.appendChild(link);
+  link.click();
+  document.body.removeChild(link);
+  URL.revokeObjectURL(url);
+}
+
+function flattenObject(obj: any, prefix = ''): Record<string, any> {
+  const flattened: Record<string, any> = {};
+
+  for (const [key, value] of Object.entries(obj)) {
+    const newKey = prefix ? `${prefix}.${key}` : key;
+
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+      Object.assign(flattened, flattenObject(value, newKey));
+    } else if (Array.isArray(value)) {
+      flattened[newKey] = JSON.stringify(value);
+    } else {
+      flattened[newKey] = value;
+    }
+  }
+
+  return flattened;
+}
+
+function objectToCSV(data: Record<string, any>): string {
+  const headers = Object.keys(data);
+  const values = Object.values(data).map(v =>
+    typeof v === 'string' ? `"${v.replace(/"/g, '""')}"` : v
+  );
+
+  return [headers.join(','), values.join(',')].join('\n');
+}
+
+export async function exportAndDownloadUserData(userId: string, format: 'json' | 'csv' = 'json') {
+  const data = await exportUserData(userId);
+
+  if (format === 'json') {
+    downloadDataAsJSON(data);
+  } else {
+    downloadDataAsCSV(data);
+  }
+}
+
 export async function deleteUserData(userId: string): Promise<void> {
   try {
     const tables = [

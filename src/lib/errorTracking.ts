@@ -95,7 +95,10 @@ class ErrorTracker {
     if (
       lowerMessage.includes('critical') ||
       lowerMessage.includes('fatal') ||
-      lowerMessage.includes('security')
+      lowerMessage.includes('security') ||
+      lowerMessage.includes('auth') ||
+      lowerMessage.includes('payment') ||
+      lowerMessage.includes('database')
     ) {
       return 'critical';
     }

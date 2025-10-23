@@ -126,8 +126,60 @@ class Analytics {
     this.track('conversion', {
       type,
       value,
+      currency: 'USD',
+      timestamp: new Date().toISOString(),
       ...properties
     });
+
+    if (typeof window !== 'undefined' && (window as any).gtag) {
+      (window as any).gtag('event', 'conversion', {
+        event_category: 'engagement',
+        event_label: type,
+        value: value || 0,
+        currency: 'USD'
+      });
+    }
+  }
+
+  formSubmission(formName: string, success: boolean, properties?: Record<string, any>) {
+    this.track('form_submission', {
+      formName,
+      success,
+      ...properties
+    });
+  }
+
+  signup(method: string, properties?: Record<string, any>) {
+    this.track('signup', {
+      method,
+      ...properties
+    });
+    this.conversion('signup', 0, { method, ...properties });
+  }
+
+  login(method: string, properties?: Record<string, any>) {
+    this.track('login', {
+      method,
+      ...properties
+    });
+  }
+
+  purchase(amount: number, currency: string = 'USD', properties?: Record<string, any>) {
+    this.track('purchase', {
+      amount,
+      currency,
+      ...properties
+    });
+    this.conversion('purchase', amount, { currency, ...properties });
+  }
+
+  subscriptionStarted(plan: string, amount: number, properties?: Record<string, any>) {
+    this.track('subscription_started', {
+      plan,
+      amount,
+      ...properties
+    });
+    this.conversion('subscription', amount, { plan, ...properties });
   }
 
   error(error: Error | string, context?: Record<string, any>) {
