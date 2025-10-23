@@ -226,7 +226,7 @@ export default function Pricing({ onNavigate }: PricingProps) {
                       </div>
                     </div>
 
-                    <div className="mb-6 relative h-56 rounded-xl overflow-hidden flex flex-col items-center justify-center bg-gradient-to-br from-gray-900/50 to-black/30">
+                    <div className="mb-6 relative h-56 rounded-xl overflow-hidden flex flex-col items-center justify-center bg-gradient-to-br from-blue-900/30 to-blue-950/50 border border-blue-800/30">
                       <div className="relative w-full h-full flex items-center justify-center p-6">
                         <img
                           src={
@@ -237,6 +237,11 @@ export default function Pricing({ onNavigate }: PricingProps) {
                           alt={`${plan.name} Plan`}
                           className="w-auto h-full object-contain"
                           loading="eager"
+                          onError={(e) => {
+                            console.error(`Failed to load image for ${plan.name}:`, e.currentTarget.src);
+                            e.currentTarget.style.display = 'none';
+                          }}
+                          onLoad={() => console.log(`Image loaded successfully for ${plan.name}`)}
                         />
                       </div>
                     </div>
