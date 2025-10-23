@@ -214,7 +214,19 @@ export default function Pricing({ onNavigate }: PricingProps) {
                       </div>
                     )}
 
-                    <div className="mb-6 flex items-center gap-4">
+                    <div className="mb-6">
+                      <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
+                      <p className="text-gray-400 text-sm">{plan.description}</p>
+                    </div>
+
+                    <div className="mb-6">
+                      <div className="flex items-baseline gap-1">
+                        <span className="text-5xl font-bold">${price}</span>
+                        <span className="text-gray-400">/{billingPeriod === 'monthly' ? 'month' : 'year'}</span>
+                      </div>
+                    </div>
+
+                    <div className="mb-6 bg-gradient-to-br from-blue-900/30 to-blue-950/50 rounded-xl border border-blue-800/30 p-6 flex flex-col items-center">
                       <img
                         src={
                           plan.id === 'core' ? '/pricing-core.png' :
@@ -222,18 +234,10 @@ export default function Pricing({ onNavigate }: PricingProps) {
                           '/pricing-max.png'
                         }
                         alt={plan.name}
-                        className="w-16 h-16 object-contain"
+                        className="w-32 h-32 object-contain mb-4"
                       />
-                      <div>
-                        <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                        <p className="text-gray-400 text-sm">{plan.description}</p>
-                      </div>
-                    </div>
-
-                    <div className="mb-8">
-                      <div className="flex items-baseline gap-1">
-                        <span className="text-5xl font-bold">${price}</span>
-                        <span className="text-gray-400">/{billingPeriod === 'monthly' ? 'month' : 'year'}</span>
+                      <div className="bg-blue-600 text-white px-6 py-3 rounded-lg font-bold text-lg">
+                        {plan.categories}
                       </div>
                     </div>
 
