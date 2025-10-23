@@ -226,24 +226,21 @@ export default function Pricing({ onNavigate }: PricingProps) {
                       </div>
                     </div>
 
-                    <div className="mb-6 relative h-56 rounded-xl overflow-hidden flex flex-col items-center justify-center bg-gradient-to-br from-blue-900/30 to-blue-950/50 border border-blue-800/30">
-                      <div className="relative w-full h-full flex items-center justify-center p-6">
-                        <img
-                          src={
-                            plan.id === 'core' ? '/Copilot_20251022_204924_optimized.png' :
-                            plan.id === 'daily' ? '/Copilot_20251022_205256_optimized.png' :
-                            '/Copilot_20251022_205411_optimized.png'
-                          }
-                          alt={`${plan.name} Plan`}
-                          className="w-auto h-full object-contain"
-                          loading="eager"
-                          onError={(e) => {
-                            console.error(`Failed to load image for ${plan.name}:`, e.currentTarget.src);
-                            e.currentTarget.style.display = 'none';
-                          }}
-                          onLoad={() => console.log(`Image loaded successfully for ${plan.name}`)}
-                        />
-                      </div>
+                    <div className="mb-6 relative h-56 rounded-xl overflow-hidden bg-gradient-to-br from-blue-900/20 to-blue-950/40 border border-blue-800/20 flex items-center justify-center p-6">
+                      <img
+                        src={
+                          plan.id === 'core' ? '/Copilot_20251022_204924_optimized.png' :
+                          plan.id === 'daily' ? '/Copilot_20251022_205256_optimized.png' :
+                          '/Copilot_20251022_205411_optimized.png'
+                        }
+                        alt={`${plan.name} visualization`}
+                        className="w-auto h-full object-contain drop-shadow-2xl"
+                        loading="eager"
+                        onError={(e) => {
+                          console.error(`Failed to load image for ${plan.name}:`, e.currentTarget.src);
+                        }}
+                        onLoad={() => console.log(`✓ Image loaded: ${plan.name}`)}
+                      />
                     </div>
 
                     <ul className="space-y-3 mb-8">
