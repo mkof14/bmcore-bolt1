@@ -81,7 +81,11 @@ export default function AIAssistantButton({ onClick, isOpen }: AIAssistantButton
         {isOpen ? (
           <X className="h-7 w-7 text-white transition-transform group-hover:rotate-90" />
         ) : (
-          <MessageCircle className="h-7 w-7 text-white transition-transform group-hover:scale-110" />
+          <img
+            src="/Copilot_20251022_203134.png"
+            alt="AI Health Advisor"
+            className="h-10 w-10 transition-transform group-hover:scale-110"
+          />
         )}
 
         <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white animate-pulse" />
