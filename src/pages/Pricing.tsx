@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Shield, ChevronDown, Check, Zap, Users } from 'lucide-react';
 import BackButton from '../components/BackButton';
 import PaymentConfirmationModal from '../components/PaymentConfirmationModal';
@@ -8,6 +8,7 @@ import SEO from '../components/SEO';
 import ComparisonTable from '../components/ComparisonTable';
 import { TrustBadgesCompact } from '../components/TrustSignals';
 import Testimonials from '../components/Testimonials';
+import { generateProductSchema, injectStructuredData } from '../lib/structuredData';
 
 interface PricingProps {
   onNavigate: (page: string) => void;
@@ -147,6 +148,23 @@ export default function Pricing({ onNavigate }: PricingProps) {
       default: return 'text-orange-500';
     }
   };
+
+  useEffect(() => {
+    plans.forEach(plan => {
+      const price = billingPeriod === 'monthly' ? plan.monthlyPrice : plan.yearlyPrice;
+      const productSchema = generateProductSchema({
+        name: `BioMath Core ${plan.name} Plan`,
+        description: plan.description,
+        image: '/biomathcore_emblem_1024.png',
+        price: price.toString(),
+        currency: 'USD',
+        availability: 'https://schema.org/InStock',
+        rating: 4.8,
+        reviewCount: 127
+      });
+      injectStructuredData(productSchema);
+    });
+  }, [billingPeriod]);
 
   return (
     <div className="min-h-screen bg-white dark:bg-[#0a0e1a] text-gray-900 dark:text-white transition-colors">

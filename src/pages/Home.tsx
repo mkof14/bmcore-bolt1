@@ -1,10 +1,12 @@
 import { Activity, Brain, Shield, Heart, Lightbulb, Sparkles, ArrowRight, Check, BookOpen } from 'lucide-react';
+import { useEffect } from 'react';
 import HealthCategories from '../components/HealthCategories';
 import SEO from '../components/SEO';
 import Testimonials from '../components/Testimonials';
 import StatsCounter from '../components/StatsCounter';
 import TrustSignals from '../components/TrustSignals';
 import CTASection, { CTABanner } from '../components/CTASection';
+import { generateOrganizationSchema, generateWebSiteSchema, injectStructuredData } from '../lib/structuredData';
 
 interface HomeProps {
   onNavigate: (page: string) => void;
@@ -43,6 +45,13 @@ export default function Home({ onNavigate }: HomeProps) {
     'Understanding before symptoms escalate',
     'Proactive self-care without clinical pressure'
   ];
+
+  useEffect(() => {
+    const orgSchema = generateOrganizationSchema();
+    const websiteSchema = generateWebSiteSchema();
+    injectStructuredData(orgSchema);
+    injectStructuredData(websiteSchema);
+  }, []);
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors">

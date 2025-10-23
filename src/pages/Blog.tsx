@@ -6,6 +6,7 @@ import SEO from '../components/SEO';
 import LoadingSpinner, { SkeletonList } from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
 import EmptyState from '../components/EmptyState';
+import { generateArticleSchema, injectStructuredData } from '../lib/structuredData';
 
 interface BlogProps {
   onNavigate: (page: string) => void;

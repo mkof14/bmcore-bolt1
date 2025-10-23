@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Star, Quote, CheckCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { injectStructuredData } from '../lib/structuredData';
 
 interface Testimonial {
   id: string;
@@ -34,6 +35,37 @@ export default function Testimonials() {
 
       if (error) throw error;
       setTestimonials(data || []);
+
+      if (data && data.length > 0) {
+        const reviewSchema = {
+          '@context': 'https://schema.org',
+          '@type': 'Product',
+          name: 'BioMath Core',
+          aggregateRating: {
+            '@type': 'AggregateRating',
+            ratingValue: '4.8',
+            reviewCount: data.length.toString(),
+            bestRating: '5',
+            worstRating: '1'
+          },
+          review: data.map(testimonial => ({
+            '@type': 'Review',
+            author: {
+              '@type': 'Person',
+              name: testimonial.full_name
+            },
+            datePublished: testimonial.created_at,
+            reviewBody: testimonial.content,
+            reviewRating: {
+              '@type': 'Rating',
+              ratingValue: testimonial.rating.toString(),
+              bestRating: '5',
+              worstRating: '1'
+            }
+          }))
+        };
+        injectStructuredData(reviewSchema);
+      }
     } catch (error) {
       console.error('Error fetching testimonials:', error);
     } finally {

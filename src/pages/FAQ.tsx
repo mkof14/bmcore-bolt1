@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronDown, ChevronUp, HelpCircle } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import SEO from '../components/SEO';
+import { generateFAQSchema, injectStructuredData } from '../lib/structuredData';
 
 interface FAQItemProps {
   question: string;
@@ -378,6 +379,17 @@ export default function FAQ({ onNavigate }: FAQProps) {
       ]
     }
   ];
+
+  useEffect(() => {
+    const allFaqs = faqSections.flatMap(section =>
+      section.items.map(item => ({
+        question: item.question,
+        answer: item.answer
+      }))
+    );
+    const faqSchema = generateFAQSchema(allFaqs);
+    injectStructuredData(faqSchema);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
