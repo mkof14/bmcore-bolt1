@@ -1,7 +1,10 @@
 {
-  "name": "vite-react-typescript-starter",
+  "name": "biomathcore-platform",
   "private": true,
-  "version": "0.0.0",
+  "version": "1.0.0",
+  "description": "BioMath Core - Advanced Health Analytics Platform",
+  "author": "BioMath Core Team",
+  "license": "UNLICENSED",
   "type": "module",
   "scripts": {
     "dev": "vite",
