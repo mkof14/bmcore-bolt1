@@ -226,20 +226,34 @@ export default function Pricing({ onNavigate }: PricingProps) {
                       </div>
                     </div>
 
-                    <div className="mb-6 relative h-56 rounded-xl overflow-hidden bg-gradient-to-br from-blue-900/20 to-blue-950/40 border border-blue-800/20 flex items-center justify-center p-6">
+                    <div className="mb-6 relative h-56 rounded-xl overflow-hidden bg-gradient-to-br from-blue-900/20 to-blue-950/40 border border-blue-800/20 flex flex-col items-center justify-center p-6">
+                      <div className="absolute top-2 right-2 text-xs bg-green-500 text-white px-2 py-1 rounded z-50 font-mono">
+                        v2.1-{Date.now().toString().slice(-6)}
+                      </div>
                       <img
                         src={
                           plan.id === 'core' ? '/pricing-core.png' :
                           plan.id === 'daily' ? '/pricing-daily.png' :
                           '/pricing-max.png'
                         }
-                        alt={`${plan.name} visualization`}
+                        alt=""
                         className="w-auto h-full object-contain drop-shadow-2xl"
                         loading="eager"
                         onError={(e) => {
-                          console.error(`❌ Failed to load image for ${plan.name}:`, e.currentTarget.src);
+                          const target = e.currentTarget;
+                          target.style.display = 'none';
+                          const errorDiv = document.createElement('div');
+                          errorDiv.className = 'absolute inset-0 flex flex-col items-center justify-center text-red-400 text-sm font-mono bg-red-950/50 p-4';
+                          errorDiv.innerHTML = `<div>❌ IMAGE LOAD FAILED</div><div class="text-xs mt-2">${target.src}</div>`;
+                          target.parentElement?.appendChild(errorDiv);
                         }}
-                        onLoad={() => console.log(`✅ Image loaded: ${plan.name}`)}
+                        onLoad={(e) => {
+                          const target = e.currentTarget;
+                          const successDiv = document.createElement('div');
+                          successDiv.className = 'absolute bottom-2 left-2 text-xs bg-green-600 text-white px-2 py-1 rounded font-mono z-50';
+                          successDiv.textContent = '✓ LOADED';
+                          target.parentElement?.appendChild(successDiv);
+                        }}
                       />
                     </div>
 
