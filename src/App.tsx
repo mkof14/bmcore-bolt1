@@ -5,9 +5,11 @@ import Footer from './components/Footer';
 import AIAssistantButton from './components/AIAssistantButton';
 import AIHealthAssistant from './components/AIHealthAssistantV2';
 import CookieBanner from './components/CookieBanner';
+import PWAInstallPrompt, { PWAUpdatePrompt } from './components/PWAInstallPrompt';
 import { LoadingPage } from './components/LoadingSpinner';
 import { analytics, identifyUser } from './lib/analytics';
 import { performanceMonitor } from './lib/performance';
+import { useServiceWorker } from './hooks/useServiceWorker';
 import Home from './pages/Home';
 
 const About = lazy(() => import('./pages/About'));
@@ -54,6 +56,7 @@ function App() {
   const [categoryFilter, setCategoryFilter] = useState<string>('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
+  const { isUpdateAvailable, updateServiceWorker } = useServiceWorker();
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -219,6 +222,12 @@ function App() {
       />
 
       <CookieBanner />
+
+      <PWAInstallPrompt />
+
+      {isUpdateAvailable && (
+        <PWAUpdatePrompt onUpdate={updateServiceWorker} />
+      )}
     </div>
   );
 }
