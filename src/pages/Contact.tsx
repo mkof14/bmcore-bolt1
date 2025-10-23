@@ -1,6 +1,7 @@
 import { Mail, Send, MessageCircle, Clock, AlertCircle } from 'lucide-react';
 import { useState } from 'react';
 import BackButton from '../components/BackButton';
+import SEO from '../components/SEO';
 
 interface ContactProps {
   onNavigate: (page: string) => void;
@@ -42,6 +43,12 @@ export default function Contact({ onNavigate }: ContactProps) {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors pt-20 pb-16">
+      <SEO
+        title="Contact Us - Get in Touch with BioMath Core"
+        description="Have questions? Contact BioMath Core for support, partnerships, or inquiries. We typically respond within 24 hours. Multiple contact options available."
+        keywords={['contact biomath core', 'health platform support', 'customer service', 'business inquiries', 'partnership opportunities']}
+        url="/contact"
+      />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
         <BackButton onNavigate={onNavigate} />
 

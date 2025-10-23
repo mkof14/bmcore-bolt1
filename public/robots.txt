@@ -1,0 +1,43 @@
+# BioMath Core - Robots.txt
+# https://biomathcore.com/robots.txt
+
+User-agent: *
+Allow: /
+
+# Allow all main pages
+Allow: /about
+Allow: /services
+Allow: /pricing
+Allow: /science
+Allow: /blog
+Allow: /news
+Allow: /careers
+Allow: /contact
+Allow: /faq
+Allow: /learning-center
+
+# Allow legal pages
+Allow: /privacy-policy
+Allow: /terms-of-service
+Allow: /data-privacy
+Allow: /gdpr
+Allow: /hipaa-notice
+Allow: /security
+Allow: /disclaimer
+Allow: /trust-safety
+
+# Disallow member areas
+Disallow: /member-zone
+Disallow: /admin-panel
+Disallow: /command-center
+Disallow: /sign-in
+Disallow: /sign-up
+
+# Disallow API endpoints
+Disallow: /api/
+
+# Crawl-delay for politeness
+Crawl-delay: 1
+
+# Sitemap location
+Sitemap: https://biomathcore.com/sitemap.xml

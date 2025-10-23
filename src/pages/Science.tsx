@@ -1,6 +1,21 @@
 import { Brain, Activity, Dna, LineChart, FlaskConical, BookOpen } from 'lucide-react';
+import SEO from '../components/SEO';
 
 export default function Science() {
+  return (
+    <>
+      <SEO
+        title="Science & Research - Biomathematical Health Modeling"
+        description="Discover the scientific foundation of BioMath Core: biomathematical modeling, multi-signal integration, genomic analysis, and predictive analytics for personalized health intelligence."
+        keywords={['biomathematics', 'health modeling', 'systems biology', 'predictive analytics', 'genomic analysis', 'physiological dynamics', 'computational biology']}
+        url="/science"
+      />
+      <ScienceContent />
+    </>
+  );
+}
+
+function ScienceContent() {
   const pillars = [
     {
       icon: Brain,

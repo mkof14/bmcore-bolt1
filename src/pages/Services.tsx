@@ -4,6 +4,7 @@ import BackButton from '../components/BackButton';
 import PaymentConfirmationModal from '../components/PaymentConfirmationModal';
 import { createSubscription } from '../lib/subscriptionService';
 import { supabase } from '../lib/supabase';
+import SEO from '../components/SEO';
 
 interface ServicesProps {
   onNavigate: (page: string) => void;
@@ -146,6 +147,12 @@ export default function Services({ onNavigate }: ServicesProps) {
 
   return (
     <div className="min-h-screen bg-[#0a0e1a] text-white">
+      <SEO
+        title="Services & Pricing - Health Analytics Plans"
+        description="Choose from Core, Daily, or Max plans for AI-powered health analytics. 5-day free trial, 200+ services across 20 health categories. From $19/month. Secure, HIPAA-compliant."
+        keywords={['health analytics pricing', 'subscription plans', 'health monitoring service', 'wellness plans', 'AI health tracking cost', 'personalized health service']}
+        url="/services"
+      />
       <div className="pt-20 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <BackButton onNavigate={onNavigate} />

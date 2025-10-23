@@ -4,6 +4,7 @@ import Header from './components/Header';
 import Footer from './components/Footer';
 import AIAssistantButton from './components/AIAssistantButton';
 import AIHealthAssistant from './components/AIHealthAssistantV2';
+import CookieBanner from './components/CookieBanner';
 import Home from './pages/Home';
 import About from './pages/About';
 import Services from './pages/Services';
@@ -196,6 +197,8 @@ function App() {
         isOpen={isAssistantOpen}
         onClose={() => setIsAssistantOpen(false)}
       />
+
+      <CookieBanner />
     </div>
   );
 }

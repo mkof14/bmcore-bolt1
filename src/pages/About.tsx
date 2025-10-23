@@ -1,5 +1,6 @@
 import { Target, MapPin, Users, Sparkles, Shield, Users2, TrendingUp, CheckCircle, Award, Globe, Heart, Building2 } from 'lucide-react';
 import BackButton from '../components/BackButton';
+import SEO from '../components/SEO';
 
 interface AboutProps {
   onNavigate: (page: string) => void;
@@ -8,6 +9,12 @@ interface AboutProps {
 export default function About({ onNavigate }: AboutProps) {
   return (
     <div className="min-h-screen bg-gray-950 transition-colors">
+      <SEO
+        title="About Us - Mission, Vision & Team"
+        description="Learn about BioMath Core's mission to build trustworthy wellness intelligence through biomathematics, computational biology, and AI. Discover our founder's journey and our commitment to preventive health."
+        keywords={['about biomath core', 'health technology mission', 'computational biology', 'biomathematics', 'preventive wellness', 'health AI company']}
+        url="/about"
+      />
       <div className="pt-20 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <BackButton onNavigate={onNavigate} />

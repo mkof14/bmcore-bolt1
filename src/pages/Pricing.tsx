@@ -4,6 +4,7 @@ import BackButton from '../components/BackButton';
 import PaymentConfirmationModal from '../components/PaymentConfirmationModal';
 import { createSubscription } from '../lib/subscriptionService';
 import { supabase } from '../lib/supabase';
+import SEO from '../components/SEO';
 
 interface PricingProps {
   onNavigate: (page: string) => void;
@@ -146,6 +147,12 @@ export default function Pricing({ onNavigate }: PricingProps) {
 
   return (
     <div className="min-h-screen bg-[#0a0e1a] text-white">
+      <SEO
+        title="Pricing Plans - Affordable Health Analytics"
+        description="Transparent pricing for AI-powered health analytics. Core ($19/mo), Daily ($39/mo), Max ($59/mo). 5-day free trial. Annual discounts available. Cancel anytime."
+        keywords={['health analytics cost', 'wellness subscription pricing', 'health monitoring plans', 'affordable health tracking', 'AI health service cost']}
+        url="/pricing"
+      />
       <div className="pt-20 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <BackButton onNavigate={onNavigate} />
