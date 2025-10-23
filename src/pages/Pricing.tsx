@@ -214,9 +214,20 @@ export default function Pricing({ onNavigate }: PricingProps) {
                       </div>
                     )}
 
-                    <div className="mb-6">
-                      <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
-                      <p className="text-gray-400 text-sm">{plan.description}</p>
+                    <div className="mb-6 flex items-center gap-4">
+                      <img
+                        src={
+                          plan.id === 'core' ? '/pricing-core.png' :
+                          plan.id === 'daily' ? '/pricing-daily.png' :
+                          '/pricing-max.png'
+                        }
+                        alt={plan.name}
+                        className="w-16 h-16 object-contain"
+                      />
+                      <div>
+                        <h3 className="text-2xl font-bold mb-2">{plan.name}</h3>
+                        <p className="text-gray-400 text-sm">{plan.description}</p>
+                      </div>
                     </div>
 
                     <div className="mb-6">
