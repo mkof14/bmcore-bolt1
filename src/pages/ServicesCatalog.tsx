@@ -168,7 +168,7 @@ export default function ServicesCatalog({ onNavigate, initialCategory }: Service
   const IconComponent = selectedCategoryData ? iconMap[selectedCategoryData.icon] : null;
 
   return (
-    <div className="min-h-screen bg-gray-950 transition-colors pt-16">
+    <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors pt-16">
       {selectedCategoryData && heroData && IconComponent ? (
         <section className="relative h-80 overflow-hidden">
           <div

@@ -6,7 +6,7 @@ interface InvestorsProps {
 
 export default function Investors({ onNavigate }: InvestorsProps) {
   return (
-    <div className="min-h-screen bg-gray-950 transition-colors pt-16">
+    <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors pt-16">
       <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 via-gray-950 to-gray-900 relative overflow-hidden">
         <div className="absolute inset-0 opacity-20">
           <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-blue-500/20 to-transparent"></div>

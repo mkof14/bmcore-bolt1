@@ -8,7 +8,7 @@ interface AboutProps {
 
 export default function About({ onNavigate }: AboutProps) {
   return (
-    <div className="min-h-screen bg-gray-950 transition-colors">
+    <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors">
       <SEO
         title="About Us - Mission, Vision & Team"
         description="Learn about BioMath Core's mission to build trustworthy wellness intelligence through biomathematics, computational biology, and AI. Discover our founder's journey and our commitment to preventive health."
@@ -124,7 +124,7 @@ export default function About({ onNavigate }: AboutProps) {
                   <span className="font-bold text-white">Human Data Model</span>, which forms the core of the BioMath Core platform.
                 </p>
 
-                <div className="bg-gray-950 border border-gray-700 rounded-xl p-6 my-6">
+                <div className="bg-gray-50 dark:bg-gray-950 border border-gray-200 dark:border-gray-700 rounded-xl p-6 my-6">
                   <p className="text-gray-300">
                     <span className="font-bold text-white">BioMath Core Platform</span> is not just a set of tools. It is a{' '}
                     <span className="font-bold text-white">living ecosystem</span> capable of incorporating multiple services, implementing innovations, and leveraging achievements from various sciences — from biomathematics and epidemiology to machine learning and behavioral psychology —{' '}
@@ -167,7 +167,7 @@ export default function About({ onNavigate }: AboutProps) {
               <div className="group relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 border border-gray-700/40 rounded-xl p-6 hover:border-orange-600/40 transition-all duration-300 overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-orange-900/0 to-orange-900/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <div className="relative">
-                  <div className="w-16 h-16 bg-gray-900 border border-orange-600/20 rounded-lg flex items-center justify-center mb-4 group-hover:border-orange-500/40 group-hover:shadow-lg group-hover:shadow-orange-600/10 transition-all">
+                  <div className="w-16 h-16 bg-gray-100 dark:bg-gray-900 border border-orange-600/20 rounded-lg flex items-center justify-center mb-4 group-hover:border-orange-500/40 group-hover:shadow-lg group-hover:shadow-orange-600/10 transition-all">
                     <Sparkles className="w-8 h-8 text-orange-500" />
                   </div>
                   <h3 className="text-white font-bold mb-2 text-lg">Model-first design</h3>
@@ -180,7 +180,7 @@ export default function About({ onNavigate }: AboutProps) {
               <div className="group relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 border border-gray-700/40 rounded-xl p-6 hover:border-orange-600/40 transition-all duration-300 overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-orange-900/0 to-orange-900/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <div className="relative">
-                  <div className="w-16 h-16 bg-gray-900 border border-orange-600/20 rounded-lg flex items-center justify-center mb-4 group-hover:border-orange-500/40 group-hover:shadow-lg group-hover:shadow-orange-600/10 transition-all">
+                  <div className="w-16 h-16 bg-gray-100 dark:bg-gray-900 border border-orange-600/20 rounded-lg flex items-center justify-center mb-4 group-hover:border-orange-500/40 group-hover:shadow-lg group-hover:shadow-orange-600/10 transition-all">
                     <Globe className="w-8 h-8 text-orange-500" />
                   </div>
                   <h3 className="text-white font-bold mb-2 text-lg">Multi-modal fusion</h3>
@@ -193,7 +193,7 @@ export default function About({ onNavigate }: AboutProps) {
               <div className="group relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 border border-gray-700/40 rounded-xl p-6 hover:border-orange-600/40 transition-all duration-300 overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-orange-900/0 to-orange-900/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <div className="relative">
-                  <div className="w-16 h-16 bg-gray-900 border border-orange-600/20 rounded-lg flex items-center justify-center mb-4 group-hover:border-orange-500/40 group-hover:shadow-lg group-hover:shadow-orange-600/10 transition-all">
+                  <div className="w-16 h-16 bg-gray-100 dark:bg-gray-900 border border-orange-600/20 rounded-lg flex items-center justify-center mb-4 group-hover:border-orange-500/40 group-hover:shadow-lg group-hover:shadow-orange-600/10 transition-all">
                     <Shield className="w-8 h-8 text-orange-500" />
                   </div>
                   <h3 className="text-white font-bold mb-2 text-lg">Quality gates</h3>
@@ -206,7 +206,7 @@ export default function About({ onNavigate }: AboutProps) {
               <div className="group relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 border border-gray-700/40 rounded-xl p-6 hover:border-orange-600/40 transition-all duration-300 overflow-hidden">
                 <div className="absolute inset-0 bg-gradient-to-br from-orange-900/0 to-orange-900/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
                 <div className="relative">
-                  <div className="w-16 h-16 bg-gray-900 border border-orange-600/20 rounded-lg flex items-center justify-center mb-4 group-hover:border-orange-500/40 group-hover:shadow-lg group-hover:shadow-orange-600/10 transition-all">
+                  <div className="w-16 h-16 bg-gray-100 dark:bg-gray-900 border border-orange-600/20 rounded-lg flex items-center justify-center mb-4 group-hover:border-orange-500/40 group-hover:shadow-lg group-hover:shadow-orange-600/10 transition-all">
                     <TrendingUp className="w-8 h-8 text-orange-500" />
                   </div>
                   <h3 className="text-white font-bold mb-2 text-lg">Outcome orientation</h3>
