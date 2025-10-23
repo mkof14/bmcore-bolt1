@@ -47,9 +47,12 @@ export default function SignIn({ onNavigate, onSignIn }: SignInProps) {
           <BackButton onNavigate={onNavigate} />
         </div>
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-3 mb-6">
-            <img src="/logo-header.png" alt="BioMath Core" className="h-12 w-12" />
-            <h1 className="text-3xl font-bold bg-gradient-to-r from-cyan-400 to-blue-400 bg-clip-text text-transparent">BioMath Core</h1>
+          <div className="flex items-center justify-center gap-4 mb-6">
+            <img src="/logo-header.png" alt="BioMath Core" className="h-16 w-16" />
+            <h1 className="text-4xl font-bold">
+              <span className="text-blue-600 dark:text-blue-400">BioMath</span>
+              <span className="text-white"> Core</span>
+            </h1>
           </div>
           <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-2">Welcome Back</h2>
           <p className="text-gray-600 dark:text-gray-300">Sign in to access your wellness dashboard</p>
