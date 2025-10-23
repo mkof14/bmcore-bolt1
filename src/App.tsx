@@ -1,45 +1,49 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { supabase } from './lib/supabase';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import AIAssistantButton from './components/AIAssistantButton';
 import AIHealthAssistant from './components/AIHealthAssistantV2';
 import CookieBanner from './components/CookieBanner';
+import { LoadingPage } from './components/LoadingSpinner';
+import { analytics, identifyUser } from './lib/analytics';
+import { performanceMonitor } from './lib/performance';
 import Home from './pages/Home';
-import About from './pages/About';
-import Services from './pages/Services';
-import Pricing from './pages/Pricing';
-import Investors from './pages/Investors';
-import Science from './pages/Science';
-import API from './pages/API';
-import Contact from './pages/Contact';
-import SignIn from './pages/SignIn';
-import SignUp from './pages/SignUp';
-import MemberZone from './pages/MemberZone';
-import ServicesCatalog from './pages/ServicesCatalog';
-import ServiceDetail from './pages/ServiceDetail';
-import Devices from './pages/Devices';
-import Reports from './pages/Reports';
-import FAQ from './pages/FAQ';
-import Referral from './pages/Referral';
-import Ambassador from './pages/Ambassador';
-import LearningCenter from './pages/LearningCenter';
-import BiomathCoreSummary from './pages/BiomathCoreSummary';
-import SummaryText from './pages/SummaryText';
-import Blog from './pages/Blog';
-import News from './pages/News';
-import Careers from './pages/Careers';
-import CommandCenter from './pages/CommandCenter';
-import AdminPanel from './pages/AdminPanel';
-import PrivacyPolicy from './pages/legal/PrivacyPolicy';
-import TermsOfService from './pages/legal/TermsOfService';
-import Disclaimer from './pages/legal/Disclaimer';
-import HIPAANotice from './pages/legal/HIPAANotice';
-import Security from './pages/legal/Security';
-import GDPR from './pages/legal/GDPR';
-import DataPrivacy from './pages/legal/DataPrivacy';
-import TrustSafety from './pages/legal/TrustSafety';
-import Partnership from './pages/Partnership';
+
+const About = lazy(() => import('./pages/About'));
+const Services = lazy(() => import('./pages/Services'));
+const Pricing = lazy(() => import('./pages/Pricing'));
+const Investors = lazy(() => import('./pages/Investors'));
+const Science = lazy(() => import('./pages/Science'));
+const API = lazy(() => import('./pages/API'));
+const Contact = lazy(() => import('./pages/Contact'));
+const SignIn = lazy(() => import('./pages/SignIn'));
+const SignUp = lazy(() => import('./pages/SignUp'));
+const MemberZone = lazy(() => import('./pages/MemberZone'));
+const ServicesCatalog = lazy(() => import('./pages/ServicesCatalog'));
+const ServiceDetail = lazy(() => import('./pages/ServiceDetail'));
+const Devices = lazy(() => import('./pages/Devices'));
+const Reports = lazy(() => import('./pages/Reports'));
+const FAQ = lazy(() => import('./pages/FAQ'));
+const Referral = lazy(() => import('./pages/Referral'));
+const Ambassador = lazy(() => import('./pages/Ambassador'));
+const LearningCenter = lazy(() => import('./pages/LearningCenter'));
+const BiomathCoreSummary = lazy(() => import('./pages/BiomathCoreSummary'));
+const SummaryText = lazy(() => import('./pages/SummaryText'));
+const Blog = lazy(() => import('./pages/Blog'));
+const News = lazy(() => import('./pages/News'));
+const Careers = lazy(() => import('./pages/Careers'));
+const CommandCenter = lazy(() => import('./pages/CommandCenter'));
+const AdminPanel = lazy(() => import('./pages/AdminPanel'));
+const PrivacyPolicy = lazy(() => import('./pages/legal/PrivacyPolicy'));
+const TermsOfService = lazy(() => import('./pages/legal/TermsOfService'));
+const Disclaimer = lazy(() => import('./pages/legal/Disclaimer'));
+const HIPAANotice = lazy(() => import('./pages/legal/HIPAANotice'));
+const Security = lazy(() => import('./pages/legal/Security'));
+const GDPR = lazy(() => import('./pages/legal/GDPR'));
+const DataPrivacy = lazy(() => import('./pages/legal/DataPrivacy'));
+const TrustSafety = lazy(() => import('./pages/legal/TrustSafety'));
+const Partnership = lazy(() => import('./pages/Partnership'));
 
 type Page = 'home' | 'about' | 'services' | 'pricing' | 'investors' | 'science' | 'api' | 'contact' | 'signin' | 'signup' | 'member' | 'member-zone' | 'services-catalog' | 'service-detail' | 'devices' | 'reports' | 'faq' | 'referral' | 'ambassador' | 'learning' | 'learning-center' | 'biomath-core-summary' | 'summary-text' | 'blog' | 'news' | 'careers' | 'command-center' | 'admin-panel' | 'privacy-policy' | 'terms-of-service' | 'disclaimer' | 'hipaa-notice' | 'security' | 'gdpr' | 'data-privacy' | 'trust-safety' | 'partnership';
 
@@ -54,14 +58,28 @@ function App() {
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setIsAuthenticated(!!session);
+      if (session?.user) {
+        identifyUser(session.user.id, {
+          email: session.user.email
+        });
+      }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsAuthenticated(!!session);
+      if (session?.user) {
+        identifyUser(session.user.id, {
+          email: session.user.email
+        });
+      }
     });
 
     return () => subscription.unsubscribe();
   }, []);
+
+  useEffect(() => {
+    analytics.page(currentPage);
+  }, [currentPage]);
 
   const handleNavigate = (page: string, data?: string) => {
     if (page === 'member' && !isAuthenticated) {
@@ -184,7 +202,9 @@ function App() {
     <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors">
       {showHeaderFooter && <Header onNavigate={handleNavigate} currentPage={currentPage} />}
       <main>
-        {renderPage()}
+        <Suspense fallback={<LoadingPage text="Loading..." />}>
+          {renderPage()}
+        </Suspense>
       </main>
       {showHeaderFooter && <Footer onNavigate={handleNavigate} />}
 
