@@ -116,7 +116,7 @@ export default function StatsCounter() {
   };
 
   return (
-    <div ref={sectionRef} className="py-16 bg-blue-600 dark:bg-blue-900">
+    <div ref={sectionRef} className="py-16 bg-white dark:bg-gray-950">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-8">
           {metrics.map((metric) => (
@@ -138,13 +138,13 @@ function StatCard({ metric, isVisible }: { metric: TrustMetric; isVisible: boole
 
   return (
     <div className="text-center">
-      <div className="inline-flex items-center justify-center w-12 h-12 mb-4 bg-white/10 rounded-lg">
-        <Icon className="h-6 w-6 text-white" />
+      <div className="inline-flex items-center justify-center w-12 h-12 mb-4 bg-gray-100 dark:bg-gray-800 rounded-lg">
+        <Icon className="h-6 w-6 text-blue-500 dark:text-blue-400" />
       </div>
-      <div className="text-3xl md:text-4xl font-bold text-white mb-2">
+      <div className="text-3xl md:text-4xl font-bold text-gray-900 dark:text-white mb-2">
         {formatMetricValue(count, metric.display_format)}
       </div>
-      <div className="text-sm md:text-base text-blue-100">
+      <div className="text-sm md:text-base text-gray-600 dark:text-gray-400">
         {metric.metric_label}
       </div>
     </div>
