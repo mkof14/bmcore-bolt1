@@ -70,7 +70,7 @@ export default function MemberSidebar({ currentSection, onSectionChange }: Membe
   ];
 
   return (
-    <aside className={`fixed left-0 top-16 bottom-0 bg-gradient-to-b from-gray-900 to-gray-950 border-r border-gray-800/50 transition-all duration-300 z-40 ${
+    <aside className={`fixed left-0 top-16 bottom-0 bg-gradient-to-b from-gray-100 to-gray-50 dark:from-gray-900 dark:to-gray-950 border-r border-gray-200 dark:border-gray-800/50 transition-all duration-300 z-40 ${
       isCollapsed ? 'w-20' : 'w-64'
     }`}>
       <div className="h-full flex flex-col">
@@ -78,7 +78,7 @@ export default function MemberSidebar({ currentSection, onSectionChange }: Membe
           {menuSections.map((section, sectionIndex) => (
             <div key={sectionIndex} className="mb-6">
               {!isCollapsed && (
-                <h3 className="px-3 mb-2 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+                <h3 className="px-3 mb-2 text-xs font-semibold text-gray-600 dark:text-gray-500 uppercase tracking-wider">
                   {section.title}
                 </h3>
               )}
@@ -94,14 +94,14 @@ export default function MemberSidebar({ currentSection, onSectionChange }: Membe
                       onClick={() => onSectionChange(item.id)}
                       className={`w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg transition-all duration-300 ${
                         isActive
-                          ? 'bg-gradient-to-r from-orange-900/30 to-orange-800/20 border border-orange-600/30 text-orange-500'
+                          ? 'bg-gradient-to-r from-orange-100 to-orange-50 dark:from-orange-900/30 dark:to-orange-800/20 border border-orange-300 dark:border-orange-600/30 text-orange-600 dark:text-orange-500'
                           : isCatalog
-                          ? 'bg-gradient-to-r from-green-900/20 to-green-800/10 border border-green-600/30 text-green-400 hover:from-green-900/30 hover:to-green-800/20'
-                          : 'text-gray-400 hover:bg-gray-800/50 border border-transparent hover:border-gray-700/50'
+                          ? 'bg-gradient-to-r from-green-100 to-green-50 dark:from-green-900/20 dark:to-green-800/10 border border-green-300 dark:border-green-600/30 text-green-600 dark:text-green-400 hover:from-green-200 hover:to-green-100 dark:hover:from-green-900/30 dark:hover:to-green-800/20'
+                          : 'text-gray-700 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800/50 border border-transparent hover:border-gray-300 dark:hover:border-gray-700/50'
                       }`}
                       title={isCollapsed ? item.label : ''}
                     >
-                      <Icon className={`h-5 w-5 flex-shrink-0 ${isActive ? 'text-orange-500' : isCatalog ? 'text-green-400' : ''}`} />
+                      <Icon className={`h-5 w-5 flex-shrink-0 ${isActive ? 'text-orange-600 dark:text-orange-500' : isCatalog ? 'text-green-600 dark:text-green-400' : ''}`} />
                       {!isCollapsed && (
                         <span className={`text-sm font-medium ${isActive ? 'font-semibold' : isCatalog ? 'font-semibold' : ''}`}>
                           {item.label}
@@ -115,10 +115,10 @@ export default function MemberSidebar({ currentSection, onSectionChange }: Membe
           ))}
         </div>
 
-        <div className="border-t border-gray-800/50 p-4">
+        <div className="border-t border-gray-300 dark:border-gray-800/50 p-4">
           <button
             onClick={() => setIsCollapsed(!isCollapsed)}
-            className="w-full flex items-center justify-center space-x-2 px-3 py-2 text-gray-400 hover:bg-gray-800/50 hover:text-gray-300 rounded-lg transition-all duration-300"
+            className="w-full flex items-center justify-center space-x-2 px-3 py-2 text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800/50 hover:text-gray-900 dark:hover:text-gray-300 rounded-lg transition-all duration-300"
           >
             {isCollapsed ? (
               <ChevronRight className="h-5 w-5" />

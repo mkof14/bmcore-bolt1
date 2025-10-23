@@ -149,7 +149,7 @@ export default function Pricing({ onNavigate }: PricingProps) {
   };
 
   return (
-    <div className="min-h-screen bg-[#0a0e1a] text-white">
+    <div className="min-h-screen bg-white dark:bg-[#0a0e1a] text-gray-900 dark:text-white transition-colors">
       <SEO
         title="Pricing Plans - Affordable Health Analytics"
         description="Transparent pricing for AI-powered health analytics. Core ($19/mo), Daily ($39/mo), Max ($59/mo). 5-day free trial. Annual discounts available. Cancel anytime."

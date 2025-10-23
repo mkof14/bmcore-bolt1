@@ -113,14 +113,14 @@ export default function MemberZone({ onNavigate, onSignOut }: MemberZoneProps) {
           <div className="flex justify-between items-center mb-6">
             <button
               onClick={() => onNavigate('home')}
-              className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700/50 hover:border-orange-600/50 text-gray-300 rounded-lg transition-all duration-300"
+              className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 border border-gray-300 dark:border-gray-700/50 hover:border-orange-600/50 text-gray-700 dark:text-gray-300 rounded-lg transition-all duration-300"
             >
               <ArrowLeft className="h-5 w-5" />
               <span>Back to Home</span>
             </button>
             <button
               onClick={handleSignOut}
-              className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-br from-gray-800 to-gray-900 border border-gray-700/50 hover:border-orange-600/50 text-gray-300 rounded-lg transition-all duration-300"
+              className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 border border-gray-300 dark:border-gray-700/50 hover:border-orange-600/50 text-gray-700 dark:text-gray-300 rounded-lg transition-all duration-300"
             >
               <LogOut className="h-5 w-5" />
               <span>Sign Out</span>
