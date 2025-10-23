@@ -59,7 +59,7 @@ export default function Blog({ onNavigate }: BlogProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 pt-20 pb-16">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-950 to-gray-900 pt-20 pb-16">
       <SEO
         title="Health & Wellness Blog - Expert Articles & Insights"
         description="Explore our collection of articles on health analytics, wellness optimization, preventive care, and personalized medicine. Expert insights from BioMath Core."
