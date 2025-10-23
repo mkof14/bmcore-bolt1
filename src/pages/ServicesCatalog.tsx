@@ -216,12 +216,21 @@ export default function ServicesCatalog({ onNavigate, initialCategory }: Service
             <BackButton onNavigate={onNavigate} />
 
             <div className="text-center mb-8">
-              <h1 className="text-5xl font-bold text-white mb-4">
-                Complete Services Catalog
-              </h1>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
-                Explore our comprehensive suite of 200+ biomathematical health services across 20 specialized categories
-              </p>
+              <div className="flex items-center justify-center gap-8 mb-4">
+                <div className="flex-1 text-right">
+                  <h1 className="text-5xl font-bold text-white mb-4">
+                    Complete Services Catalog
+                  </h1>
+                  <p className="text-xl text-gray-300">
+                    Explore our comprehensive suite of 200+ biomathematical health services across 20 specialized categories
+                  </p>
+                </div>
+                <img
+                  src="/Copilot_20251022_202220.png"
+                  alt="BioMath Services"
+                  className="w-48 h-48 object-contain"
+                />
+              </div>
 
               <div className="max-w-2xl mx-auto">
                 <div className="relative">
