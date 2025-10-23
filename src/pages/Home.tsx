@@ -1,6 +1,10 @@
 import { Activity, Brain, Shield, Heart, Lightbulb, Sparkles, ArrowRight, Check, BookOpen } from 'lucide-react';
 import HealthCategories from '../components/HealthCategories';
 import SEO from '../components/SEO';
+import Testimonials from '../components/Testimonials';
+import StatsCounter from '../components/StatsCounter';
+import TrustSignals from '../components/TrustSignals';
+import CTASection, { CTABanner } from '../components/CTASection';
 
 interface HomeProps {
   onNavigate: (page: string) => void;
@@ -48,6 +52,9 @@ export default function Home({ onNavigate }: HomeProps) {
         keywords={['AI health analytics', 'personalized medicine', 'preventive healthcare', 'wellness tracking', 'health intelligence', 'biomarkers analysis']}
         url="/"
       />
+
+      <CTABanner onNavigate={onNavigate} />
+
       <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:via-gray-950 dark:to-gray-900">
         <div className="absolute inset-0 opacity-20">
           <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-orange-500/20 dark:from-orange-500/20 to-transparent"></div>
@@ -198,6 +205,19 @@ export default function Home({ onNavigate }: HomeProps) {
           </div>
         </div>
       </section>
+
+      <StatsCounter />
+
+      <TrustSignals />
+
+      <Testimonials />
+
+      <CTASection
+        variant="gradient"
+        onPrimaryClick={() => onNavigate('signup')}
+        onSecondaryClick={() => onNavigate('pricing')}
+        showStats={true}
+      />
     </div>
   );
 }

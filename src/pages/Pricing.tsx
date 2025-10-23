@@ -5,6 +5,9 @@ import PaymentConfirmationModal from '../components/PaymentConfirmationModal';
 import { createSubscription } from '../lib/subscriptionService';
 import { supabase } from '../lib/supabase';
 import SEO from '../components/SEO';
+import ComparisonTable from '../components/ComparisonTable';
+import { TrustBadgesCompact } from '../components/TrustSignals';
+import Testimonials from '../components/Testimonials';
 
 interface PricingProps {
   onNavigate: (page: string) => void;
@@ -482,6 +485,12 @@ export default function Pricing({ onNavigate }: PricingProps) {
           isProcessing={isProcessing}
         />
       )}
+
+      <TrustBadgesCompact />
+
+      <ComparisonTable />
+
+      <Testimonials />
     </div>
   );
 
