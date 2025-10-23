@@ -226,28 +226,18 @@ export default function Pricing({ onNavigate }: PricingProps) {
                       </div>
                     </div>
 
-                    <div className={`mb-6 relative h-40 rounded-xl overflow-hidden flex flex-col items-center justify-center ${
-                      plan.id === 'core' ? 'border-2 border-orange-500 bg-gradient-to-br from-orange-950/50 via-black to-orange-950/30' : 'bg-gradient-to-br from-blue-900/20 to-cyan-900/20 border border-blue-500/30'
-                    }`}>
-                      {plan.id === 'core' ? (
-                        <>
-                          <div className="absolute inset-0 opacity-60">
-                            <div className="absolute top-0 left-0 w-32 h-32 bg-orange-500/30 rounded-full blur-3xl"></div>
-                            <div className="absolute bottom-0 right-0 w-40 h-40 bg-orange-600/20 rounded-full blur-3xl"></div>
-                            <div className="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-48 h-48 bg-orange-400/20 rounded-full blur-2xl animate-pulse"></div>
-                          </div>
-                          <span className="relative text-2xl font-bold z-10 text-white" style={{
-                            textShadow: '0 0 20px rgba(251, 146, 60, 0.8), 0 2px 4px rgba(0,0,0,0.8)'
-                          }}>{plan.categories}</span>
-                        </>
-                      ) : (
-                        <>
-                          <div className="absolute inset-0" style={{
-                            backgroundImage: 'radial-gradient(circle at 20% 50%, rgba(59, 130, 246, 0.15) 0%, transparent 50%), radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.15) 0%, transparent 50%)',
-                          }}></div>
-                          <span className="relative text-2xl font-bold z-10">{plan.categories}</span>
-                        </>
-                      )}
+                    <div className="mb-6 relative h-56 rounded-xl overflow-hidden flex flex-col items-center justify-center bg-gradient-to-br from-gray-900/50 to-black/30">
+                      <div className="relative w-full h-full flex items-center justify-center p-6">
+                        <img
+                          src={
+                            plan.id === 'core' ? '/Copilot_20251022_204924.png' :
+                            plan.id === 'daily' ? '/Copilot_20251022_205256.png' :
+                            '/Copilot_20251022_205411.png'
+                          }
+                          alt={`${plan.name} Plan`}
+                          className="w-auto h-full object-contain"
+                        />
+                      </div>
                     </div>
 
                     <ul className="space-y-3 mb-8">
