@@ -1,4 +1,4 @@
-import {  Settings, Users, FileText, Newspaper, Briefcase, FolderOpen, BarChart3, Shield, Menu, X, LayoutDashboard, Mail } from 'lucide-react';
+import {  Settings, Users, FileText, Newspaper, Briefcase, FolderOpen, BarChart3, Shield, Menu, X, LayoutDashboard, Mail, CreditCard } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import BackButton from '../components/BackButton';
 import BlogManager from '../components/admin/BlogManager';
@@ -10,6 +10,7 @@ import SettingsSection from '../components/admin/SettingsSection';
 import AnalyticsSection from '../components/admin/AnalyticsSection';
 import UserManagementSection from '../components/admin/UserManagementSection';
 import MarketingDocumentsSection from '../components/admin/MarketingDocumentsSection';
+import StripeConfigManager from '../components/admin/StripeConfigManager';
 import { supabase } from '../lib/supabase';
 
 interface AdminPanelProps {
@@ -22,6 +23,7 @@ export default function AdminPanel({ onNavigate }: AdminPanelProps) {
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'stripe', label: 'Stripe Configuration', icon: CreditCard },
     { id: 'users', label: 'User Management', icon: Users },
     { id: 'blog', label: 'Blog Management', icon: FileText },
     { id: 'news', label: 'News Management', icon: Newspaper },
@@ -85,6 +87,7 @@ export default function AdminPanel({ onNavigate }: AdminPanelProps) {
             <BackButton onNavigate={onNavigate} />
 
             {activeSection === 'dashboard' && <DashboardSection />}
+            {activeSection === 'stripe' && <StripeConfigManager />}
             {activeSection === 'users' && <UserManagementSection />}
             {activeSection === 'blog' && <BlogManager />}
             {activeSection === 'news' && <NewsManager />}
