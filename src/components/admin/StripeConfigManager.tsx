@@ -33,6 +33,8 @@ export default function StripeConfigManager() {
 
       const importantKeys = [
         'publishable_key_test',
+        'secret_key_test',
+        'webhook_secret_test',
         'price_daily_monthly_test',
         'price_daily_yearly_test',
         'price_core_monthly_test',
@@ -86,7 +88,9 @@ export default function StripeConfigManager() {
 
   const getFriendlyLabel = (key: string) => {
     const labels: Record<string, string> = {
-      'publishable_key_test': '🔑 Publishable Key (pk_test_...)',
+      'publishable_key_test': 'Publishable Key (pk_test_...)',
+      'secret_key_test': 'Secret Key (sk_test_...)',
+      'webhook_secret_test': 'Webhook Secret (whsec_...)',
       'price_daily_monthly_test': 'Monthly Price ID (price_...)',
       'price_daily_yearly_test': 'Yearly Price ID (price_...)',
       'price_core_monthly_test': 'Monthly Price ID (price_...)',
@@ -99,7 +103,11 @@ export default function StripeConfigManager() {
 
   const getGroupedConfigs = () => {
     return {
-      api: configs.filter(c => c.key === 'publishable_key_test'),
+      apiKeys: configs.filter(c =>
+        c.key === 'publishable_key_test' ||
+        c.key === 'secret_key_test' ||
+        c.key === 'webhook_secret_test'
+      ),
       daily: configs.filter(c => c.key.includes('daily')),
       core: configs.filter(c => c.key.includes('core')),
       max: configs.filter(c => c.key.includes('max'))
@@ -146,36 +154,43 @@ export default function StripeConfigManager() {
 
         <div className="space-y-6">
           {/* API Keys Section */}
-          {getGroupedConfigs().api.map((config) => (
-            <div key={config.key} className="space-y-2">
-              <label className="block text-sm font-medium text-gray-300">
-                {getFriendlyLabel(config.key)}
-              </label>
-              <p className="text-xs text-gray-500 mb-2">{config.description}</p>
-              <div className="relative">
-                <input
-                  type={config.is_secret && !showSecrets[config.key] ? 'password' : 'text'}
-                  value={config.value}
-                  onChange={(e) => handleUpdate(config.key, e.target.value)}
-                  placeholder="Paste your key here..."
-                  className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-12"
-                />
-                {config.is_secret && (
-                  <button
-                    type="button"
-                    onClick={() => toggleShowSecret(config.key)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-700/50 rounded-lg transition-colors"
-                  >
-                    {showSecrets[config.key] ? (
-                      <EyeOff className="w-4 h-4 text-gray-400" />
-                    ) : (
-                      <Eye className="w-4 h-4 text-gray-400" />
+          {getGroupedConfigs().apiKeys.length > 0 && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                🔐 Stripe API Keys
+              </h3>
+              {getGroupedConfigs().apiKeys.map((config) => (
+                <div key={config.key} className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-300">
+                    {getFriendlyLabel(config.key)}
+                  </label>
+                  <p className="text-xs text-gray-500 mb-2">{config.description}</p>
+                  <div className="relative">
+                    <input
+                      type={config.is_secret && !showSecrets[config.key] ? 'password' : 'text'}
+                      value={config.value}
+                      onChange={(e) => handleUpdate(config.key, e.target.value)}
+                      placeholder="Paste your key here..."
+                      className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-12"
+                    />
+                    {config.is_secret && (
+                      <button
+                        type="button"
+                        onClick={() => toggleShowSecret(config.key)}
+                        className="absolute right-3 top-1/2 -translate-y-1/2 p-2 hover:bg-gray-700/50 rounded-lg transition-colors"
+                      >
+                        {showSecrets[config.key] ? (
+                          <EyeOff className="w-4 h-4 text-gray-400" />
+                        ) : (
+                          <Eye className="w-4 h-4 text-gray-400" />
+                        )}
+                      </button>
                     )}
-                  </button>
-                )}
-              </div>
+                  </div>
+                </div>
+              ))}
             </div>
-          ))}
+          )}
 
           {/* Daily Plan */}
           {getGroupedConfigs().daily.length > 0 && (
@@ -282,9 +297,9 @@ export default function StripeConfigManager() {
           <AlertCircle className="w-5 h-5" />
           Where to get these keys?
         </h3>
-        <div className="space-y-3 text-sm text-gray-300">
+        <div className="space-y-4 text-sm text-gray-300">
           <div>
-            <strong className="text-white">1. Publishable Key:</strong>
+            <strong className="text-white">1. API Keys (Publishable & Secret):</strong>
             <p className="text-gray-400 mt-1">
               Open{' '}
               <a
@@ -293,13 +308,35 @@ export default function StripeConfigManager() {
                 rel="noopener noreferrer"
                 className="text-blue-400 hover:underline"
               >
-                Stripe Dashboard → API Keys
+                Stripe Dashboard → Developers → API Keys
               </a>
-              {' '}and copy "Publishable key" (starts with pk_test_)
             </p>
+            <ul className="list-disc list-inside text-gray-400 mt-2 ml-2 space-y-1">
+              <li>Publishable key starts with <code className="text-blue-300">pk_test_</code></li>
+              <li>Secret key starts with <code className="text-orange-300">sk_test_</code> (keep this secure!)</li>
+            </ul>
           </div>
           <div>
-            <strong className="text-white">2. Price IDs:</strong>
+            <strong className="text-white">2. Webhook Secret:</strong>
+            <p className="text-gray-400 mt-1">
+              Open{' '}
+              <a
+                href="https://dashboard.stripe.com/test/webhooks"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="text-blue-400 hover:underline"
+              >
+                Stripe Dashboard → Developers → Webhooks
+              </a>
+            </p>
+            <ul className="list-disc list-inside text-gray-400 mt-2 ml-2 space-y-1">
+              <li>Create a webhook endpoint or select existing one</li>
+              <li>Click "Reveal" to see the signing secret</li>
+              <li>Webhook secret starts with <code className="text-purple-300">whsec_</code></li>
+            </ul>
+          </div>
+          <div>
+            <strong className="text-white">3. Price IDs:</strong>
             <p className="text-gray-400 mt-1">
               Open{' '}
               <a
@@ -310,8 +347,12 @@ export default function StripeConfigManager() {
               >
                 Stripe Dashboard → Products
               </a>
-              , create products and copy Price IDs (start with price_)
             </p>
+            <ul className="list-disc list-inside text-gray-400 mt-2 ml-2 space-y-1">
+              <li>Create products for each plan (Daily, Core, Max)</li>
+              <li>Create both monthly and yearly prices for each</li>
+              <li>Copy Price IDs (start with <code className="text-green-300">price_</code>)</li>
+            </ul>
           </div>
         </div>
       </div>
