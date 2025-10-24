@@ -44,7 +44,7 @@ export async function createCheckoutSession(
 
     console.log('[Stripe Service] Calling edge function...');
 
-    const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+    const response = await supabase.functions.invoke('create-checkout-session', {
       body: {
         priceId,
         userId,
@@ -56,23 +56,49 @@ export async function createCheckoutSession(
       }
     });
 
-    console.log('[Stripe Service] Edge function response:', { data, error });
+    console.log('[Stripe Service] Raw response:', response);
+    console.log('[Stripe Service] Response data:', response.data);
+    console.log('[Stripe Service] Response error:', response.error);
+
+    const { data, error } = response;
 
     if (error) {
-      console.error('[Stripe Service] Edge function error:', {
+      console.error('[Stripe Service] Edge function ERROR:', {
         message: error.message,
         status: error.status,
-        details: error
+        name: error.name,
+        context: error.context,
+        fullError: JSON.stringify(error, null, 2)
       });
+
+      // Check if data contains error details
+      if (data) {
+        console.error('[Stripe Service] Error data from function:', data);
+        throw new Error(`Edge Function Error: ${data.error || error.message || 'Unknown error'}`);
+      }
+
       throw new Error(`Edge Function Error: ${error.message || 'Unknown error'}`);
     }
 
     if (!data) {
+      console.error('[Stripe Service] NO DATA returned from Edge Function');
       throw new Error('No data returned from Edge Function');
     }
 
+    console.log('[Stripe Service] Checking response data structure...');
+    console.log('[Stripe Service] Data keys:', Object.keys(data));
+    console.log('[Stripe Service] Has sessionId?', 'sessionId' in data);
+    console.log('[Stripe Service] Has url?', 'url' in data);
+    console.log('[Stripe Service] Has error?', 'error' in data);
+
+    // Check if response contains error message
+    if (data.error) {
+      console.error('[Stripe Service] Error in response data:', data);
+      throw new Error(`Edge Function Error: ${data.error}`);
+    }
+
     if (!data.sessionId && !data.url) {
-      console.error('[Stripe Service] Invalid response from Edge Function:', data);
+      console.error('[Stripe Service] Invalid response structure:', data);
       throw new Error(`Invalid response: ${JSON.stringify(data)}`);
     }
 
