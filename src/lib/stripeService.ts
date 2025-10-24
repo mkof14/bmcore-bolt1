@@ -71,13 +71,33 @@ export async function createCheckoutSession(
         fullError: JSON.stringify(error, null, 2)
       });
 
+      // Try to read response body from context
+      let errorDetails = '';
+      try {
+        if (error.context && error.context instanceof Response) {
+          const responseClone = error.context.clone();
+          const errorText = await responseClone.text();
+          console.error('[Stripe Service] Response body:', errorText);
+
+          try {
+            const errorJson = JSON.parse(errorText);
+            errorDetails = errorJson.error || errorJson.message || errorText;
+            console.error('[Stripe Service] Parsed error:', errorJson);
+          } catch {
+            errorDetails = errorText;
+          }
+        }
+      } catch (e) {
+        console.error('[Stripe Service] Failed to read response body:', e);
+      }
+
       // Check if data contains error details
       if (data) {
         console.error('[Stripe Service] Error data from function:', data);
-        throw new Error(`Edge Function Error: ${data.error || error.message || 'Unknown error'}`);
+        throw new Error(`Edge Function Error: ${data.error || errorDetails || error.message || 'Unknown error'}`);
       }
 
-      throw new Error(`Edge Function Error: ${error.message || 'Unknown error'}`);
+      throw new Error(`Edge Function Error: ${errorDetails || error.message || 'Unknown error'}`);
     }
 
     if (!data) {
