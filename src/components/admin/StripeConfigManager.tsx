@@ -71,7 +71,7 @@ export default function StripeConfigManager() {
         if (error) throw error;
       }
 
-      setMessage({ type: 'success', text: 'Все ключи успешно сохранены!' });
+      setMessage({ type: 'success', text: 'All keys saved successfully!' });
       setTimeout(() => setMessage(null), 5000);
     } catch (error: any) {
       setMessage({ type: 'error', text: error.message });
@@ -87,12 +87,12 @@ export default function StripeConfigManager() {
   const getFriendlyLabel = (key: string) => {
     const labels: Record<string, string> = {
       'publishable_key_test': '🔑 Publishable Key (pk_test_...)',
-      'price_daily_monthly_test': '📅 Daily Plan - Monthly ($39/mo)',
-      'price_daily_yearly_test': '📅 Daily Plan - Yearly ($390/yr)',
-      'price_core_monthly_test': '⭐ Core Plan - Monthly ($79/mo)',
-      'price_core_yearly_test': '⭐ Core Plan - Yearly ($790/yr)',
-      'price_max_monthly_test': '🚀 Max Plan - Monthly ($149/mo)',
-      'price_max_yearly_test': '🚀 Max Plan - Yearly ($1490/yr)',
+      'price_daily_monthly_test': '📅 Daily Plan - Monthly ($25/month)',
+      'price_daily_yearly_test': '📅 Daily Plan - Yearly ($250/year)',
+      'price_core_monthly_test': '⭐ Core Plan - Monthly ($55/month)',
+      'price_core_yearly_test': '⭐ Core Plan - Yearly ($550/year)',
+      'price_max_monthly_test': '🚀 Max Plan - Monthly ($99/month)',
+      'price_max_yearly_test': '🚀 Max Plan - Yearly ($990/year)',
     };
     return labels[key] || key;
   };

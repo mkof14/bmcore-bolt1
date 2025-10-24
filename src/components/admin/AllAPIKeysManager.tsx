@@ -20,7 +20,7 @@ export default function AllAPIKeysManager() {
       key: 'stripe_publishable',
       value: '',
       required: true,
-      description: 'Публичный ключ для оплаты (pk_live_... или pk_test_...)',
+      description: 'Public key for payments (pk_live_... or pk_test_...)',
       setupUrl: 'https://dashboard.stripe.com/apikeys',
       icon: '💳',
       isSecret: false
@@ -30,7 +30,7 @@ export default function AllAPIKeysManager() {
       key: 'stripe_secret',
       value: '',
       required: true,
-      description: 'Секретный ключ (sk_live_... или sk_test_...)',
+      description: 'Secret key (sk_live_... or sk_test_...)',
       setupUrl: 'https://dashboard.stripe.com/apikeys',
       icon: '💳',
       isSecret: true
@@ -40,7 +40,7 @@ export default function AllAPIKeysManager() {
       key: 'openai_key',
       value: '',
       required: false,
-      description: 'Для AI ассистента и ChatGPT (sk-...)',
+      description: 'For AI assistant and ChatGPT (sk-...)',
       setupUrl: 'https://platform.openai.com/api-keys',
       icon: '🤖',
       isSecret: true
@@ -60,7 +60,7 @@ export default function AllAPIKeysManager() {
       key: 'facebook_pixel',
       value: '',
       required: false,
-      description: 'Pixel ID для отслеживания конверсий',
+      description: 'Pixel ID for conversion tracking',
       setupUrl: 'https://business.facebook.com/events_manager',
       icon: '👥',
       isSecret: false
@@ -70,7 +70,7 @@ export default function AllAPIKeysManager() {
       key: 'resend_key',
       value: '',
       required: false,
-      description: 'Для отправки email уведомлений (re_...)',
+      description: 'For email notifications (re_...)',
       setupUrl: 'https://resend.com/api-keys',
       icon: '📧',
       isSecret: true
@@ -80,7 +80,7 @@ export default function AllAPIKeysManager() {
       key: 'sendgrid_key',
       value: '',
       required: false,
-      description: 'Альтернатива Resend для email (SG...)',
+      description: 'Alternative to Resend for email (SG...)',
       setupUrl: 'https://app.sendgrid.com/settings/api_keys',
       icon: '📧',
       isSecret: true
@@ -90,7 +90,7 @@ export default function AllAPIKeysManager() {
       key: 'aws_access',
       value: '',
       required: false,
-      description: 'Для S3, Lambda и других AWS сервисов',
+      description: 'For S3, Lambda and other AWS services',
       setupUrl: 'https://console.aws.amazon.com/iam',
       icon: '☁️',
       isSecret: true
@@ -110,7 +110,7 @@ export default function AllAPIKeysManager() {
       key: 'cloudflare_token',
       value: '',
       required: false,
-      description: 'Для CDN и безопасности',
+      description: 'For CDN and security',
       setupUrl: 'https://dash.cloudflare.com/profile/api-tokens',
       icon: '🛡️',
       isSecret: true
@@ -120,7 +120,7 @@ export default function AllAPIKeysManager() {
       key: 'twilio_sid',
       value: '',
       required: false,
-      description: 'Для SMS уведомлений',
+      description: 'For SMS notifications',
       setupUrl: 'https://console.twilio.com',
       icon: '📱',
       isSecret: false
@@ -130,7 +130,7 @@ export default function AllAPIKeysManager() {
       key: 'twilio_token',
       value: '',
       required: false,
-      description: 'Auth Token для Twilio',
+      description: 'Auth Token for Twilio',
       setupUrl: 'https://console.twilio.com',
       icon: '📱',
       isSecret: true
@@ -155,7 +155,7 @@ export default function AllAPIKeysManager() {
 
       setMessage({
         type: 'success',
-        text: 'Все ключи успешно сохранены! ✓'
+        text: 'All keys saved successfully! ✓'
       });
 
       setTimeout(() => setMessage(null), 5000);
@@ -187,7 +187,7 @@ export default function AllAPIKeysManager() {
           <div>
             <h2 className="text-2xl font-bold text-white">API Keys Management</h2>
             <p className="text-gray-400 text-sm mt-1">
-              Управление всеми API ключами и интеграциями
+              Manage all API keys and integrations
             </p>
           </div>
         </div>
@@ -214,12 +214,12 @@ export default function AllAPIKeysManager() {
             if (items.length === 0) return null;
 
             const categoryNames: Record<string, string> = {
-              payments: '💳 Платежи',
-              ai: '🤖 Искусственный интеллект',
-              analytics: '📊 Аналитика',
-              email: '📧 Email рассылки',
-              cloud: '☁️ Облачные сервисы',
-              sms: '📱 SMS уведомления'
+              payments: '💳 Payments',
+              ai: '🤖 Artificial Intelligence',
+              analytics: '📊 Analytics',
+              email: '📧 Email Services',
+              cloud: '☁️ Cloud Services',
+              sms: '📱 SMS Notifications'
             };
 
             return (
@@ -241,7 +241,7 @@ export default function AllAPIKeysManager() {
                               {service.name}
                               {service.required && (
                                 <span className="text-xs bg-red-500/20 text-red-400 px-2 py-0.5 rounded">
-                                  обязательно
+                                  required
                                 </span>
                               )}
                             </div>
@@ -253,7 +253,7 @@ export default function AllAPIKeysManager() {
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-blue-400 hover:text-blue-300 transition-colors"
-                            title="Получить ключ"
+                            title="Get API key"
                           >
                             <ExternalLink className="w-4 h-4" />
                           </a>
@@ -265,7 +265,7 @@ export default function AllAPIKeysManager() {
                           type={service.isSecret && !showSecrets[service.key] ? 'password' : 'text'}
                           value={service.value}
                           onChange={(e) => handleUpdate(service.key, e.target.value)}
-                          placeholder={`Вставьте ${service.isSecret ? 'секретный' : ''} ключ...`}
+                          placeholder={`Paste ${service.isSecret ? 'secret' : ''} key...`}
                           className="w-full px-4 py-2.5 bg-gray-900/50 border border-gray-600 rounded-lg text-white text-sm placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-12"
                         />
                         {service.isSecret && (
@@ -299,12 +299,12 @@ export default function AllAPIKeysManager() {
             {saving ? (
               <>
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                <span>Сохранение...</span>
+                <span>Saving...</span>
               </>
             ) : (
               <>
                 <Save className="w-5 h-5" />
-                <span>Сохранить все ключи</span>
+                <span>Save all keys</span>
               </>
             )}
           </button>
@@ -314,15 +314,15 @@ export default function AllAPIKeysManager() {
       <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-6">
         <h3 className="text-lg font-semibold text-yellow-400 mb-3 flex items-center gap-2">
           <AlertCircle className="w-5 h-5" />
-          Важная информация по безопасности
+          Important Security Information
         </h3>
         <ul className="space-y-2 text-sm text-gray-300">
-          <li>🔒 Секретные ключи никогда не должны быть доступны в клиентском коде</li>
-          <li>🌐 Используйте Test Keys для разработки, Live Keys для production</li>
-          <li>🔄 Регулярно обновляйте ключи (раз в 3-6 месяцев)</li>
-          <li>👀 Не делитесь секретными ключами через email или мессенджеры</li>
-          <li>💾 Храните резервные копии ключей в защищенном хранилище</li>
-          <li>📝 Используйте переменные окружения (.env) вместо хардкода</li>
+          <li>🔒 Secret keys should never be accessible in client-side code</li>
+          <li>🌐 Use Test Keys for development, Live Keys for production</li>
+          <li>🔄 Rotate keys regularly (every 3-6 months)</li>
+          <li>👀 Never share secret keys via email or messaging apps</li>
+          <li>💾 Store backup copies of keys in a secure vault</li>
+          <li>📝 Use environment variables (.env) instead of hardcoding</li>
         </ul>
       </div>
     </div>
