@@ -475,33 +475,54 @@ export default function AccessControlSection() {
                       <p className="text-sm text-gray-400 mb-3">
                         Joined: {new Date(user.created_at).toLocaleDateString()}
                       </p>
-                      {userRolesList.length > 0 ? (
-                        <div className="space-y-2">
-                          {userRolesList.map(ur => (
-                            <div
-                              key={ur.id}
-                              className="flex items-center justify-between p-3 bg-gray-800/50 border border-gray-700/30 rounded-lg"
-                            >
-                              <div className="flex items-center gap-2">
-                                <Shield className="h-4 w-4 text-orange-400" />
-                                <span className="text-sm font-medium text-white">{ur.roles?.name}</span>
-                                <span className="text-xs text-gray-500">
-                                  • Assigned {new Date(ur.assigned_at).toLocaleDateString()}
-                                </span>
-                              </div>
-                              <button
-                                onClick={() => handleRevokeRole(ur.id)}
-                                className="p-1 text-red-400 hover:bg-red-900/30 rounded transition-colors"
-                                title="Revoke Role"
+                      <div className="space-y-3">
+                        {userRolesList.length > 0 && (
+                          <div className="space-y-2">
+                            {userRolesList.map(ur => (
+                              <div
+                                key={ur.id}
+                                className="flex items-center justify-between p-3 bg-gray-800/50 border border-gray-700/30 rounded-lg"
                               >
-                                <UserMinus className="h-4 w-4" />
-                              </button>
-                            </div>
-                          ))}
+                                <div className="flex items-center gap-2">
+                                  <Shield className="h-4 w-4 text-orange-400" />
+                                  <span className="text-sm font-medium text-white">{ur.roles?.name}</span>
+                                  <span className="text-xs text-gray-500">
+                                    • Assigned {new Date(ur.assigned_at).toLocaleDateString()}
+                                  </span>
+                                </div>
+                                <button
+                                  onClick={() => handleRevokeRole(ur.id)}
+                                  className="p-1 text-red-400 hover:bg-red-900/30 rounded transition-colors"
+                                  title="Revoke Role"
+                                >
+                                  <UserMinus className="h-4 w-4" />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        <div className="flex items-center gap-2">
+                          <select
+                            onChange={(e) => {
+                              if (e.target.value) {
+                                handleAssignRole(user.id, e.target.value);
+                                e.target.value = '';
+                              }
+                            }}
+                            className="flex-1 px-3 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                          >
+                            <option value="">+ Assign role...</option>
+                            {roles
+                              .filter(role => !userRolesList.some(ur => ur.role_id === role.id))
+                              .map(role => (
+                                <option key={role.id} value={role.id}>
+                                  {role.name} {role.is_system ? '(System)' : ''}
+                                </option>
+                              ))}
+                          </select>
                         </div>
-                      ) : (
-                        <p className="text-sm text-gray-500 italic">No roles assigned</p>
-                      )}
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -664,10 +685,13 @@ export default function AccessControlSection() {
 
       {showAssignModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl max-w-md w-full">
+          <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl max-w-2xl w-full">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-white">Assign Role</h2>
+                <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                  <UserPlus className="h-6 w-6 text-orange-400" />
+                  Assign Role to User
+                </h2>
                 <button
                   onClick={() => setShowAssignModal(false)}
                   className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
@@ -676,53 +700,151 @@ export default function AccessControlSection() {
                 </button>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-2">Select User</label>
-                  <select
-                    value={selectedUserId}
-                    onChange={(e) => setSelectedUserId(e.target.value)}
-                    className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-                  >
-                    <option value="">Choose a user...</option>
-                    {users.map(user => (
-                      <option key={user.id} value={user.id}>
-                        {user.id}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="relative">
+                    <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <select
+                      value={selectedUserId}
+                      onChange={(e) => setSelectedUserId(e.target.value)}
+                      className="w-full pl-10 pr-4 py-3 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    >
+                      <option value="">Choose a user...</option>
+                      {users.map(user => (
+                        <option key={user.id} value={user.id}>
+                          {user.id}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-2">Select Role</label>
-                  <div className="space-y-2 max-h-64 overflow-y-auto">
-                    {roles.map(role => (
-                      <button
-                        key={role.id}
-                        onClick={() => {
-                          if (selectedUserId) {
-                            handleAssignRole(selectedUserId, role.id);
-                          } else {
-                            alert('Please select a user first');
-                          }
-                        }}
-                        disabled={!selectedUserId}
-                        className="w-full p-3 bg-gray-800/50 border border-gray-700/30 rounded-lg hover:bg-gray-800 transition-colors text-left disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <div className="flex items-center gap-2 mb-1">
-                          <Shield className="h-4 w-4 text-orange-400" />
-                          <span className="font-medium text-white">{role.name}</span>
-                        </div>
-                        <p className="text-xs text-gray-400">{role.description}</p>
-                      </button>
-                    ))}
-                  </div>
+                  <label className="block text-sm font-medium text-gray-400 mb-3">
+                    Select Role
+                    {selectedUserId && (
+                      <span className="ml-2 text-xs text-gray-500">
+                        (Click a role to assign)
+                      </span>
+                    )}
+                  </label>
+
+                  {(() => {
+                    const systemRoles = roles.filter(r => r.is_system);
+                    const customRoles = roles.filter(r => !r.is_system);
+
+                    return (
+                      <div className="space-y-4 max-h-96 overflow-y-auto">
+                        {systemRoles.length > 0 && (
+                          <div>
+                            <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                              System Roles
+                            </h4>
+                            <div className="space-y-2">
+                              {systemRoles.map(role => (
+                                <button
+                                  key={role.id}
+                                  onClick={() => {
+                                    if (selectedUserId) {
+                                      handleAssignRole(selectedUserId, role.id);
+                                    } else {
+                                      alert('Please select a user first');
+                                    }
+                                  }}
+                                  disabled={!selectedUserId}
+                                  className={`w-full p-4 rounded-lg border transition-all text-left ${
+                                    selectedUserId
+                                      ? 'bg-gray-800/50 border-gray-700/30 hover:bg-gray-800 hover:border-orange-500/50 cursor-pointer'
+                                      : 'bg-gray-800/20 border-gray-700/20 opacity-50 cursor-not-allowed'
+                                  }`}
+                                >
+                                  <div className="flex items-start gap-3">
+                                    <div className={`p-2 rounded-lg ${
+                                      role.name === 'super_admin' ? 'bg-purple-900/30 border border-purple-600/30' :
+                                      role.name === 'admin' ? 'bg-orange-900/30 border border-orange-600/30' :
+                                      'bg-blue-900/30 border border-blue-600/30'
+                                    }`}>
+                                      <Shield className={`h-5 w-5 ${
+                                        role.name === 'super_admin' ? 'text-purple-400' :
+                                        role.name === 'admin' ? 'text-orange-400' :
+                                        'text-blue-400'
+                                      }`} />
+                                    </div>
+                                    <div className="flex-1">
+                                      <div className="flex items-center gap-2 mb-1">
+                                        <span className="font-semibold text-white">{role.name}</span>
+                                        {role.name === 'super_admin' && (
+                                          <span className="px-2 py-0.5 bg-purple-900/30 border border-purple-600/30 text-purple-400 text-xs font-medium rounded-full">
+                                            ★ FULL ACCESS
+                                          </span>
+                                        )}
+                                      </div>
+                                      <p className="text-sm text-gray-400">{role.description}</p>
+                                      <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
+                                        <Users className="h-3 w-3" />
+                                        {getRoleUserCount(role.id)} {getRoleUserCount(role.id) === 1 ? 'user' : 'users'}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {customRoles.length > 0 && (
+                          <div>
+                            <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                              Custom Roles
+                            </h4>
+                            <div className="space-y-2">
+                              {customRoles.map(role => (
+                                <button
+                                  key={role.id}
+                                  onClick={() => {
+                                    if (selectedUserId) {
+                                      handleAssignRole(selectedUserId, role.id);
+                                    } else {
+                                      alert('Please select a user first');
+                                    }
+                                  }}
+                                  disabled={!selectedUserId}
+                                  className={`w-full p-4 rounded-lg border transition-all text-left ${
+                                    selectedUserId
+                                      ? 'bg-gray-800/50 border-gray-700/30 hover:bg-gray-800 hover:border-orange-500/50 cursor-pointer'
+                                      : 'bg-gray-800/20 border-gray-700/20 opacity-50 cursor-not-allowed'
+                                  }`}
+                                >
+                                  <div className="flex items-start gap-3">
+                                    <div className="p-2 bg-green-900/30 border border-green-600/30 rounded-lg">
+                                      <Shield className="h-5 w-5 text-green-400" />
+                                    </div>
+                                    <div className="flex-1">
+                                      <div className="flex items-center gap-2 mb-1">
+                                        <span className="font-semibold text-white">{role.name}</span>
+                                      </div>
+                                      <p className="text-sm text-gray-400">{role.description}</p>
+                                      <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
+                                        <Users className="h-3 w-3" />
+                                        {getRoleUserCount(role.id)} {getRoleUserCount(role.id) === 1 ? 'user' : 'users'}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
 
               <button
                 onClick={() => setShowAssignModal(false)}
-                className="w-full mt-6 px-6 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
+                className="w-full mt-6 px-6 py-3 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
               >
                 Cancel
               </button>
