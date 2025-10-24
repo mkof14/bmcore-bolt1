@@ -21,9 +21,10 @@ import { useState } from 'react';
 interface MemberSidebarProps {
   currentSection: string;
   onSectionChange: (section: string) => void;
+  hasActiveSubscription?: boolean;
 }
 
-export default function MemberSidebar({ currentSection, onSectionChange }: MemberSidebarProps) {
+export default function MemberSidebar({ currentSection, onSectionChange, hasActiveSubscription = false }: MemberSidebarProps) {
   const [isCollapsed, setIsCollapsed] = useState(false);
 
   const menuSections = [
@@ -84,6 +85,11 @@ export default function MemberSidebar({ currentSection, onSectionChange }: Membe
               )}
               <nav className="space-y-1">
                 {section.items.map((item) => {
+                  // Hide Catalog if no active subscription
+                  if (item.id === 'catalog' && !hasActiveSubscription) {
+                    return null;
+                  }
+
                   const Icon = item.icon;
                   const isActive = currentSection === item.id;
                   const isCatalog = item.id === 'catalog';

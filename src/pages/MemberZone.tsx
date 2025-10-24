@@ -40,15 +40,20 @@ interface MemberZoneProps {
 }
 
 export default function MemberZone({ onNavigate, onSignOut }: MemberZoneProps) {
-  const [currentSection, setCurrentSection] = useState('catalog');
+  const [currentSection, setCurrentSection] = useState('dashboard');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [showSuccessModal, setShowSuccessModal] = useState(false);
+  const [hasActiveSubscription, setHasActiveSubscription] = useState(false);
 
   useEffect(() => {
+    // Check subscription status
+    checkSubscription();
+
     // Check if returning from successful payment
     const params = new URLSearchParams(window.location.search);
     if (params.get('payment') === 'success') {
       setShowSuccessModal(true);
+      setCurrentSection('catalog'); // Show catalog after payment
       // Clean up URL
       window.history.replaceState({}, '', window.location.pathname);
 
@@ -56,6 +61,24 @@ export default function MemberZone({ onNavigate, onSignOut }: MemberZoneProps) {
       sendWelcomeEmail();
     }
   }, []);
+
+  const checkSubscription = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      const { data: subscription } = await supabase
+        .from('user_subscriptions')
+        .select('status')
+        .eq('user_id', user.id)
+        .in('status', ['active', 'trialing'])
+        .maybeSingle();
+
+      setHasActiveSubscription(!!subscription);
+    } catch (error) {
+      console.error('Error checking subscription:', error);
+    }
+  };
 
   const sendWelcomeEmail = async () => {
     try {
@@ -123,6 +146,28 @@ export default function MemberZone({ onNavigate, onSignOut }: MemberZoneProps) {
         return <SystemSection />;
 
       case 'catalog':
+        // Show catalog ONLY if user has active subscription
+        if (!hasActiveSubscription) {
+          return (
+            <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
+              <div className="bg-gradient-to-br from-orange-500/10 to-blue-500/10 border border-orange-500/30 rounded-2xl p-12 max-w-2xl">
+                <CreditCard className="w-16 h-16 text-orange-500 mx-auto mb-6" />
+                <h2 className="text-3xl font-bold text-white mb-4">
+                  Subscribe to Access Catalog
+                </h2>
+                <p className="text-xl text-gray-300 mb-8">
+                  Choose a subscription plan to unlock access to our comprehensive health services catalog with 20+ categories.
+                </p>
+                <button
+                  onClick={() => onNavigate('pricing')}
+                  className="px-8 py-4 bg-orange-500 hover:bg-orange-600 text-white rounded-lg font-semibold transition-all text-lg"
+                >
+                  View Plans & Subscribe
+                </button>
+              </div>
+            </div>
+          );
+        }
         return <CatalogSection onSectionChange={setCurrentSection} />;
 
       case 'questionnaires':
@@ -162,6 +207,7 @@ export default function MemberZone({ onNavigate, onSignOut }: MemberZoneProps) {
       <MemberSidebar
         currentSection={currentSection}
         onSectionChange={setCurrentSection}
+        hasActiveSubscription={hasActiveSubscription}
       />
 
       <div className="ml-64 transition-all duration-300">
@@ -210,30 +256,25 @@ export default function MemberZone({ onNavigate, onSignOut }: MemberZoneProps) {
                 Thank you for your subscription! Your payment was successful.
               </p>
 
-              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-6 mb-6 text-left">
+              <div className="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-800 rounded-xl p-6 mb-6 text-left">
                 <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
-                  You now have access to:
+                  🎯 Next Step: Choose Your Health Categories
                 </h3>
+                <p className="text-sm text-gray-700 dark:text-gray-300 mb-4">
+                  Visit the <strong>Catalog</strong> to select health service categories based on your plan:
+                </p>
                 <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
                   <li className="flex items-center gap-2">
                     <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
-                    <span>Complete health analytics dashboard</span>
+                    <span><strong>Core Plan:</strong> Choose up to 3 categories</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
-                    <span>AI-powered health assistant</span>
+                    <span><strong>Daily Plan:</strong> Choose up to 10 categories</span>
                   </li>
                   <li className="flex items-center gap-2">
                     <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
-                    <span>Device connectivity and tracking</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
-                    <span>Comprehensive health reports</span>
-                  </li>
-                  <li className="flex items-center gap-2">
-                    <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
-                    <span>All premium features</span>
+                    <span><strong>Max Plan:</strong> All 20 categories included!</span>
                   </li>
                 </ul>
               </div>
@@ -245,11 +286,14 @@ export default function MemberZone({ onNavigate, onSignOut }: MemberZoneProps) {
               <button
                 onClick={() => {
                   setShowSuccessModal(false);
-                  setCurrentSection('dashboard');
+                  // After payment, go to catalog to select categories
+                  setCurrentSection('catalog');
+                  // Refresh subscription status
+                  checkSubscription();
                 }}
                 className="w-full px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-xl font-semibold transition-all transform hover:scale-105 shadow-lg"
               >
-                Start Exploring
+                Go to Catalog
               </button>
             </div>
           </div>
