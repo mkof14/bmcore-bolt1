@@ -69,7 +69,7 @@ export default function SiteMapManager() {
 
       setMessage({
         type: 'success',
-        text: 'Конфигурация страниц успешно сохранена! ✓'
+        text: 'Page configuration saved successfully! ✓'
       });
 
       setTimeout(() => setMessage(null), 5000);
@@ -95,11 +95,11 @@ export default function SiteMapManager() {
   }));
 
   const categoryNames: Record<string, string> = {
-    main: '🏠 Основные страницы',
-    marketing: '🎯 Маркетинг',
-    member: '👤 Пользовательские',
-    admin: '⚙️ Администрирование',
-    legal: '⚖️ Юридические'
+    main: '🏠 Main Pages',
+    marketing: '🎯 Marketing',
+    member: '👤 Member Pages',
+    admin: '⚙️ Administration',
+    legal: '⚖️ Legal Pages'
   };
 
   return (
@@ -110,7 +110,7 @@ export default function SiteMapManager() {
           <div>
             <h2 className="text-2xl font-bold text-white">Site Map & Page Visibility</h2>
             <p className="text-gray-400 text-sm mt-1">
-              Управление видимостью страниц сайта
+              Manage site page visibility
             </p>
           </div>
         </div>
@@ -147,13 +147,13 @@ export default function SiteMapManager() {
                   onClick={() => toggleCategory(category, true)}
                   className="flex-1 px-2 py-1 text-xs bg-green-500/20 text-green-400 rounded hover:bg-green-500/30 transition-colors"
                 >
-                  Все ВКЛ
+                  Enable All
                 </button>
                 <button
                   onClick={() => toggleCategory(category, false)}
                   className="flex-1 px-2 py-1 text-xs bg-red-500/20 text-red-400 rounded hover:bg-red-500/30 transition-colors"
                 >
-                  Все ВЫКЛ
+                  Disable All
                 </button>
               </div>
             </div>
@@ -221,12 +221,12 @@ export default function SiteMapManager() {
             {saving ? (
               <>
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                <span>Сохранение...</span>
+                <span>Saving...</span>
               </>
             ) : (
               <>
                 <Save className="w-5 h-5" />
-                <span>Сохранить конфигурацию</span>
+                <span>Save Configuration</span>
               </>
             )}
           </button>
@@ -236,14 +236,14 @@ export default function SiteMapManager() {
       <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-6">
         <h3 className="text-lg font-semibold text-blue-400 mb-3 flex items-center gap-2">
           <AlertCircle className="w-5 h-5" />
-          Как это работает
+          How it works
         </h3>
         <ul className="space-y-2 text-sm text-gray-300">
-          <li>🟢 <strong>Зеленые карточки</strong> - страница активна и доступна пользователям</li>
-          <li>⚫ <strong>Серые карточки</strong> - страница скрыта (возвращает 404 или редирект)</li>
-          <li>🔘 <strong>Кнопки категорий</strong> - быстрое включение/выключение всех страниц в категории</li>
-          <li>💾 <strong>После изменений</strong> - нажмите "Сохранить" для применения</li>
-          <li>⚠️ <strong>Важно:</strong> Отключение Admin Panel заблокирует доступ к настройкам</li>
+          <li>🟢 <strong>Green cards</strong> - page is active and accessible to users</li>
+          <li>⚫ <strong>Gray cards</strong> - page is hidden (returns 404 or redirect)</li>
+          <li>🔘 <strong>Category buttons</strong> - quickly enable/disable all pages in category</li>
+          <li>💾 <strong>After changes</strong> - click "Save" to apply changes</li>
+          <li>⚠️ <strong>Important:</strong> Disabling Admin Panel will block access to settings</li>
         </ul>
       </div>
     </div>

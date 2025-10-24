@@ -87,12 +87,12 @@ export default function StripeConfigManager() {
   const getFriendlyLabel = (key: string) => {
     const labels: Record<string, string> = {
       'publishable_key_test': '🔑 Publishable Key (pk_test_...)',
-      'price_daily_monthly_test': '📅 Daily Plan - Monthly ($25/month)',
-      'price_daily_yearly_test': '📅 Daily Plan - Yearly ($250/year)',
-      'price_core_monthly_test': '⭐ Core Plan - Monthly ($55/month)',
-      'price_core_yearly_test': '⭐ Core Plan - Yearly ($550/year)',
-      'price_max_monthly_test': '🚀 Max Plan - Monthly ($99/month)',
-      'price_max_yearly_test': '🚀 Max Plan - Yearly ($990/year)',
+      'price_daily_monthly_test': '📅 Daily Plan - Monthly ($39/month)',
+      'price_daily_yearly_test': '📅 Daily Plan - Yearly ($374/year)',
+      'price_core_monthly_test': '⭐ Core Plan - Monthly ($19/month)',
+      'price_core_yearly_test': '⭐ Core Plan - Yearly ($182/year)',
+      'price_max_monthly_test': '🚀 Max Plan - Monthly ($79/month)',
+      'price_max_yearly_test': '🚀 Max Plan - Yearly ($758/year)',
     };
     return labels[key] || key;
   };
@@ -113,7 +113,7 @@ export default function StripeConfigManager() {
           <div>
             <h2 className="text-2xl font-bold text-white">Stripe Configuration</h2>
             <p className="text-gray-400 text-sm mt-1">
-              Вставьте ваши ключи из Stripe Dashboard
+              Paste your keys from Stripe Dashboard
             </p>
           </div>
         </div>
@@ -147,7 +147,7 @@ export default function StripeConfigManager() {
                   type={config.is_secret && !showSecrets[config.key] ? 'password' : 'text'}
                   value={config.value}
                   onChange={(e) => handleUpdate(config.key, e.target.value)}
-                  placeholder="Вставьте сюда ваш ключ..."
+                  placeholder="Paste your key here..."
                   className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent pr-12"
                 />
                 {config.is_secret && (
@@ -177,12 +177,12 @@ export default function StripeConfigManager() {
             {saving ? (
               <>
                 <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                <span>Сохранение...</span>
+                <span>Saving...</span>
               </>
             ) : (
               <>
                 <Save className="w-5 h-5" />
-                <span>Сохранить все ключи</span>
+                <span>Save all keys</span>
               </>
             )}
           </button>
@@ -192,13 +192,13 @@ export default function StripeConfigManager() {
       <div className="bg-blue-500/10 border border-blue-500/20 rounded-lg p-6">
         <h3 className="text-lg font-semibold text-blue-400 mb-3 flex items-center gap-2">
           <AlertCircle className="w-5 h-5" />
-          Где взять эти ключи?
+          Where to get these keys?
         </h3>
         <div className="space-y-3 text-sm text-gray-300">
           <div>
             <strong className="text-white">1. Publishable Key:</strong>
             <p className="text-gray-400 mt-1">
-              Откройте{' '}
+              Open{' '}
               <a
                 href="https://dashboard.stripe.com/test/apikeys"
                 target="_blank"
@@ -207,13 +207,13 @@ export default function StripeConfigManager() {
               >
                 Stripe Dashboard → API Keys
               </a>
-              {' '}и скопируйте "Publishable key" (начинается с pk_test_)
+              {' '}and copy "Publishable key" (starts with pk_test_)
             </p>
           </div>
           <div>
             <strong className="text-white">2. Price IDs:</strong>
             <p className="text-gray-400 mt-1">
-              Откройте{' '}
+              Open{' '}
               <a
                 href="https://dashboard.stripe.com/test/products"
                 target="_blank"
@@ -222,7 +222,7 @@ export default function StripeConfigManager() {
               >
                 Stripe Dashboard → Products
               </a>
-              , создайте продукты и скопируйте Price IDs (начинаются с price_)
+              , create products and copy Price IDs (start with price_)
             </p>
           </div>
         </div>

@@ -18,7 +18,7 @@ const defaultServices: APIService[] = [
     key: 'stripe_publishable',
     value: '',
     required: true,
-    description: 'Публичный ключ для оплаты (pk_live_... или pk_test_...)',
+    description: 'Public key for payments (pk_live_... or pk_test_...)',
     setupUrl: 'https://dashboard.stripe.com/apikeys',
     icon: '💳',
     isSecret: false
@@ -28,7 +28,7 @@ const defaultServices: APIService[] = [
     key: 'stripe_secret',
     value: '',
     required: true,
-    description: 'Секретный ключ (sk_live_... или sk_test_...)',
+    description: 'Secret key (sk_live_... or sk_test_...)',
     setupUrl: 'https://dashboard.stripe.com/apikeys',
     icon: '💳',
     isSecret: true
@@ -38,7 +38,7 @@ const defaultServices: APIService[] = [
     key: 'stripe_webhook',
     value: '',
     required: true,
-    description: 'Webhook secret для обработки событий (whsec_...)',
+    description: 'Webhook secret for event processing (whsec_...)',
     setupUrl: 'https://dashboard.stripe.com/webhooks',
     icon: '💳',
     isSecret: true
@@ -48,7 +48,7 @@ const defaultServices: APIService[] = [
     key: 'openai_key',
     value: '',
     required: false,
-    description: 'Для AI ассистента и ChatGPT (sk-...)',
+    description: 'For AI assistant and ChatGPT (sk-...)',
     setupUrl: 'https://platform.openai.com/api-keys',
     icon: '🤖',
     isSecret: true
@@ -68,7 +68,7 @@ const defaultServices: APIService[] = [
     key: 'facebook_pixel',
     value: '',
     required: false,
-    description: 'Pixel ID для отслеживания конверсий',
+    description: 'Pixel ID for conversion tracking',
     setupUrl: 'https://business.facebook.com/events_manager',
     icon: '👥',
     isSecret: false
@@ -78,7 +78,7 @@ const defaultServices: APIService[] = [
     key: 'resend_key',
     value: '',
     required: false,
-    description: 'Для отправки email уведомлений (re_...)',
+    description: 'For email notifications (re_...)',
     setupUrl: 'https://resend.com/api-keys',
     icon: '📧',
     isSecret: true
@@ -88,7 +88,7 @@ const defaultServices: APIService[] = [
     key: 'sendgrid_key',
     value: '',
     required: false,
-    description: 'Альтернатива Resend для email (SG...)',
+    description: 'Alternative to Resend for email (SG...)',
     setupUrl: 'https://app.sendgrid.com/settings/api_keys',
     icon: '📧',
     isSecret: true
@@ -98,7 +98,7 @@ const defaultServices: APIService[] = [
     key: 'aws_access',
     value: '',
     required: false,
-    description: 'Для S3, Lambda и других AWS сервисов',
+    description: 'For S3, Lambda and other AWS services',
     setupUrl: 'https://console.aws.amazon.com/iam',
     icon: '☁️',
     isSecret: true
