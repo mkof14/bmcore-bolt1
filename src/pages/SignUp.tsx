@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Mail, Lock, User, AlertCircle, CheckCircle, Gift } from 'lucide-react';
+import { Mail, Lock, User, AlertCircle, CheckCircle, Gift, Eye, EyeOff } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import BackButton from '../components/BackButton';
 
@@ -15,6 +15,8 @@ export default function SignUp({ onNavigate }: SignUpProps) {
     confirmPassword: '',
     referralCode: ''
   });
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
@@ -79,9 +81,9 @@ export default function SignUp({ onNavigate }: SignUpProps) {
       </div>
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
-          <div className="flex items-center justify-center gap-4 mb-6">
-            <img src="/logo-header.png" alt="BioMath Core" className="h-16 w-16" />
-            <h1 className="text-4xl font-bold">
+          <div className="flex items-center justify-center gap-6 mb-6">
+            <img src="/logo-header.png" alt="BioMath Core" className="h-24 w-24" />
+            <h1 className="text-5xl font-bold">
               <span className="text-blue-600 dark:text-blue-400">BioMath</span>
               <span className="text-white"> Core</span>
             </h1>
@@ -153,15 +155,26 @@ export default function SignUp({ onNavigate }: SignUpProps) {
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 dark:text-gray-500" />
                 <input
-                  type="password"
+                  type={showPassword ? "text" : "password"}
                   id="password"
                   name="password"
                   value={formData.password}
                   onChange={handleChange}
                   required
-                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  className="w-full pl-10 pr-12 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                   placeholder="••••••••"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                >
+                  {showPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
               </div>
               <p className="text-xs text-gray-500 dark:text-gray-400 mt-1">Must be at least 6 characters</p>
             </div>
@@ -173,15 +186,26 @@ export default function SignUp({ onNavigate }: SignUpProps) {
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400 dark:text-gray-500" />
                 <input
-                  type="password"
+                  type={showConfirmPassword ? "text" : "password"}
                   id="confirmPassword"
                   name="confirmPassword"
                   value={formData.confirmPassword}
                   onChange={handleChange}
                   required
-                  className="w-full pl-10 pr-4 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  className="w-full pl-10 pr-12 py-3 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                   placeholder="••••••••"
                 />
+                <button
+                  type="button"
+                  onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500 hover:text-gray-600 dark:hover:text-gray-300 transition-colors"
+                >
+                  {showConfirmPassword ? (
+                    <EyeOff className="h-5 w-5" />
+                  ) : (
+                    <Eye className="h-5 w-5" />
+                  )}
+                </button>
               </div>
             </div>
 
@@ -228,6 +252,10 @@ export default function SignUp({ onNavigate }: SignUpProps) {
 
         <p className="text-center text-sm text-gray-500 dark:text-gray-400 mt-8">
           By creating an account, you agree to our Terms of Service and Privacy Policy
+        </p>
+
+        <p className="text-center text-xs text-gray-400 dark:text-gray-500 mt-6">
+          © {new Date().getFullYear()} BioMath Core. All rights reserved.
         </p>
       </div>
     </div>
