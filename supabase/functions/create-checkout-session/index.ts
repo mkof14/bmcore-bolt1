@@ -17,20 +17,53 @@ serve(async (req) => {
   }
 
   try {
-    const stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY');
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
     const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 
-    if (!stripeSecretKey || !supabaseUrl || !supabaseKey) {
+    if (!supabaseUrl || !supabaseKey) {
       throw new Error('Missing required environment variables');
+    }
+
+    const supabase = createClient(supabaseUrl, supabaseKey);
+
+    // Load Stripe secret key from database (Admin Panel config)
+    let stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY');
+
+    try {
+      const { data: envConfig } = await supabase
+        .from('stripe_configuration')
+        .select('value')
+        .eq('key', 'environment')
+        .maybeSingle();
+
+      const environment = envConfig?.value || 'live';
+      const secretKeyName = environment === 'live' ? 'secret_key_live' : 'secret_key_test';
+
+      const { data: secretKeyConfig } = await supabase
+        .from('stripe_configuration')
+        .select('value')
+        .eq('key', secretKeyName)
+        .eq('is_secret', true)
+        .maybeSingle();
+
+      if (secretKeyConfig?.value && secretKeyConfig.value !== 'sk_test_YOUR_KEY_HERE' && secretKeyConfig.value !== 'sk_live_YOUR_KEY_HERE') {
+        stripeSecretKey = secretKeyConfig.value;
+        console.log('[Stripe] Using secret key from database (Admin Panel)');
+      } else {
+        console.log('[Stripe] Using secret key from environment variable');
+      }
+    } catch (error) {
+      console.warn('[Stripe] Failed to load secret key from database, using env:', error);
+    }
+
+    if (!stripeSecretKey) {
+      throw new Error('Stripe secret key not configured. Please configure in Admin Panel or set STRIPE_SECRET_KEY environment variable.');
     }
 
     const stripe = new Stripe(stripeSecretKey, {
       apiVersion: '2023-10-16',
       httpClient: Stripe.createFetchHttpClient(),
     });
-
-    const supabase = createClient(supabaseUrl, supabaseKey);
 
     const authHeader = req.headers.get('Authorization');
     if (!authHeader) {

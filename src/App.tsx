@@ -84,6 +84,21 @@ function App() {
     }
   };
 
+  // Load Stripe configuration from database on startup
+  useEffect(() => {
+    const loadStripeConfig = async () => {
+      try {
+        const { loadStripeConfigFromDatabase } = await import('./config/stripe');
+        await loadStripeConfigFromDatabase();
+        console.log('[App] Stripe configuration loaded from database');
+      } catch (error) {
+        console.error('[App] Failed to load Stripe config:', error);
+      }
+    };
+
+    loadStripeConfig();
+  }, []);
+
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setIsAuthenticated(!!session);

@@ -1,3 +1,6 @@
+import { loadStripeConfigFromDB } from '../lib/stripeConfigService';
+
+// Default config (fallback)
 export const stripeConfig = {
   publishableKey: import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY,
   currency: import.meta.env.VITE_STRIPE_CURRENCY || 'usd',
@@ -188,4 +191,65 @@ export function calculateDiscountPercent(planId: PlanId): number {
 
 export function isStripeEnabled(): boolean {
   return !!import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
+}
+
+/**
+ * Load Stripe configuration from database (Admin Panel)
+ * Updates stripeConfig with values from DB
+ */
+export async function loadStripeConfigFromDatabase() {
+  try {
+    const dbConfig = await loadStripeConfigFromDB();
+
+    console.log('[Stripe] Loading config from database:', {
+      hasPublishableKey: !!dbConfig.publishable_key,
+      hasPrices: !!dbConfig.price_core_monthly,
+      currency: dbConfig.currency
+    });
+
+    // Update publishable key
+    if (dbConfig.publishable_key) {
+      stripeConfig.publishableKey = dbConfig.publishable_key;
+    }
+
+    // Update currency
+    if (dbConfig.currency) {
+      stripeConfig.currency = dbConfig.currency;
+    }
+
+    // Update price IDs
+    if (dbConfig.price_daily_monthly) {
+      stripeConfig.prices.daily.monthly.priceId = dbConfig.price_daily_monthly;
+    }
+    if (dbConfig.price_daily_yearly) {
+      stripeConfig.prices.daily.yearly.priceId = dbConfig.price_daily_yearly;
+    }
+    if (dbConfig.price_core_monthly) {
+      stripeConfig.prices.core.monthly.priceId = dbConfig.price_core_monthly;
+    }
+    if (dbConfig.price_core_yearly) {
+      stripeConfig.prices.core.yearly.priceId = dbConfig.price_core_yearly;
+    }
+    if (dbConfig.price_max_monthly) {
+      stripeConfig.prices.max.monthly.priceId = dbConfig.price_max_monthly;
+    }
+    if (dbConfig.price_max_yearly) {
+      stripeConfig.prices.max.yearly.priceId = dbConfig.price_max_yearly;
+    }
+
+    // Update URLs
+    if (dbConfig.success_url) {
+      stripeConfig.successUrl = dbConfig.success_url;
+    }
+    if (dbConfig.cancel_url) {
+      stripeConfig.cancelUrl = dbConfig.cancel_url;
+    }
+
+    console.log('[Stripe] Config loaded successfully from database');
+    return true;
+  } catch (error) {
+    console.error('[Stripe] Failed to load config from database:', error);
+    console.log('[Stripe] Using .env fallback');
+    return false;
+  }
 }
