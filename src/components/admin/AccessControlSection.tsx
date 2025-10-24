@@ -232,27 +232,42 @@ export default function AccessControlSection() {
 
   const handleAssignRole = async (userId: string, roleId: string) => {
     try {
-      const { error } = await supabase
+      const { data: currentUser } = await supabase.auth.getUser();
+
+      if (!currentUser.user) {
+        alert('You must be logged in to assign roles');
+        return;
+      }
+
+      console.log('Attempting to assign role:', { userId, roleId, assignedBy: currentUser.user.id });
+
+      const { data, error } = await supabase
         .from('user_roles')
         .insert({
           user_id: userId,
           role_id: roleId,
-          assigned_by: (await supabase.auth.getUser()).data.user?.id,
-        });
+          assigned_by: currentUser.user.id,
+        })
+        .select();
 
       if (error) {
+        console.error('Error details:', error);
         if (error.code === '23505') {
           alert('User already has this role');
+        } else if (error.code === '42501') {
+          alert('Permission denied. You must be an admin to assign roles.');
         } else {
-          throw error;
+          alert(`Failed to assign role: ${error.message}`);
         }
       } else {
-        loadUserRoles();
+        console.log('Role assigned successfully:', data);
+        await loadUserRoles();
         setShowAssignModal(false);
+        alert('Role assigned successfully!');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error assigning role:', error);
-      alert('Failed to assign role');
+      alert(`Failed to assign role: ${error.message || 'Unknown error'}`);
     }
   };
 
