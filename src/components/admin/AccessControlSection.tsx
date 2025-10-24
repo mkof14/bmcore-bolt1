@@ -244,22 +244,27 @@ export default function AccessControlSection() {
       console.log('Target User ID:', userId);
       console.log('Role ID:', roleId);
 
-      const { data: checkAdmin, error: checkError } = await supabase.rpc('is_admin_cached', {
-        check_user_id: currentUser.user.id
-      });
+      // Check if current user is admin by querying their profile
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('is_admin')
+        .eq('id', currentUser.user.id)
+        .single();
 
-      console.log('Is Admin Check:', checkAdmin);
+      console.log('Profile check:', profile);
 
-      if (checkError) {
-        console.error('Error checking admin status:', checkError);
+      if (profileError) {
+        console.error('Error checking profile:', profileError);
+        alert('Failed to verify admin status. Please try again.');
+        return;
       }
 
-      if (!checkAdmin) {
+      if (!profile?.is_admin) {
         alert('Permission denied: You must be an admin or super_admin to assign roles.');
         return;
       }
 
-      console.log('Admin check passed, inserting role assignment...');
+      console.log('Admin check passed (is_admin = true), inserting role assignment...');
 
       const { data, error } = await supabase
         .from('user_roles')
