@@ -134,6 +134,246 @@ export default function AllAPIKeysManager() {
       setupUrl: 'https://console.twilio.com',
       icon: '📱',
       isSecret: true
+    },
+    {
+      name: 'Stripe Webhook Secret',
+      key: 'stripe_webhook_secret',
+      value: '',
+      required: true,
+      description: 'Webhook signing secret (whsec_...)',
+      setupUrl: 'https://dashboard.stripe.com/webhooks',
+      icon: '💳',
+      isSecret: true
+    },
+    {
+      name: 'Anthropic API Key',
+      key: 'anthropic_key',
+      value: '',
+      required: false,
+      description: 'For Claude AI (sk-ant-...)',
+      setupUrl: 'https://console.anthropic.com/settings/keys',
+      icon: '🤖',
+      isSecret: true
+    },
+    {
+      name: 'Supabase URL',
+      key: 'supabase_url',
+      value: '',
+      required: true,
+      description: 'Your Supabase project URL',
+      setupUrl: 'https://supabase.com/dashboard/project/_/settings/api',
+      icon: '🗄️',
+      isSecret: false
+    },
+    {
+      name: 'Supabase Anon Key',
+      key: 'supabase_anon_key',
+      value: '',
+      required: true,
+      description: 'Public anon key (safe for client)',
+      setupUrl: 'https://supabase.com/dashboard/project/_/settings/api',
+      icon: '🗄️',
+      isSecret: false
+    },
+    {
+      name: 'Supabase Service Role Key',
+      key: 'supabase_service_role',
+      value: '',
+      required: false,
+      description: 'Service role key (backend only)',
+      setupUrl: 'https://supabase.com/dashboard/project/_/settings/api',
+      icon: '🗄️',
+      isSecret: true
+    },
+    {
+      name: 'Sentry DSN',
+      key: 'sentry_dsn',
+      value: '',
+      required: false,
+      description: 'For error tracking and monitoring',
+      setupUrl: 'https://sentry.io/settings/',
+      icon: '🐛',
+      isSecret: false
+    },
+    {
+      name: 'Mailchimp API Key',
+      key: 'mailchimp_key',
+      value: '',
+      required: false,
+      description: 'For email marketing campaigns',
+      setupUrl: 'https://admin.mailchimp.com/account/api/',
+      icon: '📧',
+      isSecret: true
+    },
+    {
+      name: 'Mailchimp Audience ID',
+      key: 'mailchimp_audience',
+      value: '',
+      required: false,
+      description: 'Newsletter list/audience ID',
+      setupUrl: 'https://admin.mailchimp.com/lists/',
+      icon: '📧',
+      isSecret: false
+    },
+    {
+      name: 'Postmark Server Token',
+      key: 'postmark_token',
+      value: '',
+      required: false,
+      description: 'Transactional email service',
+      setupUrl: 'https://account.postmarkapp.com/servers',
+      icon: '📧',
+      isSecret: true
+    },
+    {
+      name: 'Google Maps API Key',
+      key: 'google_maps_key',
+      value: '',
+      required: false,
+      description: 'For maps and location services',
+      setupUrl: 'https://console.cloud.google.com/apis/credentials',
+      icon: '🗺️',
+      isSecret: false
+    },
+    {
+      name: 'Mixpanel Token',
+      key: 'mixpanel_token',
+      value: '',
+      required: false,
+      description: 'Product analytics platform',
+      setupUrl: 'https://mixpanel.com/settings/project',
+      icon: '📊',
+      isSecret: false
+    },
+    {
+      name: 'Intercom API Key',
+      key: 'intercom_key',
+      value: '',
+      required: false,
+      description: 'Customer messaging platform',
+      setupUrl: 'https://app.intercom.com/a/apps/_/settings/api',
+      icon: '💬',
+      isSecret: true
+    },
+    {
+      name: 'Segment Write Key',
+      key: 'segment_key',
+      value: '',
+      required: false,
+      description: 'Customer data platform',
+      setupUrl: 'https://app.segment.com/',
+      icon: '📊',
+      isSecret: false
+    },
+    {
+      name: 'Algolia Application ID',
+      key: 'algolia_app_id',
+      value: '',
+      required: false,
+      description: 'For search functionality',
+      setupUrl: 'https://www.algolia.com/account/api-keys',
+      icon: '🔍',
+      isSecret: false
+    },
+    {
+      name: 'Algolia Search API Key',
+      key: 'algolia_search_key',
+      value: '',
+      required: false,
+      description: 'Search-only API key (public)',
+      setupUrl: 'https://www.algolia.com/account/api-keys',
+      icon: '🔍',
+      isSecret: false
+    },
+    {
+      name: 'Algolia Admin API Key',
+      key: 'algolia_admin_key',
+      value: '',
+      required: false,
+      description: 'Admin API key (backend only)',
+      setupUrl: 'https://www.algolia.com/account/api-keys',
+      icon: '🔍',
+      isSecret: true
+    },
+    {
+      name: 'Redis URL',
+      key: 'redis_url',
+      value: '',
+      required: false,
+      description: 'For caching and session storage',
+      setupUrl: 'https://redis.io/',
+      icon: '⚡',
+      isSecret: true
+    },
+    {
+      name: 'Vercel Token',
+      key: 'vercel_token',
+      value: '',
+      required: false,
+      description: 'For deployments and API access',
+      setupUrl: 'https://vercel.com/account/tokens',
+      icon: '▲',
+      isSecret: true
+    },
+    {
+      name: 'GitHub Personal Access Token',
+      key: 'github_token',
+      value: '',
+      required: false,
+      description: 'For GitHub API access',
+      setupUrl: 'https://github.com/settings/tokens',
+      icon: '🐙',
+      isSecret: true
+    },
+    {
+      name: 'Discord Webhook URL',
+      key: 'discord_webhook',
+      value: '',
+      required: false,
+      description: 'For notifications to Discord',
+      setupUrl: 'https://discord.com/developers',
+      icon: '💬',
+      isSecret: true
+    },
+    {
+      name: 'Slack Webhook URL',
+      key: 'slack_webhook',
+      value: '',
+      required: false,
+      description: 'For notifications to Slack',
+      setupUrl: 'https://api.slack.com/messaging/webhooks',
+      icon: '💬',
+      isSecret: true
+    },
+    {
+      name: 'PagerDuty Integration Key',
+      key: 'pagerduty_key',
+      value: '',
+      required: false,
+      description: 'For incident management',
+      setupUrl: 'https://support.pagerduty.com/docs/services-and-integrations',
+      icon: '🚨',
+      isSecret: true
+    },
+    {
+      name: 'Datadog API Key',
+      key: 'datadog_api_key',
+      value: '',
+      required: false,
+      description: 'For monitoring and logging',
+      setupUrl: 'https://app.datadoghq.com/organization-settings/api-keys',
+      icon: '📈',
+      isSecret: true
+    },
+    {
+      name: 'LogRocket App ID',
+      key: 'logrocket_app_id',
+      value: '',
+      required: false,
+      description: 'Session replay and analytics',
+      setupUrl: 'https://app.logrocket.com/settings',
+      icon: '📹',
+      isSecret: false
     }
   ]);
 
@@ -172,11 +412,42 @@ export default function AllAPIKeysManager() {
 
   const groupedServices = {
     payments: services.filter(s => s.key.includes('stripe')),
-    ai: services.filter(s => s.key.includes('openai')),
-    analytics: services.filter(s => s.key.includes('google') || s.key.includes('facebook')),
-    email: services.filter(s => s.key.includes('resend') || s.key.includes('sendgrid')),
-    cloud: services.filter(s => s.key.includes('aws') || s.key.includes('cloudflare')),
-    sms: services.filter(s => s.key.includes('twilio'))
+    database: services.filter(s => s.key.includes('supabase') || s.key.includes('redis')),
+    ai: services.filter(s => s.key.includes('openai') || s.key.includes('anthropic')),
+    analytics: services.filter(s =>
+      s.key.includes('google_analytics') ||
+      s.key.includes('facebook') ||
+      s.key.includes('mixpanel') ||
+      s.key.includes('segment')
+    ),
+    email: services.filter(s =>
+      s.key.includes('resend') ||
+      s.key.includes('sendgrid') ||
+      s.key.includes('mailchimp') ||
+      s.key.includes('postmark')
+    ),
+    cloud: services.filter(s =>
+      s.key.includes('aws') ||
+      s.key.includes('cloudflare') ||
+      s.key.includes('vercel')
+    ),
+    sms: services.filter(s => s.key.includes('twilio')),
+    search: services.filter(s => s.key.includes('algolia')),
+    mapping: services.filter(s => s.key.includes('maps')),
+    monitoring: services.filter(s =>
+      s.key.includes('sentry') ||
+      s.key.includes('datadog') ||
+      s.key.includes('logrocket')
+    ),
+    messaging: services.filter(s =>
+      s.key.includes('intercom') ||
+      s.key.includes('discord') ||
+      s.key.includes('slack')
+    ),
+    devtools: services.filter(s =>
+      s.key.includes('github') ||
+      s.key.includes('pagerduty')
+    )
   };
 
   return (
@@ -215,11 +486,17 @@ export default function AllAPIKeysManager() {
 
             const categoryNames: Record<string, string> = {
               payments: '💳 Payments',
+              database: '🗄️ Database & Storage',
               ai: '🤖 Artificial Intelligence',
-              analytics: '📊 Analytics',
+              analytics: '📊 Analytics & Tracking',
               email: '📧 Email Services',
-              cloud: '☁️ Cloud Services',
-              sms: '📱 SMS Notifications'
+              cloud: '☁️ Cloud Infrastructure',
+              sms: '📱 SMS Notifications',
+              search: '🔍 Search Services',
+              mapping: '🗺️ Maps & Location',
+              monitoring: '📈 Monitoring & Debugging',
+              messaging: '💬 Customer Messaging',
+              devtools: '🛠️ Developer Tools'
             };
 
             return (
