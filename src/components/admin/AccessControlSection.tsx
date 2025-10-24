@@ -24,10 +24,14 @@ interface UserRole {
 
 interface Profile {
   id: string;
-  privacy_flags: {
+  email?: string;
+  name?: string;
+  privacy_flags?: {
     is_admin?: boolean;
   };
   created_at: string;
+  last_sign_in_at?: string;
+  roles?: string[];
 }
 
 const PERMISSION_CATEGORIES = {
@@ -120,7 +124,7 @@ export default function AccessControlSection() {
   const loadUsers = async () => {
     try {
       const { data, error } = await supabase
-        .from('profiles')
+        .from('admin_users_view')
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -128,6 +132,13 @@ export default function AccessControlSection() {
       setUsers(data || []);
     } catch (error) {
       console.error('Error loading users:', error);
+
+      const { data: fallbackData } = await supabase
+        .from('profiles')
+        .select('id, email, name, privacy_flags, created_at')
+        .order('created_at', { ascending: false });
+
+      setUsers(fallbackData || []);
     }
   };
 
@@ -296,7 +307,9 @@ export default function AccessControlSection() {
   };
 
   const filteredUsers = users.filter(user =>
-    user.id.toLowerCase().includes(searchQuery.toLowerCase())
+    user.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -443,7 +456,7 @@ export default function AccessControlSection() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search users by ID..."
+                placeholder="Search users by email, name, or ID..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
@@ -451,8 +464,17 @@ export default function AccessControlSection() {
             </div>
           </div>
 
-          <div className="space-y-4">
-            {filteredUsers.map(user => {
+          {filteredUsers.length === 0 ? (
+            <div className="text-center py-12 text-gray-400">
+              <Users className="h-16 w-16 mx-auto mb-4 opacity-30" />
+              <p className="text-xl mb-2">No users found</p>
+              <p className="text-sm">
+                {searchQuery ? 'Try adjusting your search criteria' : 'No users are registered yet'}
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {filteredUsers.map(user => {
               const userRolesList = getUserRoles(user.id);
               return (
                 <div
@@ -465,16 +487,24 @@ export default function AccessControlSection() {
                         <div className="p-2 bg-blue-900/30 border border-blue-600/30 rounded-lg">
                           <Users className="h-5 w-5 text-blue-400" />
                         </div>
-                        <h3 className="text-base font-mono font-semibold text-white">{user.id}</h3>
+                        <div className="flex-1">
+                          <h3 className="text-base font-semibold text-white">
+                            {user.email || user.name || 'Unknown User'}
+                          </h3>
+                          <p className="text-xs text-gray-500 font-mono">{user.id}</p>
+                        </div>
                         {user.privacy_flags?.is_admin && (
                           <span className="px-2 py-1 bg-orange-900/30 border border-orange-600/30 text-orange-400 text-xs font-medium rounded-full">
                             Admin
                           </span>
                         )}
                       </div>
-                      <p className="text-sm text-gray-400 mb-3">
-                        Joined: {new Date(user.created_at).toLocaleDateString()}
-                      </p>
+                      <div className="flex items-center gap-4 text-sm text-gray-400 mb-3">
+                        <span>Joined: {new Date(user.created_at).toLocaleDateString()}</span>
+                        {user.last_sign_in_at && (
+                          <span>• Last login: {new Date(user.last_sign_in_at).toLocaleDateString()}</span>
+                        )}
+                      </div>
                       <div className="space-y-3">
                         {userRolesList.length > 0 && (
                           <div className="space-y-2">
@@ -528,7 +558,8 @@ export default function AccessControlSection() {
                 </div>
               );
             })}
-          </div>
+            </div>
+          )}
         </div>
       ) : (
         <div className="space-y-6">
