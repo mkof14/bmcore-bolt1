@@ -1,4 +1,4 @@
-import { stripeConfig, validateStripeConfig, type PlanId } from '../config/stripe';
+import { stripeConfig, validateStripeConfig, type PlanId, type BillingInterval } from '../config/stripe';
 import { supabase } from './supabase';
 
 let stripe: any = null;
@@ -59,7 +59,7 @@ export async function createCheckoutSession(
   }
 }
 
-export async function redirectToCheckout(planId: PlanId) {
+export async function redirectToCheckout(planId: PlanId, interval: BillingInterval = 'monthly') {
   try {
     const { data: { user } } = await supabase.auth.getUser();
 
@@ -72,8 +72,10 @@ export async function redirectToCheckout(planId: PlanId) {
       throw new Error(`Invalid plan: ${planId}`);
     }
 
+    const priceId = plan[interval].priceId;
+
     const stripe = getStripe();
-    const { sessionId } = await createCheckoutSession(plan.priceId, user.id);
+    const { sessionId } = await createCheckoutSession(priceId, user.id);
 
     const { error } = await stripe.redirectToCheckout({ sessionId });
 
@@ -172,10 +174,13 @@ export function isSubscriptionCanceled(status: string | undefined): boolean {
   return status === 'canceled' || status === 'unpaid';
 }
 
-export function getPlanFromPriceId(priceId: string): PlanId | null {
+export function getPlanFromPriceId(priceId: string): { planId: PlanId; interval: BillingInterval } | null {
   for (const [key, plan] of Object.entries(stripeConfig.prices)) {
-    if (plan.priceId === priceId) {
-      return key as PlanId;
+    if (plan.monthly.priceId === priceId) {
+      return { planId: key as PlanId, interval: 'monthly' };
+    }
+    if (plan.yearly.priceId === priceId) {
+      return { planId: key as PlanId, interval: 'yearly' };
     }
   }
   return null;
