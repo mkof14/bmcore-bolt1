@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { LogOut, ArrowLeft } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { LogOut, ArrowLeft, CheckCircle, X } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import MemberSidebar from '../components/MemberSidebar';
 import DashboardSection from './member/DashboardSection';
@@ -42,6 +42,62 @@ interface MemberZoneProps {
 export default function MemberZone({ onNavigate, onSignOut }: MemberZoneProps) {
   const [currentSection, setCurrentSection] = useState('catalog');
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [showSuccessModal, setShowSuccessModal] = useState(false);
+
+  useEffect(() => {
+    // Check if returning from successful payment
+    const params = new URLSearchParams(window.location.search);
+    if (params.get('payment') === 'success') {
+      setShowSuccessModal(true);
+      // Clean up URL
+      window.history.replaceState({}, '', window.location.pathname);
+
+      // Send welcome email
+      sendWelcomeEmail();
+    }
+  }, []);
+
+  const sendWelcomeEmail = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Get user subscription
+      const { data: subscription } = await supabase
+        .from('user_subscriptions')
+        .select('plan_id, billing_period')
+        .eq('user_id', user.id)
+        .in('status', ['active', 'trial'])
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (subscription) {
+        // Send email via email provider
+        const { sendEmail } = await import('../lib/emailProvider');
+        await sendEmail({
+          to: user.email!,
+          subject: 'Welcome to BioMath Core! 🎉',
+          html: `
+            <h1>Welcome to BioMath Core!</h1>
+            <p>Thank you for subscribing to our ${subscription.plan_id.toUpperCase()} plan!</p>
+            <p>You now have full access to all features of the BioMath Core platform.</p>
+            <p>Get started by exploring:</p>
+            <ul>
+              <li>📊 Your health dashboard</li>
+              <li>🤖 AI Health Assistant</li>
+              <li>📱 Device connectivity</li>
+              <li>📈 Comprehensive reports</li>
+            </ul>
+            <p>If you have any questions, our support team is here to help!</p>
+            <p>Best regards,<br/>The BioMath Core Team</p>
+          `
+        });
+      }
+    } catch (error) {
+      console.error('Error sending welcome email:', error);
+    }
+  };
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
@@ -130,6 +186,75 @@ export default function MemberZone({ onNavigate, onSignOut }: MemberZoneProps) {
           {renderSection()}
         </div>
       </div>
+
+      {showSuccessModal && (
+        <div className="fixed inset-0 bg-black/70 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fadeIn">
+          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-2xl max-w-md w-full p-8 relative animate-slideUp">
+            <button
+              onClick={() => setShowSuccessModal(false)}
+              className="absolute top-4 right-4 text-gray-400 hover:text-gray-600 dark:hover:text-gray-200 transition-colors"
+            >
+              <X className="h-6 w-6" />
+            </button>
+
+            <div className="text-center">
+              <div className="mx-auto w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full flex items-center justify-center mb-6">
+                <CheckCircle className="h-12 w-12 text-green-600 dark:text-green-400" />
+              </div>
+
+              <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
+                🎉 Welcome to BioMath Core!
+              </h2>
+
+              <p className="text-lg text-gray-600 dark:text-gray-300 mb-6">
+                Thank you for your subscription! Your payment was successful.
+              </p>
+
+              <div className="bg-blue-50 dark:bg-blue-900/20 border border-blue-200 dark:border-blue-800 rounded-xl p-6 mb-6 text-left">
+                <h3 className="font-semibold text-gray-900 dark:text-white mb-3">
+                  You now have access to:
+                </h3>
+                <ul className="space-y-2 text-sm text-gray-700 dark:text-gray-300">
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
+                    <span>Complete health analytics dashboard</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
+                    <span>AI-powered health assistant</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
+                    <span>Device connectivity and tracking</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
+                    <span>Comprehensive health reports</span>
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <CheckCircle className="h-4 w-4 text-green-600 flex-shrink-0" />
+                    <span>All premium features</span>
+                  </li>
+                </ul>
+              </div>
+
+              <p className="text-sm text-gray-500 dark:text-gray-400 mb-6">
+                A confirmation email has been sent to your inbox with all the details.
+              </p>
+
+              <button
+                onClick={() => {
+                  setShowSuccessModal(false);
+                  setCurrentSection('dashboard');
+                }}
+                className="w-full px-6 py-3 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-xl font-semibold transition-all transform hover:scale-105 shadow-lg"
+              >
+                Start Exploring
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

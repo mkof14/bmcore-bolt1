@@ -354,6 +354,27 @@ export default function ServicesCatalog({ onNavigate, initialCategory }: Service
           )}
         </div>
       </section>
+
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 via-gray-950 to-gray-900">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            Ready to Start Your Health Journey?
+          </h2>
+          <p className="text-xl text-gray-300 mb-8">
+            Choose a plan that matches your needs and get instant access to our comprehensive health analytics platform.
+          </p>
+          <button
+            onClick={() => onNavigate('pricing')}
+            className="inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-xl font-bold text-lg shadow-2xl shadow-orange-500/50 transition-all transform hover:scale-105"
+          >
+            View Pricing Plans
+            <ChevronRight className="h-6 w-6" />
+          </button>
+          <p className="mt-6 text-sm text-gray-400">
+            All plans include a 5-day free trial • Cancel anytime
+          </p>
+        </div>
+      </section>
     </div>
   );
 }

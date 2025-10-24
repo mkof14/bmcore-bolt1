@@ -522,23 +522,17 @@ export default function Pricing({ onNavigate }: PricingProps) {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error('Not authenticated');
 
-      const result = await createSubscription(
-        user.id,
-        selectedPlan.id,
-        billingPeriod
-      );
+      // Use dynamic import for stripeService
+      const { redirectToCheckout } = await import('../lib/stripeService');
 
-      if (!result.success) {
-        throw new Error(result.error || 'Failed to create subscription');
-      }
+      // Redirect to Stripe Checkout
+      await redirectToCheckout(selectedPlan.id, billingPeriod === 'monthly' ? 'monthly' : 'yearly');
 
-      setShowConfirmation(false);
-      setSelectedPlan(null);
-
-      onNavigate('member-zone');
+      // NOTE: User will be redirected to Stripe,
+      // then back to success_url after successful payment
     } catch (err: any) {
-      setError(err.message || 'Payment failed. Please try again.');
-    } finally {
+      console.error('Checkout error:', err);
+      setError(err.message || 'Failed to start checkout. Please try again.');
       setIsProcessing(false);
     }
   }
