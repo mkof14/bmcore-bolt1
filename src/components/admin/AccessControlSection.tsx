@@ -239,7 +239,27 @@ export default function AccessControlSection() {
         return;
       }
 
-      console.log('Attempting to assign role:', { userId, roleId, assignedBy: currentUser.user.id });
+      console.log('=== Role Assignment Debug ===');
+      console.log('Current User ID:', currentUser.user.id);
+      console.log('Target User ID:', userId);
+      console.log('Role ID:', roleId);
+
+      const { data: checkAdmin, error: checkError } = await supabase.rpc('is_admin', {
+        user_id: currentUser.user.id
+      });
+
+      console.log('Is Admin Check:', checkAdmin);
+
+      if (checkError) {
+        console.error('Error checking admin status:', checkError);
+      }
+
+      if (!checkAdmin) {
+        alert('Permission denied: You must be an admin or super_admin to assign roles.');
+        return;
+      }
+
+      console.log('Admin check passed, inserting role assignment...');
 
       const { data, error } = await supabase
         .from('user_roles')
@@ -252,10 +272,16 @@ export default function AccessControlSection() {
 
       if (error) {
         console.error('Error details:', error);
+        console.error('Error code:', error.code);
+        console.error('Error hint:', error.hint);
+        console.error('Error details:', error.details);
+
         if (error.code === '23505') {
           alert('User already has this role');
         } else if (error.code === '42501') {
           alert('Permission denied. You must be an admin to assign roles.');
+        } else if (error.message && error.message.includes('infinite recursion')) {
+          alert('System error: Infinite recursion detected. Please contact administrator.');
         } else {
           alert(`Failed to assign role: ${error.message}`);
         }
