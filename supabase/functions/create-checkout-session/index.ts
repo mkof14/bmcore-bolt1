@@ -24,36 +24,52 @@ serve(async (req) => {
       throw new Error('Missing required environment variables');
     }
 
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    // Create admin supabase client with service role for reading config
+    const supabaseAdmin = createClient(supabaseUrl, supabaseKey);
 
     // Load Stripe secret key from database (Admin Panel config)
     let stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY');
 
     try {
-      const { data: envConfig } = await supabase
+      console.log('[Stripe] Attempting to load config from database...');
+
+      // Use service role to bypass RLS
+      const { data: envConfig, error: envError } = await supabaseAdmin
         .from('stripe_configuration')
         .select('value')
         .eq('key', 'environment')
         .maybeSingle();
 
+      if (envError) {
+        console.warn('[Stripe] Error reading environment:', envError);
+      }
+
       const environment = envConfig?.value || 'live';
+      console.log('[Stripe] Environment:', environment);
+
       const secretKeyName = environment === 'live' ? 'secret_key_live' : 'secret_key_test';
 
-      const { data: secretKeyConfig } = await supabase
+      const { data: secretKeyConfig, error: secretError } = await supabaseAdmin
         .from('stripe_configuration')
         .select('value')
         .eq('key', secretKeyName)
         .eq('is_secret', true)
         .maybeSingle();
 
-      if (secretKeyConfig?.value && secretKeyConfig.value !== 'sk_test_YOUR_KEY_HERE' && secretKeyConfig.value !== 'sk_live_YOUR_KEY_HERE') {
+      if (secretError) {
+        console.warn('[Stripe] Error reading secret key:', secretError);
+      }
+
+      if (secretKeyConfig?.value &&
+          secretKeyConfig.value !== 'sk_test_YOUR_KEY_HERE' &&
+          secretKeyConfig.value !== 'sk_live_YOUR_KEY_HERE') {
         stripeSecretKey = secretKeyConfig.value;
-        console.log('[Stripe] Using secret key from database (Admin Panel)');
+        console.log('[Stripe] ✅ Using secret key from database (Admin Panel)');
       } else {
-        console.log('[Stripe] Using secret key from environment variable');
+        console.log('[Stripe] ⚠️ No valid secret key in database, using environment variable');
       }
     } catch (error) {
-      console.warn('[Stripe] Failed to load secret key from database, using env:', error);
+      console.warn('[Stripe] Exception loading from database, using env:', error);
     }
 
     if (!stripeSecretKey) {
@@ -74,41 +90,51 @@ serve(async (req) => {
     }
 
     const token = authHeader.replace('Bearer ', '');
-    const { data: { user }, error: authError } = await supabase.auth.getUser(token);
+    const { data: { user }, error: authError } = await supabaseAdmin.auth.getUser(token);
 
     if (authError || !user) {
+      console.error('[Stripe] Auth error:', authError);
       return new Response(
-        JSON.stringify({ error: 'Unauthorized' }),
+        JSON.stringify({ error: 'Unauthorized', details: authError?.message }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
+    console.log('[Stripe] User authenticated:', user.id);
+
     const { priceId, successUrl, cancelUrl } = await req.json();
 
     if (!priceId) {
+      console.error('[Stripe] Missing priceId');
       return new Response(
         JSON.stringify({ error: 'Missing priceId' }),
         { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
     }
 
-    const { data: profile } = await supabase
+    console.log('[Stripe] Creating checkout for:', { priceId, userId: user.id });
+
+    const { data: profile } = await supabaseAdmin
       .from('user_profiles')
       .select('email, full_name')
       .eq('id', user.id)
-      .single();
+      .maybeSingle();
+
+    console.log('[Stripe] User profile:', { hasEmail: !!profile?.email, hasName: !!profile?.full_name });
 
     let customerId: string | undefined;
 
-    const { data: existingSubscription } = await supabase
+    const { data: existingSubscription } = await supabaseAdmin
       .from('user_subscriptions')
       .select('stripe_customer_id')
       .eq('user_id', user.id)
-      .single();
+      .maybeSingle();
 
     if (existingSubscription?.stripe_customer_id) {
       customerId = existingSubscription.stripe_customer_id;
+      console.log('[Stripe] Using existing customer:', customerId);
     } else {
+      console.log('[Stripe] Creating new customer...');
       const customer = await stripe.customers.create({
         email: profile?.email || user.email,
         name: profile?.full_name,
@@ -117,7 +143,10 @@ serve(async (req) => {
         },
       });
       customerId = customer.id;
+      console.log('[Stripe] Customer created:', customerId);
     }
+
+    console.log('[Stripe] Creating checkout session...');
 
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
@@ -143,6 +172,8 @@ serve(async (req) => {
       billing_address_collection: 'auto',
     });
 
+    console.log('[Stripe] ✅ Session created successfully:', session.id);
+
     return new Response(
       JSON.stringify({
         sessionId: session.id,
@@ -153,10 +184,20 @@ serve(async (req) => {
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       }
     );
-  } catch (err) {
-    console.error('Error creating checkout session:', err);
+  } catch (err: any) {
+    console.error('[Stripe] ❌ Error creating checkout session:', {
+      message: err.message,
+      type: err.type,
+      code: err.code,
+      stack: err.stack
+    });
+
     return new Response(
-      JSON.stringify({ error: err.message }),
+      JSON.stringify({
+        error: err.message || 'Failed to create checkout session',
+        type: err.type,
+        code: err.code
+      }),
       {
         status: 400,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },

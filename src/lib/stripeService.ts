@@ -29,11 +29,20 @@ export async function createCheckoutSession(
   userId: string
 ): Promise<{ sessionId: string; url: string }> {
   try {
+    console.log('[Stripe Service] Creating checkout session:', {
+      priceId,
+      userId,
+      successUrl: stripeConfig.successUrl,
+      cancelUrl: stripeConfig.cancelUrl
+    });
+
     const { data: { session } } = await supabase.auth.getSession();
 
     if (!session) {
       throw new Error('Not authenticated');
     }
+
+    console.log('[Stripe Service] Calling edge function...');
 
     const { data, error } = await supabase.functions.invoke('create-checkout-session', {
       body: {
@@ -47,14 +56,40 @@ export async function createCheckoutSession(
       }
     });
 
-    if (error) throw error;
+    console.log('[Stripe Service] Edge function response:', { data, error });
+
+    if (error) {
+      console.error('[Stripe Service] Edge function error:', {
+        message: error.message,
+        status: error.status,
+        details: error
+      });
+      throw new Error(`Edge Function Error: ${error.message || 'Unknown error'}`);
+    }
+
+    if (!data) {
+      throw new Error('No data returned from Edge Function');
+    }
+
+    if (!data.sessionId && !data.url) {
+      console.error('[Stripe Service] Invalid response from Edge Function:', data);
+      throw new Error(`Invalid response: ${JSON.stringify(data)}`);
+    }
+
+    console.log('[Stripe Service] Checkout session created successfully:', {
+      hasSessionId: !!data.sessionId,
+      hasUrl: !!data.url
+    });
 
     return {
       sessionId: data.sessionId,
       url: data.url
     };
-  } catch (error) {
-    console.error('Error creating checkout session:', error);
+  } catch (error: any) {
+    console.error('[Stripe Service] Error creating checkout session:', {
+      message: error.message,
+      error: error
+    });
     throw error;
   }
 }
