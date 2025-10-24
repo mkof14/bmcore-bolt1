@@ -87,14 +87,23 @@ export default function StripeConfigManager() {
   const getFriendlyLabel = (key: string) => {
     const labels: Record<string, string> = {
       'publishable_key_test': '🔑 Publishable Key (pk_test_...)',
-      'price_daily_monthly_test': '📅 Daily Plan - Monthly ($39/month)',
-      'price_daily_yearly_test': '📅 Daily Plan - Yearly ($374/year)',
-      'price_core_monthly_test': '⭐ Core Plan - Monthly ($19/month)',
-      'price_core_yearly_test': '⭐ Core Plan - Yearly ($182/year)',
-      'price_max_monthly_test': '🚀 Max Plan - Monthly ($79/month)',
-      'price_max_yearly_test': '🚀 Max Plan - Yearly ($758/year)',
+      'price_daily_monthly_test': 'Monthly Price ID (price_...)',
+      'price_daily_yearly_test': 'Yearly Price ID (price_...)',
+      'price_core_monthly_test': 'Monthly Price ID (price_...)',
+      'price_core_yearly_test': 'Yearly Price ID (price_...)',
+      'price_max_monthly_test': 'Monthly Price ID (price_...)',
+      'price_max_yearly_test': 'Yearly Price ID (price_...)',
     };
     return labels[key] || key;
+  };
+
+  const getGroupedConfigs = () => {
+    return {
+      api: configs.filter(c => c.key === 'publishable_key_test'),
+      daily: configs.filter(c => c.key.includes('daily')),
+      core: configs.filter(c => c.key.includes('core')),
+      max: configs.filter(c => c.key.includes('max'))
+    };
   };
 
   if (loading) {
@@ -135,8 +144,9 @@ export default function StripeConfigManager() {
           </div>
         )}
 
-        <div className="space-y-4">
-          {configs.map((config) => (
+        <div className="space-y-6">
+          {/* API Keys Section */}
+          {getGroupedConfigs().api.map((config) => (
             <div key={config.key} className="space-y-2">
               <label className="block text-sm font-medium text-gray-300">
                 {getFriendlyLabel(config.key)}
@@ -166,6 +176,84 @@ export default function StripeConfigManager() {
               </div>
             </div>
           ))}
+
+          {/* Daily Plan */}
+          {getGroupedConfigs().daily.length > 0 && (
+            <div className="border-t border-gray-700 pt-6">
+              <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                📅 Daily Plan - $39/month or $374/year
+              </h3>
+              <div className="space-y-4">
+                {getGroupedConfigs().daily.map((config) => (
+                  <div key={config.key} className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-300">
+                      {getFriendlyLabel(config.key)}
+                    </label>
+                    <p className="text-xs text-gray-500 mb-2">{config.description}</p>
+                    <input
+                      type="text"
+                      value={config.value}
+                      onChange={(e) => handleUpdate(config.key, e.target.value)}
+                      placeholder="Paste Price ID here..."
+                      className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Core Plan */}
+          {getGroupedConfigs().core.length > 0 && (
+            <div className="border-t border-gray-700 pt-6">
+              <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                ⭐ Core Plan - $19/month or $182/year
+              </h3>
+              <div className="space-y-4">
+                {getGroupedConfigs().core.map((config) => (
+                  <div key={config.key} className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-300">
+                      {getFriendlyLabel(config.key)}
+                    </label>
+                    <p className="text-xs text-gray-500 mb-2">{config.description}</p>
+                    <input
+                      type="text"
+                      value={config.value}
+                      onChange={(e) => handleUpdate(config.key, e.target.value)}
+                      placeholder="Paste Price ID here..."
+                      className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Max Plan */}
+          {getGroupedConfigs().max.length > 0 && (
+            <div className="border-t border-gray-700 pt-6">
+              <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                🚀 Max Plan - $79/month or $758/year
+              </h3>
+              <div className="space-y-4">
+                {getGroupedConfigs().max.map((config) => (
+                  <div key={config.key} className="space-y-2">
+                    <label className="block text-sm font-medium text-gray-300">
+                      {getFriendlyLabel(config.key)}
+                    </label>
+                    <p className="text-xs text-gray-500 mb-2">{config.description}</p>
+                    <input
+                      type="text"
+                      value={config.value}
+                      onChange={(e) => handleUpdate(config.key, e.target.value)}
+                      placeholder="Paste Price ID here..."
+                      className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    />
+                  </div>
+                ))}
+              </div>
+            </div>
+          )}
         </div>
 
         <div className="mt-8 pt-6 border-t border-gray-700/50">
