@@ -38,6 +38,10 @@ export function usePushNotifications() {
         subscription,
       }));
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (errorMessage.includes('StackBlitz') || errorMessage.includes('WebContainer')) {
+        return;
+      }
       console.error('Error checking push subscription:', error);
     }
   }
@@ -101,6 +105,10 @@ export function usePushNotifications() {
 
       return true;
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (errorMessage.includes('StackBlitz') || errorMessage.includes('WebContainer')) {
+        return false;
+      }
       console.error('Error subscribing to push notifications:', error);
       return false;
     }
@@ -149,6 +157,10 @@ export function usePushNotifications() {
       });
       return true;
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (errorMessage.includes('StackBlitz') || errorMessage.includes('WebContainer')) {
+        return false;
+      }
       console.error('Error sending test notification:', error);
       return false;
     }

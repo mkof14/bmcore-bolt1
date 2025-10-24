@@ -37,6 +37,10 @@ export function useBackgroundSync() {
         hasPendingData: count > 0,
       }));
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (errorMessage.includes('StackBlitz') || errorMessage.includes('WebContainer')) {
+        return;
+      }
       console.error('Error checking pending data:', error);
     }
   }
@@ -65,6 +69,10 @@ export function useBackgroundSync() {
 
       return true;
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (errorMessage.includes('StackBlitz') || errorMessage.includes('WebContainer')) {
+        return false;
+      }
       console.error('Error queuing sync:', error);
       return false;
     }
@@ -79,6 +87,10 @@ export function useBackgroundSync() {
         hasPendingData: false,
       }));
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (errorMessage.includes('StackBlitz') || errorMessage.includes('WebContainer')) {
+        return;
+      }
       console.error('Error clearing pending data:', error);
     }
   }, []);
@@ -88,6 +100,10 @@ export function useBackgroundSync() {
       const db = await openDB();
       return await db.getAll('pending-sync');
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (errorMessage.includes('StackBlitz') || errorMessage.includes('WebContainer')) {
+        return [];
+      }
       console.error('Error getting pending data:', error);
       return [];
     }

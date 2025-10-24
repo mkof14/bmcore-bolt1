@@ -55,6 +55,10 @@ export function useServiceWorker() {
         registration.update();
       }, 60 * 60 * 1000);
     } catch (error) {
+      const errorMessage = error instanceof Error ? error.message : String(error);
+      if (errorMessage.includes('StackBlitz') || errorMessage.includes('WebContainer')) {
+        return;
+      }
       console.error('Service Worker registration failed:', error);
     }
   }
