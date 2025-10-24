@@ -1,53 +1,111 @@
 import { useState, useEffect } from 'react';
-import { Key, Eye, EyeOff, Check, X, AlertCircle } from 'lucide-react';
-import { API_KEYS, isServiceEnabled } from '../../lib/apiConfig';
+import { Key, Eye, EyeOff, Save, AlertCircle, CheckCircle, ExternalLink } from 'lucide-react';
 
 interface APIService {
   name: string;
-  key: keyof typeof API_KEYS;
+  key: string;
+  value: string;
   required: boolean;
   description: string;
   setupUrl?: string;
+  icon: string;
+  isSecret: boolean;
 }
 
-const services: APIService[] = [
+const defaultServices: APIService[] = [
   {
-    name: 'OpenAI',
-    key: 'OPENAI',
+    name: 'Stripe Publishable Key',
+    key: 'stripe_publishable',
+    value: '',
+    required: true,
+    description: 'Публичный ключ для оплаты (pk_live_... или pk_test_...)',
+    setupUrl: 'https://dashboard.stripe.com/apikeys',
+    icon: '💳',
+    isSecret: false
+  },
+  {
+    name: 'Stripe Secret Key',
+    key: 'stripe_secret',
+    value: '',
+    required: true,
+    description: 'Секретный ключ (sk_live_... или sk_test_...)',
+    setupUrl: 'https://dashboard.stripe.com/apikeys',
+    icon: '💳',
+    isSecret: true
+  },
+  {
+    name: 'Stripe Webhook Secret',
+    key: 'stripe_webhook',
+    value: '',
+    required: true,
+    description: 'Webhook secret для обработки событий (whsec_...)',
+    setupUrl: 'https://dashboard.stripe.com/webhooks',
+    icon: '💳',
+    isSecret: true
+  },
+  {
+    name: 'OpenAI API Key',
+    key: 'openai_key',
+    value: '',
     required: false,
-    description: 'ChatGPT, GPT-4 - AI health assistant',
+    description: 'Для AI ассистента и ChatGPT (sk-...)',
     setupUrl: 'https://platform.openai.com/api-keys',
+    icon: '🤖',
+    isSecret: true
   },
   {
-    name: 'Google Gemini',
-    key: 'GEMINI',
+    name: 'Google Analytics',
+    key: 'google_analytics',
+    value: '',
     required: false,
-    description: 'Google AI for health insights',
-    setupUrl: 'https://makersuite.google.com/app/apikey',
+    description: 'Measurement ID (G-XXXXXXXXXX)',
+    setupUrl: 'https://analytics.google.com',
+    icon: '📊',
+    isSecret: false
   },
   {
-    name: 'Anthropic Claude',
-    key: 'ANTHROPIC',
+    name: 'Facebook Pixel',
+    key: 'facebook_pixel',
+    value: '',
     required: false,
-    description: 'Claude AI for medical analysis',
-    setupUrl: 'https://console.anthropic.com/',
+    description: 'Pixel ID для отслеживания конверсий',
+    setupUrl: 'https://business.facebook.com/events_manager',
+    icon: '👥',
+    isSecret: false
   },
   {
-    name: 'GitHub Copilot',
-    key: 'COPILOT',
+    name: 'Resend API Key',
+    key: 'resend_key',
+    value: '',
     required: false,
-    description: 'Code assistance',
-    setupUrl: 'https://github.com/features/copilot',
+    description: 'Для отправки email уведомлений (re_...)',
+    setupUrl: 'https://resend.com/api-keys',
+    icon: '📧',
+    isSecret: true
   },
   {
-    name: 'ElevenLabs',
-    key: 'ELEVENLABS',
+    name: 'SendGrid API Key',
+    key: 'sendgrid_key',
+    value: '',
     required: false,
-    description: 'Text-to-speech, voice AI',
-    setupUrl: 'https://elevenlabs.io/',
+    description: 'Альтернатива Resend для email (SG...)',
+    setupUrl: 'https://app.sendgrid.com/settings/api_keys',
+    icon: '📧',
+    isSecret: true
   },
   {
-    name: 'Stripe',
+    name: 'AWS Access Key ID',
+    key: 'aws_access',
+    value: '',
+    required: false,
+    description: 'Для S3, Lambda и других AWS сервисов',
+    setupUrl: 'https://console.aws.amazon.com/iam',
+    icon: '☁️',
+    isSecret: true
+  },
+  {
+    name: 'AWS Secret Access Key',
+    key: 'aws_secret',
     key: 'STRIPE_PUBLISHABLE',
     required: false,
     description: 'Payment processing',
