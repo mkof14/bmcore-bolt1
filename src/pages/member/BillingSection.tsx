@@ -207,16 +207,19 @@ export default function BillingSection() {
 
   const handleManageBilling = async () => {
     try {
+      // Open Stripe Customer Portal for managing payment methods and billing
       const { createPortalSession } = await import('../../lib/stripeService');
       const portalUrl = await createPortalSession();
       window.open(portalUrl, '_blank');
     } catch (error) {
       console.error('Error opening billing portal:', error);
+      alert('Unable to open billing portal. Please make sure you have an active subscription.');
     }
   };
 
   const handleUpgradePlan = () => {
-    window.location.hash = '#/pricing';
+    // Navigate to pricing page to select a new plan
+    window.location.href = '#/pricing';
   };
 
   if (loading) {
@@ -234,8 +237,29 @@ export default function BillingSection() {
           <CreditCard className="h-8 w-8 text-orange-500" />
           Billing & Subscription
         </h1>
-        <p className="text-gray-400">Manage your subscription and view payment history</p>
+        <p className="text-gray-400">
+          Manage your subscription, update payment methods, and view your complete payment history
+        </p>
       </div>
+
+      {/* Help Banner */}
+      {!subscription && (
+        <div className="mb-6 bg-blue-500/10 border border-blue-500/30 rounded-xl p-4 flex items-start gap-3">
+          <Info className="h-5 w-5 text-blue-400 flex-shrink-0 mt-0.5" />
+          <div>
+            <h3 className="text-white font-semibold mb-1">No Active Subscription</h3>
+            <p className="text-sm text-gray-300 mb-3">
+              You don't have an active subscription yet. Choose a plan to unlock all features and start your health journey!
+            </p>
+            <button
+              onClick={handleUpgradePlan}
+              className="px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg text-sm font-semibold transition-all"
+            >
+              View Plans & Pricing
+            </button>
+          </div>
+        </div>
+      )}
 
       {/* Current Plan Card */}
       <div className="mb-6 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-2xl p-6">
@@ -277,80 +301,96 @@ export default function BillingSection() {
           <div className="flex flex-col sm:flex-row gap-3">
             <button
               onClick={handleUpgradePlan}
-              className="px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-lg font-semibold transition-all flex items-center gap-2"
+              className="px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-lg font-semibold transition-all flex items-center gap-2 group"
+              title="View all available plans and upgrade to access more features"
             >
-              <ArrowUpRight className="h-4 w-4" />
+              <ArrowUpRight className="h-4 w-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               Upgrade Plan
             </button>
             <button
               onClick={handleManageBilling}
-              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold transition-all flex items-center gap-2"
+              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold transition-all flex items-center gap-2 group"
+              title="Update payment method, view invoices, or cancel subscription"
             >
-              <ExternalLink className="h-4 w-4" />
+              <ExternalLink className="h-4 w-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
               Manage Billing
             </button>
           </div>
         </div>
       </div>
 
-      {/* Stats Grid */}
+      {/* Stats Grid - Your subscription metrics at a glance */}
       <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-        {/* Next Billing */}
-        <div className="bg-gradient-to-br from-green-900/30 via-green-800/20 to-gray-900 border border-green-600/30 rounded-xl p-4">
+        {/* Next Billing - When your card will be charged next */}
+        <div
+          className="bg-gradient-to-br from-green-900/30 via-green-800/20 to-gray-900 border border-green-600/30 rounded-xl p-4 cursor-help"
+          title="Your next automatic payment date"
+        >
           <div className="flex items-center justify-between mb-2">
             <Calendar className="h-5 w-5 text-green-400" />
             <span className="text-xs text-green-400 font-semibold">
-              {getDaysUntilRenewal()} days
+              {getDaysUntilRenewal()} days away
             </span>
           </div>
-          <p className="text-xs text-gray-400 mb-1">Next Billing</p>
+          <p className="text-xs text-gray-400 mb-1">Next Billing Date</p>
           <p className="text-lg font-bold text-white">
-            {subscription ? formatDate(subscription.current_period_end) : 'N/A'}
+            {subscription ? formatDate(subscription.current_period_end) : 'No subscription'}
           </p>
           <p className="text-xs text-gray-500 mt-1">
-            {formatPrice(
+            {subscription ? `${formatPrice(
               subscription?.billing_period === 'annual'
                 ? plan?.annual_price_cents || 0
                 : plan?.monthly_price_cents || 0
-            )}
+            )} will be charged` : 'Select a plan to start'}
           </p>
         </div>
 
-        {/* Total Paid */}
-        <div className="bg-gradient-to-br from-blue-900/30 via-blue-800/20 to-gray-900 border border-blue-600/30 rounded-xl p-4">
+        {/* Total Paid - Lifetime spending */}
+        <div
+          className="bg-gradient-to-br from-blue-900/30 via-blue-800/20 to-gray-900 border border-blue-600/30 rounded-xl p-4 cursor-help"
+          title="Total amount you've paid since joining"
+        >
           <div className="flex items-center justify-between mb-2">
             <DollarSign className="h-5 w-5 text-blue-400" />
             <TrendingUp className="h-4 w-4 text-blue-400" />
           </div>
-          <p className="text-xs text-gray-400 mb-1">Total Paid</p>
+          <p className="text-xs text-gray-400 mb-1">Total Paid (Lifetime)</p>
           <p className="text-lg font-bold text-white">${totalPaid.toFixed(2)}</p>
           <p className="text-xs text-gray-500 mt-1">
-            {invoices.filter(i => i.status === 'paid').length} payments
+            {invoices.filter(i => i.status === 'paid').length} successful payment{invoices.filter(i => i.status === 'paid').length !== 1 ? 's' : ''}
           </p>
         </div>
 
-        {/* Reports Usage */}
-        <div className="bg-gradient-to-br from-purple-900/30 via-purple-800/20 to-gray-900 border border-purple-600/30 rounded-xl p-4">
+        {/* Reports Usage - Track your monthly report generation */}
+        <div
+          className="bg-gradient-to-br from-purple-900/30 via-purple-800/20 to-gray-900 border border-purple-600/30 rounded-xl p-4 cursor-help"
+          title="Number of health reports generated this billing period"
+        >
           <div className="flex items-center justify-between mb-2">
             <RefreshCw className="h-5 w-5 text-purple-400" />
             <span className="text-xs text-purple-400 font-semibold">
-              {usageStats?.reportsLimit === -1 ? '∞' : `${usageStats?.reportsUsed}/${usageStats?.reportsLimit}`}
+              {usageStats?.reportsLimit === -1 ? 'Unlimited' : `${usageStats?.reportsUsed}/${usageStats?.reportsLimit}`}
             </span>
           </div>
           <p className="text-xs text-gray-400 mb-1">Reports This Month</p>
           <p className="text-lg font-bold text-white">{usageStats?.reportsUsed || 0}</p>
-          {usageStats && usageStats.reportsLimit !== -1 && (
+          {usageStats && usageStats.reportsLimit !== -1 ? (
             <div className="mt-2 bg-gray-800 rounded-full h-1.5">
               <div
                 className="bg-purple-500 h-1.5 rounded-full transition-all"
                 style={{ width: `${getUsagePercentage(usageStats.reportsUsed, usageStats.reportsLimit)}%` }}
               />
             </div>
+          ) : (
+            <p className="text-xs text-purple-400 mt-1">∞ Generate unlimited reports</p>
           )}
         </div>
 
-        {/* Storage Usage */}
-        <div className="bg-gradient-to-br from-orange-900/30 via-orange-800/20 to-gray-900 border border-orange-600/30 rounded-xl p-4">
+        {/* Storage Usage - Your data storage consumption */}
+        <div
+          className="bg-gradient-to-br from-orange-900/30 via-orange-800/20 to-gray-900 border border-orange-600/30 rounded-xl p-4 cursor-help"
+          title="Storage space used for your health data and files"
+        >
           <div className="flex items-center justify-between mb-2">
             <CreditCard className="h-5 w-5 text-orange-400" />
             <span className="text-xs text-orange-400 font-semibold">
@@ -367,6 +407,9 @@ export default function BillingSection() {
               />
             </div>
           )}
+          <p className="text-xs text-gray-500 mt-1">
+            {usageStats ? `${(usageStats.storageLimit - usageStats.storageUsed).toFixed(1)} GB remaining` : 'N/A'}
+          </p>
         </div>
       </div>
 
@@ -459,27 +502,45 @@ export default function BillingSection() {
         </div>
       </div>
 
-      {/* Quick Actions */}
+      {/* Quick Actions - Common billing tasks */}
+      <div className="mb-4">
+        <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+          <Zap className="h-5 w-5 text-orange-500" />
+          Quick Actions
+        </h3>
+        <p className="text-sm text-gray-400 mb-4">
+          Manage your subscription and billing with these quick shortcuts
+        </p>
+      </div>
       <div className="grid md:grid-cols-3 gap-4">
-        <button className="p-4 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl hover:border-orange-500/50 transition-all text-left group">
+        <button
+          onClick={handleUpgradePlan}
+          className="p-4 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl hover:border-orange-500/50 transition-all text-left group"
+          title="Browse all available plans"
+        >
           <ArrowUpRight className="h-6 w-6 text-orange-400 mb-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
           <h3 className="text-white font-semibold mb-1">Upgrade Plan</h3>
           <p className="text-sm text-gray-400">Get access to more features and higher limits</p>
         </button>
 
-        <button className="p-4 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl hover:border-blue-500/50 transition-all text-left group">
+        <button
+          onClick={handleManageBilling}
+          className="p-4 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl hover:border-blue-500/50 transition-all text-left group"
+          title="Manage via Stripe Customer Portal"
+        >
           <RefreshCw className="h-6 w-6 text-blue-400 mb-2 group-hover:rotate-180 transition-transform duration-500" />
           <h3 className="text-white font-semibold mb-1">Change Billing Cycle</h3>
-          <p className="text-sm text-gray-400">Switch between monthly and annual billing</p>
+          <p className="text-sm text-gray-400">Switch between monthly and annual billing (save 17%)</p>
         </button>
 
         <button
           onClick={handleManageBilling}
           className="p-4 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl hover:border-purple-500/50 transition-all text-left group"
+          title="Opens Stripe portal in new tab"
         >
           <ExternalLink className="h-6 w-6 text-purple-400 mb-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
           <h3 className="text-white font-semibold mb-1">Payment Methods</h3>
-          <p className="text-sm text-gray-400">Update your credit card and billing info</p>
+          <p className="text-sm text-gray-400">Update your credit card and billing information</p>
         </button>
       </div>
     </div>
