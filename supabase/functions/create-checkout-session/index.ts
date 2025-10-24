@@ -1,4 +1,4 @@
-import { serve } from 'https://deno.land/std@0.168.0/http/server.ts';
+import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import Stripe from 'https://esm.sh/stripe@14.0.0?target=deno';
 
@@ -8,7 +8,7 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'Content-Type, Authorization, X-Client-Info, Apikey',
 };
 
-serve(async (req) => {
+Deno.serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, {
       status: 200,
@@ -24,16 +24,13 @@ serve(async (req) => {
       throw new Error('Missing required environment variables');
     }
 
-    // Create admin supabase client with service role for reading config
     const supabaseAdmin = createClient(supabaseUrl, supabaseKey);
 
-    // Load Stripe secret key from database (Admin Panel config)
     let stripeSecretKey = Deno.env.get('STRIPE_SECRET_KEY');
 
     try {
       console.log('[Stripe] Attempting to load config from database...');
 
-      // Use service role to bypass RLS
       const { data: envConfig, error: envError } = await supabaseAdmin
         .from('stripe_configuration')
         .select('value')

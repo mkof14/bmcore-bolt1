@@ -467,8 +467,24 @@ export default function Pricing({ onNavigate }: PricingProps) {
       </div>
 
       {error && (
-        <div className="fixed bottom-4 right-4 bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg">
-          {error}
+        <div className="fixed bottom-4 right-4 bg-red-500 text-white px-6 py-4 rounded-lg shadow-lg max-w-md z-50">
+          <div className="flex items-start justify-between gap-3">
+            <div className="flex-1">
+              <div className="font-bold mb-1">Payment Error</div>
+              <div className="text-sm">{error}</div>
+              <div className="text-xs mt-2 opacity-80">
+                Tip: Open browser console (F12) for detailed error information
+              </div>
+            </div>
+            <button
+              onClick={() => setError(null)}
+              className="text-white hover:text-gray-200 transition-colors"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
         </div>
       )}
 
