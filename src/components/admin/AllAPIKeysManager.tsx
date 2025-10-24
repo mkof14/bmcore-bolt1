@@ -520,17 +520,19 @@ export default function AllAPIKeysManager() {
       setMessage(null);
 
       for (const service of services) {
+        // Get the existing record (including its current key_value)
         const { data: existing, error: checkError } = await supabase
           .from('api_keys_configuration')
-          .select('id')
+          .select('id, key_value')
           .eq('key_name', service.key)
           .maybeSingle();
 
         if (checkError) throw checkError;
 
+        // Prepare key data - preserve existing value if current value is empty
         const keyData = {
           key_name: service.key,
-          key_value: service.value,
+          key_value: service.value || existing?.key_value || null,
           service_name: service.name,
           is_secret: service.isSecret,
           is_required: service.required,
@@ -555,6 +557,9 @@ export default function AllAPIKeysManager() {
           if (insertError) throw insertError;
         }
       }
+
+      // Reload keys to ensure UI shows saved values
+      await loadKeys();
 
       setMessage({
         type: 'success',
