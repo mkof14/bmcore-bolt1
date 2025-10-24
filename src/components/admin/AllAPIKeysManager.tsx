@@ -156,6 +156,106 @@ export default function AllAPIKeysManager() {
       isSecret: true
     },
     {
+      name: 'ElevenLabs API Key',
+      key: 'elevenlabs_key',
+      value: '',
+      required: false,
+      description: 'For voice synthesis and cloning',
+      setupUrl: 'https://elevenlabs.io/api',
+      icon: '🎙️',
+      isSecret: true
+    },
+    {
+      name: 'Replicate API Token',
+      key: 'replicate_token',
+      value: '',
+      required: false,
+      description: 'For running ML models',
+      setupUrl: 'https://replicate.com/account/api-tokens',
+      icon: '🤖',
+      isSecret: true
+    },
+    {
+      name: 'Hugging Face API Token',
+      key: 'huggingface_token',
+      value: '',
+      required: false,
+      description: 'For ML models and datasets',
+      setupUrl: 'https://huggingface.co/settings/tokens',
+      icon: '🤖',
+      isSecret: true
+    },
+    {
+      name: 'Stability AI API Key',
+      key: 'stability_key',
+      value: '',
+      required: false,
+      description: 'For Stable Diffusion image generation',
+      setupUrl: 'https://platform.stability.ai/account/keys',
+      icon: '🎨',
+      isSecret: true
+    },
+    {
+      name: 'Cohere API Key',
+      key: 'cohere_key',
+      value: '',
+      required: false,
+      description: 'For NLP and language models',
+      setupUrl: 'https://dashboard.cohere.com/api-keys',
+      icon: '🤖',
+      isSecret: true
+    },
+    {
+      name: 'Pinecone API Key',
+      key: 'pinecone_key',
+      value: '',
+      required: false,
+      description: 'Vector database for AI embeddings',
+      setupUrl: 'https://app.pinecone.io/',
+      icon: '🧠',
+      isSecret: true
+    },
+    {
+      name: 'Pinecone Environment',
+      key: 'pinecone_env',
+      value: '',
+      required: false,
+      description: 'Pinecone environment name',
+      setupUrl: 'https://app.pinecone.io/',
+      icon: '🧠',
+      isSecret: false
+    },
+    {
+      name: 'AssemblyAI API Key',
+      key: 'assemblyai_key',
+      value: '',
+      required: false,
+      description: 'For speech-to-text transcription',
+      setupUrl: 'https://www.assemblyai.com/app',
+      icon: '🎤',
+      isSecret: true
+    },
+    {
+      name: 'Deepgram API Key',
+      key: 'deepgram_key',
+      value: '',
+      required: false,
+      description: 'For voice AI and transcription',
+      setupUrl: 'https://console.deepgram.com/',
+      icon: '🎤',
+      isSecret: true
+    },
+    {
+      name: 'Voyage AI API Key',
+      key: 'voyage_key',
+      value: '',
+      required: false,
+      description: 'For embeddings and search',
+      setupUrl: 'https://www.voyageai.com/',
+      icon: '🧭',
+      isSecret: true
+    },
+    {
       name: 'Supabase URL',
       key: 'supabase_url',
       value: '',
@@ -377,10 +477,36 @@ export default function AllAPIKeysManager() {
     }
   ]);
 
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: 'success' | 'error'; text: string } | null>(null);
   const [showSecrets, setShowSecrets] = useState<Record<string, boolean>>({});
+
+  useEffect(() => {
+    loadKeys();
+  }, []);
+
+  const loadKeys = async () => {
+    try {
+      setLoading(true);
+      const { data, error } = await supabase
+        .from('api_keys_configuration')
+        .select('key_name, key_value');
+
+      if (error) throw error;
+
+      if (data && data.length > 0) {
+        setServices(prev => prev.map(service => {
+          const saved = data.find(d => d.key_name === service.key);
+          return saved ? { ...service, value: saved.key_value || '' } : service;
+        }));
+      }
+    } catch (error: any) {
+      console.error('Error loading keys:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const handleUpdate = (key: string, newValue: string) => {
     setServices(prev => prev.map(service =>
@@ -393,9 +519,46 @@ export default function AllAPIKeysManager() {
       setSaving(true);
       setMessage(null);
 
+      for (const service of services) {
+        const { data: existing, error: checkError } = await supabase
+          .from('api_keys_configuration')
+          .select('id')
+          .eq('key_name', service.key)
+          .maybeSingle();
+
+        if (checkError) throw checkError;
+
+        const keyData = {
+          key_name: service.key,
+          key_value: service.value,
+          service_name: service.name,
+          is_secret: service.isSecret,
+          is_required: service.required,
+          description: service.description,
+          setup_url: service.setupUrl,
+          icon: service.icon,
+          updated_at: new Date().toISOString()
+        };
+
+        if (existing) {
+          const { error: updateError } = await supabase
+            .from('api_keys_configuration')
+            .update(keyData)
+            .eq('id', existing.id);
+
+          if (updateError) throw updateError;
+        } else {
+          const { error: insertError } = await supabase
+            .from('api_keys_configuration')
+            .insert([keyData]);
+
+          if (insertError) throw insertError;
+        }
+      }
+
       setMessage({
         type: 'success',
-        text: 'All keys saved successfully! ✓'
+        text: 'All keys saved successfully!'
       });
 
       setTimeout(() => setMessage(null), 5000);
@@ -413,7 +576,19 @@ export default function AllAPIKeysManager() {
   const groupedServices = {
     payments: services.filter(s => s.key.includes('stripe')),
     database: services.filter(s => s.key.includes('supabase') || s.key.includes('redis')),
-    ai: services.filter(s => s.key.includes('openai') || s.key.includes('anthropic')),
+    ai: services.filter(s =>
+      s.key.includes('openai') ||
+      s.key.includes('anthropic') ||
+      s.key.includes('elevenlabs') ||
+      s.key.includes('replicate') ||
+      s.key.includes('huggingface') ||
+      s.key.includes('stability') ||
+      s.key.includes('cohere') ||
+      s.key.includes('pinecone') ||
+      s.key.includes('assemblyai') ||
+      s.key.includes('deepgram') ||
+      s.key.includes('voyage')
+    ),
     analytics: services.filter(s =>
       s.key.includes('google_analytics') ||
       s.key.includes('facebook') ||
@@ -463,24 +638,30 @@ export default function AllAPIKeysManager() {
           </div>
         </div>
 
-        {message && (
-          <div
-            className={`mb-6 p-4 rounded-lg flex items-center gap-3 ${
-              message.type === 'success'
-                ? 'bg-green-500/10 border border-green-500/20 text-green-400'
-                : 'bg-red-500/10 border border-red-500/20 text-red-400'
-            }`}
-          >
-            {message.type === 'success' ? (
-              <CheckCircle className="w-5 h-5" />
-            ) : (
-              <AlertCircle className="w-5 h-5" />
-            )}
-            <span>{message.text}</span>
+        {loading ? (
+          <div className="flex items-center justify-center py-12">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500"></div>
           </div>
-        )}
+        ) : (
+          <>
+            {message && (
+              <div
+                className={`mb-6 p-4 rounded-lg flex items-center gap-3 ${
+                  message.type === 'success'
+                    ? 'bg-green-500/10 border border-green-500/20 text-green-400'
+                    : 'bg-red-500/10 border border-red-500/20 text-red-400'
+                }`}
+              >
+                {message.type === 'success' ? (
+                  <CheckCircle className="w-5 h-5" />
+                ) : (
+                  <AlertCircle className="w-5 h-5" />
+                )}
+                <span>{message.text}</span>
+              </div>
+            )}
 
-        <div className="space-y-8">
+            <div className="space-y-8">
           {Object.entries(groupedServices).map(([category, items]) => {
             if (items.length === 0) return null;
 
@@ -565,27 +746,29 @@ export default function AllAPIKeysManager() {
               </div>
             );
           })}
-        </div>
+            </div>
 
-        <div className="mt-8 pt-6 border-t border-gray-700/50">
-          <button
-            onClick={handleSave}
-            disabled={saving}
-            className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {saving ? (
-              <>
-                <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
-                <span>Saving...</span>
-              </>
-            ) : (
-              <>
-                <Save className="w-5 h-5" />
-                <span>Save all keys</span>
-              </>
-            )}
-          </button>
-        </div>
+            <div className="mt-8 pt-6 border-t border-gray-700/50">
+              <button
+                onClick={handleSave}
+                disabled={saving}
+                className="w-full flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-blue-600 to-purple-600 text-white font-semibold rounded-lg hover:from-blue-700 hover:to-purple-700 transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {saving ? (
+                  <>
+                    <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white"></div>
+                    <span>Saving...</span>
+                  </>
+                ) : (
+                  <>
+                    <Save className="w-5 h-5" />
+                    <span>Save all keys</span>
+                  </>
+                )}
+              </button>
+            </div>
+          </>
+        )}
       </div>
 
       <div className="bg-yellow-500/10 border border-yellow-500/20 rounded-lg p-6">
