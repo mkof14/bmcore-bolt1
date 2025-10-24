@@ -61,11 +61,15 @@ export async function createCheckoutSession(
 
 export async function redirectToCheckout(planId: PlanId, interval: BillingInterval = 'monthly') {
   try {
+    console.log('[Stripe] Starting checkout:', { planId, interval });
+
     const { data: { user } } = await supabase.auth.getUser();
 
     if (!user) {
       throw new Error('User not authenticated');
     }
+
+    console.log('[Stripe] User authenticated:', user.id);
 
     const plan = stripeConfig.prices[planId];
     if (!plan) {
@@ -73,19 +77,40 @@ export async function redirectToCheckout(planId: PlanId, interval: BillingInterv
     }
 
     const priceId = plan[interval].priceId;
+    console.log('[Stripe] Using price ID:', priceId);
 
     const stripe = getStripe();
-    const { sessionId } = await createCheckoutSession(priceId, user.id);
+    console.log('[Stripe] Creating checkout session...');
 
+    const { sessionId, url } = await createCheckoutSession(priceId, user.id);
+    console.log('[Stripe] Session created:', { sessionId, url });
+
+    if (url) {
+      // Direct redirect using URL (more reliable)
+      console.log('[Stripe] Redirecting to:', url);
+      window.location.href = url;
+      return;
+    }
+
+    // Fallback to redirectToCheckout
+    console.log('[Stripe] Using redirectToCheckout with sessionId:', sessionId);
     const { error } = await stripe.redirectToCheckout({ sessionId });
 
     if (error) {
-      console.error('Stripe redirect error:', error);
+      console.error('[Stripe] Redirect error:', error);
       throw error;
     }
-  } catch (error) {
-    console.error('Checkout error:', error);
-    throw error;
+  } catch (error: any) {
+    console.error('[Stripe] Checkout error:', error);
+
+    // More detailed error message
+    if (error.message?.includes('Missing authorization')) {
+      throw new Error('Authentication required. Please sign in and try again.');
+    } else if (error.message?.includes('Missing required environment variables')) {
+      throw new Error('Payment system not configured. Please contact support.');
+    } else {
+      throw new Error(error.message || 'Failed to start checkout. Please try again.');
+    }
   }
 }
 

@@ -56,9 +56,33 @@ function App() {
   const [serviceDetailId, setServiceDetailId] = useState<string>('');
   const [categoryFilter, setCategoryFilter] = useState<string>('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [hasSubscription, setHasSubscription] = useState(false);
+  const [isCheckingSubscription, setIsCheckingSubscription] = useState(false);
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
   const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
   const { isUpdateAvailable, updateServiceWorker } = useServiceWorker();
+
+  // Check subscription status
+  const checkSubscription = async (userId: string) => {
+    try {
+      setIsCheckingSubscription(true);
+      const { data } = await supabase
+        .from('user_subscriptions')
+        .select('status')
+        .eq('user_id', userId)
+        .in('status', ['active', 'trialing'])
+        .maybeSingle();
+
+      setHasSubscription(!!data);
+      return !!data;
+    } catch (error) {
+      console.error('Error checking subscription:', error);
+      setHasSubscription(false);
+      return false;
+    } finally {
+      setIsCheckingSubscription(false);
+    }
+  };
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
@@ -67,6 +91,7 @@ function App() {
         identifyUser(session.user.id, {
           email: session.user.email
         });
+        checkSubscription(session.user.id);
       }
     });
 
@@ -76,6 +101,9 @@ function App() {
         identifyUser(session.user.id, {
           email: session.user.email
         });
+        checkSubscription(session.user.id);
+      } else {
+        setHasSubscription(false);
       }
     });
 
@@ -99,10 +127,30 @@ function App() {
     };
   }, []);
 
-  const handleNavigate = (page: string, data?: string) => {
-    if (page === 'member' && !isAuthenticated) {
+  const handleNavigate = async (page: string, data?: string) => {
+    // Special handling for member-zone/member pages
+    if ((page === 'member' || page === 'member-zone') && !isAuthenticated) {
       setCurrentPage('signin');
-    } else if (page === 'service-detail' && data) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    // If trying to access member zone, check subscription
+    if ((page === 'member' || page === 'member-zone') && isAuthenticated) {
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const hasActiveSub = await checkSubscription(user.id);
+        if (!hasActiveSub) {
+          // No subscription - redirect to pricing
+          setCurrentPage('pricing');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+      }
+    }
+
+    if (page === 'service-detail' && data) {
       setServiceDetailId(data);
       setCurrentPage('service-detail');
     } else if (page === 'services-catalog' && data) {
