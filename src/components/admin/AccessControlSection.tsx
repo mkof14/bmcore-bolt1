@@ -244,8 +244,8 @@ export default function AccessControlSection() {
       console.log('Target User ID:', userId);
       console.log('Role ID:', roleId);
 
-      const { data: checkAdmin, error: checkError } = await supabase.rpc('is_admin', {
-        user_id: currentUser.user.id
+      const { data: checkAdmin, error: checkError } = await supabase.rpc('is_admin_cached', {
+        check_user_id: currentUser.user.id
       });
 
       console.log('Is Admin Check:', checkAdmin);
