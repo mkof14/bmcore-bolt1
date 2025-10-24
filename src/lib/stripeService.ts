@@ -1,0 +1,182 @@
+import { stripeConfig, validateStripeConfig, type PlanId } from '../config/stripe';
+import { supabase } from './supabase';
+
+let stripe: any = null;
+
+export function initStripe() {
+  if (!validateStripeConfig()) {
+    throw new Error('Stripe configuration is invalid');
+  }
+
+  if (typeof window !== 'undefined' && (window as any).Stripe) {
+    stripe = (window as any).Stripe(stripeConfig.publishableKey);
+  } else {
+    throw new Error('Stripe.js not loaded. Make sure Stripe script is included in index.html');
+  }
+
+  return stripe;
+}
+
+export function getStripe() {
+  if (!stripe) {
+    stripe = initStripe();
+  }
+  return stripe;
+}
+
+export async function createCheckoutSession(
+  priceId: string,
+  userId: string
+): Promise<{ sessionId: string; url: string }> {
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+
+    if (!session) {
+      throw new Error('Not authenticated');
+    }
+
+    const { data, error } = await supabase.functions.invoke('create-checkout-session', {
+      body: {
+        priceId,
+        userId,
+        successUrl: stripeConfig.successUrl,
+        cancelUrl: stripeConfig.cancelUrl
+      },
+      headers: {
+        Authorization: `Bearer ${session.access_token}`
+      }
+    });
+
+    if (error) throw error;
+
+    return {
+      sessionId: data.sessionId,
+      url: data.url
+    };
+  } catch (error) {
+    console.error('Error creating checkout session:', error);
+    throw error;
+  }
+}
+
+export async function redirectToCheckout(planId: PlanId) {
+  try {
+    const { data: { user } } = await supabase.auth.getUser();
+
+    if (!user) {
+      throw new Error('User not authenticated');
+    }
+
+    const plan = stripeConfig.prices[planId];
+    if (!plan) {
+      throw new Error(`Invalid plan: ${planId}`);
+    }
+
+    const stripe = getStripe();
+    const { sessionId } = await createCheckoutSession(plan.priceId, user.id);
+
+    const { error } = await stripe.redirectToCheckout({ sessionId });
+
+    if (error) {
+      console.error('Stripe redirect error:', error);
+      throw error;
+    }
+  } catch (error) {
+    console.error('Checkout error:', error);
+    throw error;
+  }
+}
+
+export async function createPortalSession(): Promise<string> {
+  try {
+    const { data: { session } } = await supabase.auth.getSession();
+
+    if (!session) {
+      throw new Error('Not authenticated');
+    }
+
+    const { data, error } = await supabase.functions.invoke('create-portal-session', {
+      headers: {
+        Authorization: `Bearer ${session.access_token}`
+      }
+    });
+
+    if (error) throw error;
+
+    return data.url;
+  } catch (error) {
+    console.error('Error creating portal session:', error);
+    throw error;
+  }
+}
+
+export async function redirectToPortal() {
+  try {
+    const url = await createPortalSession();
+    window.location.href = url;
+  } catch (error) {
+    console.error('Portal redirect error:', error);
+    throw error;
+  }
+}
+
+export async function getSubscriptionStatus(userId: string) {
+  try {
+    const { data, error } = await supabase
+      .from('user_subscriptions')
+      .select('*')
+      .eq('user_id', userId)
+      .single();
+
+    if (error && error.code !== 'PGRST116') throw error;
+
+    return data;
+  } catch (error) {
+    console.error('Error getting subscription:', error);
+    return null;
+  }
+}
+
+export async function cancelSubscription(userId: string): Promise<boolean> {
+  try {
+    const subscription = await getSubscriptionStatus(userId);
+
+    if (!subscription) {
+      throw new Error('No active subscription found');
+    }
+
+    await redirectToPortal();
+
+    return true;
+  } catch (error) {
+    console.error('Error canceling subscription:', error);
+    return false;
+  }
+}
+
+export async function hasActiveSubscription(userId: string): Promise<boolean> {
+  const subscription = await getSubscriptionStatus(userId);
+  return subscription?.status === 'active';
+}
+
+export async function getSubscriptionTier(userId: string): Promise<string> {
+  const subscription = await getSubscriptionStatus(userId);
+  return subscription?.plan_id || 'free';
+}
+
+export function isSubscriptionActive(status: string | undefined): boolean {
+  return status === 'active' || status === 'trialing';
+}
+
+export function isSubscriptionCanceled(status: string | undefined): boolean {
+  return status === 'canceled' || status === 'unpaid';
+}
+
+export function getPlanFromPriceId(priceId: string): PlanId | null {
+  for (const [key, plan] of Object.entries(stripeConfig.prices)) {
+    if (plan.priceId === priceId) {
+      return key as PlanId;
+    }
+  }
+  return null;
+}
