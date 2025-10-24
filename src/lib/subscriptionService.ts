@@ -47,23 +47,27 @@ export async function createSubscription(
       periodEnd.setFullYear(periodEnd.getFullYear() + 1);
     }
 
-    const { data: subscription, error } = await supabase
+    // Use upsert function to handle existing subscriptions
+    const { data: subscriptionId, error: upsertError } = await supabase
+      .rpc('upsert_user_subscription', {
+        p_user_id: userId,
+        p_plan_id: planId,
+        p_billing_period: billingPeriod,
+        p_status: 'trial',
+        p_current_period_start: now.toISOString(),
+        p_current_period_end: periodEnd.toISOString()
+      });
+
+    if (upsertError) throw upsertError;
+
+    // Fetch the created/updated subscription
+    const { data: subscription, error: fetchError } = await supabase
       .from('user_subscriptions')
-      .insert({
-        user_id: userId,
-        plan_id: planId,
-        status: 'trial',
-        billing_period: billingPeriod,
-        current_period_start: now.toISOString(),
-        current_period_end: periodEnd.toISOString(),
-        trial_start: now.toISOString(),
-        trial_end: trialEnd.toISOString(),
-        is_trial: true
-      })
-      .select()
+      .select('*')
+      .eq('id', subscriptionId)
       .single();
 
-    if (error) throw error;
+    if (fetchError) throw fetchError;
 
     await sendSubscriptionWelcomeEmail(userId, plan, subscription);
 
@@ -92,11 +96,15 @@ export async function getSubscriptionPlan(planId: string): Promise<SubscriptionP
 
 export async function getUserSubscription(userId: string): Promise<UserSubscription | null> {
   try {
+    // Get the most recent active subscription
     const { data, error } = await supabase
       .from('user_subscriptions')
       .select('*')
       .eq('user_id', userId)
-      .single();
+      .in('status', ['active', 'trial', 'past_due'])
+      .order('created_at', { ascending: false })
+      .limit(1)
+      .maybeSingle();
 
     if (error) throw error;
     return data;
