@@ -5,13 +5,13 @@ import { injectStructuredData } from '../lib/structuredData';
 
 interface Testimonial {
   id: string;
-  full_name: string;
-  role: string;
-  company: string;
+  name: string;
+  role?: string;
+  company?: string;
   avatar_url?: string;
   content: string;
   rating: number;
-  verified: boolean;
+  status: string;
   featured: boolean;
 }
 
@@ -73,7 +73,8 @@ export default function Testimonials() {
     }
   };
 
-  const getInitials = (name: string) => {
+  const getInitials = (name: string | undefined | null) => {
+    if (!name) return '??';
     return name
       .split(' ')
       .map((n) => n[0])
@@ -129,12 +130,12 @@ export default function Testimonials() {
                   {testimonial.avatar_url ? (
                     <img
                       src={testimonial.avatar_url}
-                      alt={testimonial.full_name}
+                      alt={testimonial.name}
                       className="w-12 h-12 rounded-full object-cover"
                     />
                   ) : (
                     <div className="w-12 h-12 rounded-full bg-blue-600 flex items-center justify-center text-white font-semibold">
-                      {getInitials(testimonial.full_name)}
+                      {getInitials(testimonial.name)}
                     </div>
                   )}
                 </div>
@@ -142,9 +143,9 @@ export default function Testimonials() {
                 <div className="flex-grow">
                   <div className="flex items-center gap-2 mb-1">
                     <h3 className="font-semibold text-gray-900 dark:text-white">
-                      {testimonial.full_name}
+                      {testimonial.name}
                     </h3>
-                    {testimonial.verified && (
+                    {testimonial.status === 'approved' && (
                       <CheckCircle className="h-4 w-4 text-blue-600 dark:text-blue-400" />
                     )}
                   </div>
