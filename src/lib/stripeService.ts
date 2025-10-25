@@ -167,38 +167,34 @@ export async function redirectToCheckout(planId: PlanId, interval: BillingInterv
     console.log('[Stripe] Session created:', { sessionId, url });
 
     if (url) {
-      // Direct redirect using multiple methods for better browser compatibility
-      console.log('[Stripe] Redirecting to:', url);
+      console.log('[Stripe] Redirecting immediately to:', url);
 
-      // Try multiple redirect methods
-      try {
-        // Method 1: Direct assignment (works in most cases)
+      // Try multiple redirect methods for maximum compatibility
+
+      // Method 1: Create and click a link (works when window.location is blocked)
+      const link = document.createElement('a');
+      link.href = url;
+      link.target = '_self';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+
+      // Method 2: Direct location change as fallback
+      setTimeout(() => {
         window.location.href = url;
+      }, 100);
 
-        // Method 2: Replace (prevents back button issues)
-        setTimeout(() => {
-          window.location.replace(url);
-        }, 100);
+      // Method 3: Replace as additional fallback
+      setTimeout(() => {
+        window.location.replace(url);
+      }, 200);
 
-        // Method 3: Assign with timeout as fallback
-        setTimeout(() => {
-          window.location.assign(url);
-        }, 200);
-      } catch (e) {
-        console.error('[Stripe] Redirect failed, using fallback:', e);
-        // Fallback to Stripe's built-in redirect
-        const { error } = await stripe.redirectToCheckout({ sessionId });
-        if (error) {
-          throw error;
-        }
-      }
-
-      // Wait indefinitely to prevent any further code execution
-      await new Promise(() => {});
+      // Return to prevent any further execution
+      return;
     }
 
-    // This code should never be reached if url exists
-    console.log('[Stripe] Using redirectToCheckout with sessionId:', sessionId);
+    // Fallback if no URL
+    console.log('[Stripe] No URL, using redirectToCheckout with sessionId:', sessionId);
     const { error } = await stripe.redirectToCheckout({ sessionId });
 
     if (error) {

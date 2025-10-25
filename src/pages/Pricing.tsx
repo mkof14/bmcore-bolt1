@@ -541,13 +541,24 @@ export default function Pricing({ onNavigate }: PricingProps) {
       // Use dynamic import for stripeService
       const { redirectToCheckout } = await import('../lib/stripeService');
 
+      console.log('[Pricing] Starting redirect to Stripe...');
+
       // Redirect to Stripe Checkout - this will navigate away from the page
       await redirectToCheckout(selectedPlan.id, billingPeriod === 'monthly' ? 'monthly' : 'yearly');
+
+      console.log('[Pricing] After redirect call - should not reach here');
 
       // Keep modal open and processing state while redirecting
       // Don't reset state - user will be redirected to Stripe
     } catch (err: any) {
-      console.error('Checkout error:', err);
+      console.error('[Pricing] Checkout error:', err);
+
+      // Don't show error if it's just a redirect issue
+      if (err.message && err.message.includes('REDIRECT')) {
+        console.log('[Pricing] Redirect in progress, keeping modal open');
+        return;
+      }
+
       setError(err.message || 'Failed to start checkout. Please try again.');
       setIsProcessing(false);
     }
