@@ -21,6 +21,16 @@ export default function Pricing({ onNavigate }: PricingProps) {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [paymentStatus, setPaymentStatus] = useState<'cancelled' | null>(null);
+
+  useEffect(() => {
+    const params = new URLSearchParams(window.location.search);
+    const payment = params.get('payment');
+    if (payment === 'cancelled') {
+      setPaymentStatus('cancelled');
+      window.history.replaceState({}, '', '/pricing');
+    }
+  }, []);
 
   const plans = [
     {
@@ -177,6 +187,14 @@ export default function Pricing({ onNavigate }: PricingProps) {
       <div className="pt-20 pb-16">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <BackButton onNavigate={onNavigate} />
+
+          {paymentStatus === 'cancelled' && (
+            <div className="mb-8 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg text-center">
+              <p className="text-yellow-400 font-medium">
+                Payment was cancelled. You can try again whenever you're ready.
+              </p>
+            </div>
+          )}
 
           <section className="text-center mb-16 mt-12">
             <p className="text-orange-500 text-sm font-semibold tracking-wider mb-4">PRICING PLANS</p>

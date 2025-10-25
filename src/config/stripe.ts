@@ -6,6 +6,36 @@ export const stripeConfig = {
   currency: import.meta.env.VITE_STRIPE_CURRENCY || 'usd',
 
   prices: {
+    core: {
+      monthly: {
+        priceId: import.meta.env.VITE_STRIPE_PRICE_CORE_MONTHLY || 'price_1xxxxxxxxxx',
+        amount: 19,
+        interval: 'month',
+      },
+      yearly: {
+        priceId: import.meta.env.VITE_STRIPE_PRICE_CORE_YEARLY || 'price_1xxxxxxxxxx',
+        amount: 190,
+        interval: 'year',
+        savings: 38,
+        discount: '17%'
+      },
+      name: 'Core Plan',
+      description: 'Essential health analytics for individuals',
+      features: [
+        'Basic health dashboard',
+        '3 service categories access',
+        '10 GB Model Archive storage',
+        'Monthly health reports',
+        'Email support',
+        'Data encryption',
+        'Device connectivity (up to 2 devices)'
+      ],
+      limits: {
+        aiQueries: 50,
+        devices: 2,
+        reports: 4
+      }
+    },
     daily: {
       monthly: {
         priceId: import.meta.env.VITE_STRIPE_PRICE_DAILY_MONTHLY || 'price_1xxxxxxxxxx',
@@ -20,46 +50,18 @@ export const stripeConfig = {
         discount: '17%'
       },
       name: 'Daily Plan',
-      description: 'Daily health insights and guidance',
-      features: [
-        'Daily health insights',
-        'Basic analytics dashboard',
-        'Email support',
-        'Mobile app access',
-        'Health trend tracking',
-        'Weekly reports'
-      ],
-      limits: {
-        aiQueries: 50,
-        devices: 2,
-        reports: 4
-      }
-    },
-    core: {
-      monthly: {
-        priceId: import.meta.env.VITE_STRIPE_PRICE_CORE_MONTHLY || 'price_1xxxxxxxxxx',
-        amount: 79,
-        interval: 'month',
-      },
-      yearly: {
-        priceId: import.meta.env.VITE_STRIPE_PRICE_CORE_YEARLY || 'price_1xxxxxxxxxx',
-        amount: 790,
-        interval: 'year',
-        savings: 158,
-        discount: '17%'
-      },
-      name: 'Core Plan',
-      description: 'Complete health analytics and AI assistance',
+      description: 'Daily insights and comprehensive tracking',
       popular: true,
       features: [
-        'Everything in Daily',
-        'AI Health Assistant (unlimited)',
-        'Device integration (5 devices)',
+        'Everything in Core',
+        '10 Categories',
+        '50 GB Model Archive storage',
+        'Daily health reports',
+        'AI Assistant access',
         'Priority email support',
-        'Advanced analytics',
-        'Custom health goals',
-        'Medication tracking',
-        'Meal planning suggestions'
+        'Device connectivity (up to 5 devices)',
+        'Lab results integration',
+        'Genetic data analysis'
       ],
       limits: {
         aiQueries: -1,
@@ -70,29 +72,29 @@ export const stripeConfig = {
     max: {
       monthly: {
         priceId: import.meta.env.VITE_STRIPE_PRICE_MAX_MONTHLY || 'price_1xxxxxxxxxx',
-        amount: 149,
+        amount: 79,
         interval: 'month',
       },
       yearly: {
         priceId: import.meta.env.VITE_STRIPE_PRICE_MAX_YEARLY || 'price_1xxxxxxxxxx',
-        amount: 1490,
+        amount: 790,
         interval: 'year',
-        savings: 298,
+        savings: 158,
         discount: '17%'
       },
       name: 'Max Plan',
-      description: 'Premium health intelligence with unlimited access',
+      description: 'Complete health intelligence platform',
       features: [
-        'Everything in Core',
-        'Unlimited AI queries',
-        'Unlimited device connections',
-        'Premium 24/7 support',
-        'API access',
-        'Custom integrations',
-        'White-glove onboarding',
-        'Personalized health coaching',
-        'Export all data',
-        'Priority feature requests'
+        'Everything in Daily',
+        'All 20 service categories',
+        '200 GB Model Archive storage',
+        'Real-time AI insights',
+        '24/7 priority support',
+        'Unlimited device connectivity',
+        'Advanced predictive analytics',
+        'Custom report generation',
+        'Family accounts (up to 5 members)',
+        'API access for developers'
       ],
       limits: {
         aiQueries: -1,
