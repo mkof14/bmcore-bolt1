@@ -179,38 +179,28 @@ export async function redirectToCheckout(planId: PlanId, interval: BillingInterv
 
     if (url && url.length > 0) {
       console.log('[Stripe] ✅ URL IS VALID - Starting redirect to:', url);
+      console.log('[Stripe] URL first 100 chars:', url.substring(0, 100));
       console.log('[Stripe] Document ready state:', document.readyState);
       console.log('[Stripe] Window location before:', window.location.href);
 
-      // Method 1: Create and click a link (works when window.location is blocked)
-      console.log('[Stripe] Method 1: Creating link element...');
-      const link = document.createElement('a');
-      link.href = url;
-      link.target = '_self';
-      link.style.display = 'none';
-      document.body.appendChild(link);
-      console.log('[Stripe] Method 1: Link created, clicking now...');
-      link.click();
-      console.log('[Stripe] Method 1: Link clicked');
-      document.body.removeChild(link);
+      // CRITICAL: Use top.location for iframe compatibility
+      // This ensures we redirect the entire page, not just the iframe
+      console.log('[Stripe] Using top.location.href for redirect...');
+      try {
+        (window.top || window).location.href = url;
+        console.log('[Stripe] Redirect initiated successfully');
+      } catch (e) {
+        console.error('[Stripe] Direct redirect failed:', e);
 
-      // Method 2: Direct location change as fallback
-      console.log('[Stripe] Method 2: Scheduling window.location.href...');
-      setTimeout(() => {
-        console.log('[Stripe] Method 2: Executing window.location.href');
-        window.location.href = url;
-      }, 100);
+        // Fallback: Try with a delay
+        setTimeout(() => {
+          console.log('[Stripe] Fallback: Attempting window.location.replace');
+          window.location.replace(url);
+        }, 100);
+      }
 
-      // Method 3: Replace as additional fallback
-      console.log('[Stripe] Method 3: Scheduling window.location.replace...');
-      setTimeout(() => {
-        console.log('[Stripe] Method 3: Executing window.location.replace');
-        window.location.replace(url);
-      }, 200);
-
-      console.log('[Stripe] All redirect methods initiated, waiting...');
-      // Return to prevent any further execution
-      return;
+      // Wait indefinitely to prevent any code execution
+      return new Promise(() => {});
     } else {
       console.error('[Stripe] ❌ URL IS INVALID OR EMPTY:', { url, type: typeof url });
     }
