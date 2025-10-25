@@ -109,7 +109,12 @@ Deno.serve(async (req) => {
       );
     }
 
-    console.log('[Stripe] Creating checkout for:', { priceId, userId: user.id });
+    console.log('[Stripe] Creating checkout for:', {
+      priceId,
+      userId: user.id,
+      hasSuccessUrl: !!successUrl,
+      hasCancelUrl: !!cancelUrl
+    });
 
     const { data: profile } = await supabaseAdmin
       .from('user_profiles')
@@ -145,6 +150,19 @@ Deno.serve(async (req) => {
 
     console.log('[Stripe] Creating checkout session...');
 
+    // Use provided URLs or construct proper fallback URLs
+    const origin = successUrl
+      ? new URL(successUrl).origin
+      : (cancelUrl ? new URL(cancelUrl).origin : supabaseUrl);
+
+    const finalSuccessUrl = successUrl || `${origin}/member-zone?payment=success`;
+    const finalCancelUrl = cancelUrl || `${origin}/pricing?payment=cancelled`;
+
+    console.log('[Stripe] Redirect URLs:', {
+      success: finalSuccessUrl,
+      cancel: finalCancelUrl
+    });
+
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       mode: 'subscription',
@@ -155,8 +173,8 @@ Deno.serve(async (req) => {
           quantity: 1,
         },
       ],
-      success_url: successUrl || `${supabaseUrl}/member-zone?payment=success`,
-      cancel_url: cancelUrl || `${supabaseUrl}/pricing?payment=cancelled`,
+      success_url: finalSuccessUrl,
+      cancel_url: finalCancelUrl,
       metadata: {
         userId: user.id,
       },
