@@ -577,7 +577,15 @@ export default function Pricing({ onNavigate }: PricingProps) {
         return;
       }
 
-      setError(err.message || 'Failed to start checkout. Please try again.');
+      // Check for Stripe configuration issues
+      if (err.message && err.message.includes('Stripe secret key not configured')) {
+        setError('Payment system not fully configured. Please contact support or try again later.');
+      } else if (err.message && err.message.includes('Missing required environment variables')) {
+        setError('Payment system configuration error. Please contact support.');
+      } else {
+        setError(err.message || 'Failed to start checkout. Please try again.');
+      }
+
       setIsProcessing(false);
     }
   }

@@ -148,6 +148,19 @@ export default function StripeConfigManager() {
           </div>
         </div>
 
+        {configs.some(c => c.key === 'secret_key_live' && (c.value === 'NEED_TO_SET' || c.value === '')) && (
+          <div className="mb-6 p-4 bg-yellow-500/10 border border-yellow-500/20 rounded-lg flex items-center gap-3">
+            <AlertCircle className="w-5 h-5 text-yellow-400" />
+            <div className="text-yellow-400">
+              <p className="font-semibold">⚠️ Stripe Secret Key Required</p>
+              <p className="text-sm mt-1">
+                Payment processing won't work until you add your Stripe Secret Key below.
+                Get it from <a href="https://dashboard.stripe.com/apikeys" target="_blank" rel="noopener" className="underline">Stripe Dashboard → API Keys</a>
+              </p>
+            </div>
+          </div>
+        )}
+
         {message && (
           <div
             className={`mb-6 p-4 rounded-lg flex items-center gap-3 ${
