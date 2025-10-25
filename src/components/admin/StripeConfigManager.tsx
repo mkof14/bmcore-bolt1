@@ -24,32 +24,41 @@ export default function StripeConfigManager() {
     try {
       setLoading(true);
       const { data, error } = await supabase
-        .from('stripe_configuration')
-        .select('*')
-        .eq('environment', 'test')
+        .from('stripe_config')
+        .select('key, value')
         .order('key');
 
       if (error) throw error;
 
-      const importantKeys = [
-        'publishable_key_test',
-        'secret_key_test',
-        'webhook_secret_test',
-        'price_daily_monthly_test',
-        'price_daily_yearly_test',
-        'price_core_monthly_test',
-        'price_core_yearly_test',
-        'price_max_monthly_test',
-        'price_max_yearly_test',
-      ];
+      const configsWithMeta = (data || []).map(item => ({
+        key: item.key,
+        value: item.value,
+        description: getDescription(item.key),
+        is_secret: item.key.includes('secret') || item.key.includes('key')
+      }));
 
-      const filtered = (data || []).filter(config => importantKeys.includes(config.key));
-      setConfigs(filtered);
+      setConfigs(configsWithMeta);
     } catch (error: any) {
       setMessage({ type: 'error', text: error.message });
     } finally {
       setLoading(false);
     }
+  };
+
+  const getDescription = (key: string): string => {
+    const descriptions: Record<string, string> = {
+      'environment': 'Current environment (live/test)',
+      'publishable_key_live': 'Publishable key for live mode',
+      'secret_key_live': 'Secret key for live mode',
+      'webhook_secret': 'Webhook signing secret',
+      'price_daily_monthly': 'Daily plan monthly price ID',
+      'price_daily_yearly': 'Daily plan yearly price ID',
+      'price_core_monthly': 'Core plan monthly price ID',
+      'price_core_yearly': 'Core plan yearly price ID',
+      'price_max_monthly': 'Max plan monthly price ID',
+      'price_max_yearly': 'Max plan yearly price ID',
+    };
+    return descriptions[key] || key;
   };
 
   const handleUpdate = async (key: string, newValue: string) => {
@@ -66,8 +75,8 @@ export default function StripeConfigManager() {
 
       for (const config of configs) {
         const { error } = await supabase
-          .from('stripe_configuration')
-          .update({ value: config.value })
+          .from('stripe_config')
+          .update({ value: config.value, updated_at: new Date().toISOString() })
           .eq('key', config.key);
 
         if (error) throw error;
@@ -103,10 +112,11 @@ export default function StripeConfigManager() {
 
   const getGroupedConfigs = () => {
     return {
+      environment: configs.filter(c => c.key === 'environment'),
       apiKeys: configs.filter(c =>
-        c.key === 'publishable_key_test' ||
-        c.key === 'secret_key_test' ||
-        c.key === 'webhook_secret_test'
+        c.key === 'publishable_key_live' ||
+        c.key === 'secret_key_live' ||
+        c.key === 'webhook_secret'
       ),
       daily: configs.filter(c => c.key.includes('daily')),
       core: configs.filter(c => c.key.includes('core')),
@@ -153,6 +163,30 @@ export default function StripeConfigManager() {
         )}
 
         <div className="space-y-6">
+          {/* Environment Section */}
+          {getGroupedConfigs().environment.length > 0 && (
+            <div className="space-y-4">
+              <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
+                ⚙️ Environment
+              </h3>
+              {getGroupedConfigs().environment.map((config) => (
+                <div key={config.key} className="space-y-2">
+                  <label className="block text-sm font-medium text-gray-300">
+                    Current Mode
+                  </label>
+                  <p className="text-xs text-gray-500 mb-2">live (production) or test</p>
+                  <input
+                    type="text"
+                    value={config.value}
+                    onChange={(e) => handleUpdate(config.key, e.target.value)}
+                    placeholder="live"
+                    className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                </div>
+              ))}
+            </div>
+          )}
+
           {/* API Keys Section */}
           {getGroupedConfigs().apiKeys.length > 0 && (
             <div className="space-y-4">

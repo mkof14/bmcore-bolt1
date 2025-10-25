@@ -31,26 +31,10 @@ Deno.serve(async (req) => {
     try {
       console.log('[Stripe] Attempting to load config from database...');
 
-      const { data: envConfig, error: envError } = await supabaseAdmin
-        .from('stripe_configuration')
-        .select('value')
-        .eq('key', 'environment')
-        .maybeSingle();
-
-      if (envError) {
-        console.warn('[Stripe] Error reading environment:', envError);
-      }
-
-      const environment = envConfig?.value || 'live';
-      console.log('[Stripe] Environment:', environment);
-
-      const secretKeyName = environment === 'live' ? 'secret_key_live' : 'secret_key_test';
-
       const { data: secretKeyConfig, error: secretError } = await supabaseAdmin
-        .from('stripe_configuration')
+        .from('stripe_config')
         .select('value')
-        .eq('key', secretKeyName)
-        .eq('is_secret', true)
+        .eq('key', 'secret_key_live')
         .maybeSingle();
 
       if (secretError) {
@@ -58,10 +42,10 @@ Deno.serve(async (req) => {
       }
 
       if (secretKeyConfig?.value &&
-          secretKeyConfig.value !== 'sk_test_YOUR_KEY_HERE' &&
-          secretKeyConfig.value !== 'sk_live_YOUR_KEY_HERE') {
+          secretKeyConfig.value !== 'NEED_TO_SET' &&
+          secretKeyConfig.value.startsWith('sk_')) {
         stripeSecretKey = secretKeyConfig.value;
-        console.log('[Stripe] ✅ Using secret key from database (Admin Panel)');
+        console.log('[Stripe] ✅ Using secret key from database');
       } else {
         console.log('[Stripe] ⚠️ No valid secret key in database, using environment variable');
       }
@@ -150,7 +134,6 @@ Deno.serve(async (req) => {
 
     console.log('[Stripe] Creating checkout session...');
 
-    // Use provided URLs or construct proper fallback URLs
     const origin = successUrl
       ? new URL(successUrl).origin
       : (cancelUrl ? new URL(cancelUrl).origin : supabaseUrl);

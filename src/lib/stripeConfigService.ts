@@ -32,22 +32,10 @@ export async function loadStripeConfigFromDB(): Promise<StripeConfigFromDB> {
   }
 
   try {
-    // Get current environment setting
-    const { data: envData } = await supabase
-      .from('stripe_configuration')
-      .select('value')
-      .eq('key', 'environment')
-      .maybeSingle();
-
-    const environment = envData?.value || 'live';
-    console.log('[Stripe Config] Current environment:', environment);
-
-    // Fetch all non-secret configuration (publishable keys, price IDs)
+    // Fetch all configuration from stripe_config
     const { data: configs, error } = await supabase
-      .from('stripe_configuration')
-      .select('key, value')
-      .eq('environment', environment)
-      .eq('is_secret', false);
+      .from('stripe_config')
+      .select('key, value');
 
     if (error) {
       console.error('[Stripe Config] Error loading from database:', error);
@@ -62,26 +50,11 @@ export async function loadStripeConfigFromDB(): Promise<StripeConfigFromDB> {
     // Convert array to object
     const config: StripeConfigFromDB = {};
     configs.forEach(({ key, value }) => {
-      // Remove environment suffix from key (e.g., price_core_monthly_test -> price_core_monthly)
-      const cleanKey = key.replace(/_test$|_live$/, '');
-      config[cleanKey as keyof StripeConfigFromDB] = value;
+      config[key as keyof StripeConfigFromDB] = value;
     });
 
-    // Also fetch general config (currency, URLs)
-    const { data: generalConfigs } = await supabase
-      .from('stripe_configuration')
-      .select('key, value')
-      .in('key', ['currency', 'success_url', 'cancel_url']);
-
-    if (generalConfigs) {
-      generalConfigs.forEach(({ key, value }) => {
-        config[key as keyof StripeConfigFromDB] = value;
-      });
-    }
-
     console.log('[Stripe Config] Loaded from database:', {
-      environment,
-      hasPublishableKey: !!config.publishable_key,
+      hasPublishableKey: !!config.publishable_key_live,
       hasPriceIds: !!config.price_core_monthly
     });
 
