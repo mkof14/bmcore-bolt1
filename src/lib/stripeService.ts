@@ -46,12 +46,16 @@ export async function createCheckoutSession(
 
     console.log('[Stripe Service] Calling edge function...');
 
+    const currentOrigin = window.location.origin;
+    const successUrl = `${currentOrigin}/member-zone?payment=success`;
+    const cancelUrl = `${currentOrigin}/pricing?payment=cancelled`;
+
     const response = await supabase.functions.invoke('create-checkout-session', {
       body: {
         priceId,
         userId,
-        successUrl: stripeConfig.successUrl,
-        cancelUrl: stripeConfig.cancelUrl
+        successUrl,
+        cancelUrl
       },
       headers: {
         Authorization: `Bearer ${session.access_token}`
