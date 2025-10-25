@@ -62,11 +62,8 @@ export async function loadStripeConfigFromDB(): Promise<StripeConfigFromDB> {
     // Convert array to object
     const config: StripeConfigFromDB = {};
     configs.forEach(({ key, value }) => {
-      // Remove environment suffix from key
-      const cleanKey = key
-        .replace(`_${environment}`, '')
-        .replace('_test', '')
-        .replace('_live', '');
+      // Remove environment suffix from key (e.g., price_core_monthly_test -> price_core_monthly)
+      const cleanKey = key.replace(/_test$|_live$/, '');
       config[cleanKey as keyof StripeConfigFromDB] = value;
     });
 

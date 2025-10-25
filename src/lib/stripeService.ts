@@ -33,7 +33,9 @@ export async function createCheckoutSession(
       priceId,
       userId,
       successUrl: stripeConfig.successUrl,
-      cancelUrl: stripeConfig.cancelUrl
+      cancelUrl: stripeConfig.cancelUrl,
+      currentOrigin: window.location.origin,
+      currentHref: window.location.href
     });
 
     const { data: { session } } = await supabase.auth.getSession();
