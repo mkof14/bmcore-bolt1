@@ -167,14 +167,37 @@ export async function redirectToCheckout(planId: PlanId, interval: BillingInterv
     console.log('[Stripe] Session created:', { sessionId, url });
 
     if (url) {
-      // Direct redirect using URL (more reliable)
+      // Direct redirect using multiple methods for better browser compatibility
       console.log('[Stripe] Redirecting to:', url);
-      window.location.href = url;
-      // Wait for redirect to complete - prevent any further code execution
+
+      // Try multiple redirect methods
+      try {
+        // Method 1: Direct assignment (works in most cases)
+        window.location.href = url;
+
+        // Method 2: Replace (prevents back button issues)
+        setTimeout(() => {
+          window.location.replace(url);
+        }, 100);
+
+        // Method 3: Assign with timeout as fallback
+        setTimeout(() => {
+          window.location.assign(url);
+        }, 200);
+      } catch (e) {
+        console.error('[Stripe] Redirect failed, using fallback:', e);
+        // Fallback to Stripe's built-in redirect
+        const { error } = await stripe.redirectToCheckout({ sessionId });
+        if (error) {
+          throw error;
+        }
+      }
+
+      // Wait indefinitely to prevent any further code execution
       await new Promise(() => {});
     }
 
-    // Fallback to redirectToCheckout
+    // This code should never be reached if url exists
     console.log('[Stripe] Using redirectToCheckout with sessionId:', sessionId);
     const { error } = await stripe.redirectToCheckout({ sessionId });
 
