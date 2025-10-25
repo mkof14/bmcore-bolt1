@@ -14,11 +14,16 @@ export default function Footer({ onNavigate }: FooterProps) {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
           <div className="col-span-1 md:col-span-2">
             <div className="mb-4 flex items-center space-x-3">
-              <img
-                src="/logo-footer.png"
-                alt="BioMath Core Logo"
-                className="h-16 w-16 object-contain"
-              />
+              <picture>
+                <source srcSet="/logo-footer.webp" type="image/webp" />
+                <img
+                  src="/logo-footer.png"
+                  alt="BioMath Core Logo"
+                  className="h-16 w-16 object-contain"
+                  width="64"
+                  height="64"
+                />
+              </picture>
               <span className="text-3xl font-bold">
                 <span className="text-blue-500">BioMath</span>
                 <span className="text-gray-900 dark:text-white"> Core</span>

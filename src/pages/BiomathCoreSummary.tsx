@@ -23,7 +23,10 @@ export default function BiomathCoreSummary({ onNavigate }: BiomathCoreSummaryPro
 
           <div className="text-center mb-16">
             <div className="mb-8">
-              <img src="/logo-header.png" alt="BioMath Core" className="h-24 w-24 mx-auto mb-6" />
+              <picture>
+                <source srcSet="/logo-header.webp" type="image/webp" />
+                <img src="/logo-header.png" alt="BioMath Core" className="h-24 w-24 mx-auto mb-6" width="96" height="96" />
+              </picture>
               <h1 className="text-7xl md:text-8xl lg:text-9xl font-bold mb-6 tracking-tight">
                 <span className="text-blue-500">BIOMATH</span>
                 <span className={isDark ? 'text-white' : 'text-gray-900'}> CORE</span>

@@ -82,7 +82,10 @@ export default function SignUp({ onNavigate }: SignUpProps) {
       <div className="max-w-md w-full">
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-6 mb-6">
-            <img src="/logo-header.png" alt="BioMath Core" className="h-24 w-24" />
+            <picture>
+              <source srcSet="/logo-header.webp" type="image/webp" />
+              <img src="/logo-header.png" alt="BioMath Core" className="h-24 w-24" width="96" height="96" />
+            </picture>
             <h1 className="text-5xl font-bold">
               <span className="text-blue-600 dark:text-blue-400">BioMath</span>
               <span className="text-white"> Core</span>

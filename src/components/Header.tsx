@@ -25,11 +25,16 @@ export default function Header({ onNavigate, currentPage }: HeaderProps) {
       <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center h-16">
           <div className="flex items-center space-x-3 cursor-pointer" onClick={() => onNavigate('home')}>
-            <img
-              src="/logo-header.png"
-              alt="BioMath Core Logo"
-              className="h-12 w-12 object-contain"
-            />
+            <picture>
+              <source srcSet="/logo-header.webp" type="image/webp" />
+              <img
+                src="/logo-header.png"
+                alt="BioMath Core Logo"
+                className="h-12 w-12 object-contain"
+                width="48"
+                height="48"
+              />
+            </picture>
             <span className="text-2xl font-bold">
               <span className="text-blue-500">BioMath</span>
               <span className="text-gray-900 dark:text-white"> Core</span>
