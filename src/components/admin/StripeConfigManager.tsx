@@ -97,6 +97,9 @@ export default function StripeConfigManager() {
 
   const getFriendlyLabel = (key: string) => {
     const labels: Record<string, string> = {
+      'publishable_key_live': 'Publishable Key (pk_live_...)',
+      'secret_key_live': 'Secret Key (sk_live_...)',
+      'webhook_secret': 'Webhook Secret (whsec_...)',
       'publishable_key_test': 'Publishable Key (pk_test_...)',
       'secret_key_test': 'Secret Key (sk_test_...)',
       'webhook_secret_test': 'Webhook Secret (whsec_...)',
