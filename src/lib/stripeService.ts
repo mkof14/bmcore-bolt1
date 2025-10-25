@@ -170,7 +170,8 @@ export async function redirectToCheckout(planId: PlanId, interval: BillingInterv
       // Direct redirect using URL (more reliable)
       console.log('[Stripe] Redirecting to:', url);
       window.location.href = url;
-      return;
+      // Wait for redirect to complete - prevent any further code execution
+      await new Promise(() => {});
     }
 
     // Fallback to redirectToCheckout
