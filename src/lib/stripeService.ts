@@ -47,8 +47,16 @@ export async function createCheckoutSession(
     console.log('[Stripe Service] Calling edge function...');
 
     const currentOrigin = window.location.origin;
+    const currentHref = window.location.href;
     const successUrl = `${currentOrigin}/member-zone?payment=success`;
     const cancelUrl = `${currentOrigin}/pricing?payment=cancelled`;
+
+    console.log('[Stripe Service] URLs being sent:', {
+      currentOrigin,
+      currentHref,
+      successUrl,
+      cancelUrl
+    });
 
     const response = await supabase.functions.invoke('create-checkout-session', {
       body: {
