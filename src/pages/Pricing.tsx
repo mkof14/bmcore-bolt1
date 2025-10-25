@@ -534,32 +534,51 @@ export default function Pricing({ onNavigate }: PricingProps) {
   );
 
   async function handleSelectPlan(plan: any) {
+    console.log('[Pricing] handleSelectPlan called with plan:', plan.name);
+
     const { data: { user } } = await supabase.auth.getUser();
+    console.log('[Pricing] User check:', user ? 'Authenticated as ' + user.id : 'Not authenticated');
 
     if (!user) {
+      console.log('[Pricing] Redirecting to signin');
       onNavigate('signin');
       return;
     }
 
+    console.log('[Pricing] Opening confirmation modal');
     setSelectedPlan(plan);
     setShowConfirmation(true);
     setError(null);
   }
 
   async function handleConfirmPayment() {
-    if (!selectedPlan) return;
+    if (!selectedPlan) {
+      console.error('[Pricing] No plan selected!');
+      return;
+    }
+
+    console.log('[Pricing] handleConfirmPayment called for plan:', selectedPlan.name);
+    console.log('[Pricing] Billing period:', billingPeriod);
 
     setIsProcessing(true);
     setError(null);
 
     try {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error('Not authenticated');
+      if (!user) {
+        console.error('[Pricing] User not authenticated!');
+        throw new Error('Not authenticated');
+      }
+
+      console.log('[Pricing] User authenticated:', user.id);
 
       // Use dynamic import for stripeService
+      console.log('[Pricing] Importing stripeService...');
       const { redirectToCheckout } = await import('../lib/stripeService');
 
       console.log('[Pricing] Starting redirect to Stripe...');
+      console.log('[Pricing] Plan ID:', selectedPlan.id);
+      console.log('[Pricing] Interval:', billingPeriod === 'monthly' ? 'monthly' : 'yearly');
 
       // Redirect to Stripe Checkout - this will navigate away from the page
       await redirectToCheckout(selectedPlan.id, billingPeriod === 'monthly' ? 'monthly' : 'yearly');
