@@ -164,33 +164,55 @@ export async function redirectToCheckout(planId: PlanId, interval: BillingInterv
     console.log('[Stripe] Creating checkout session...');
 
     const { sessionId, url } = await createCheckoutSession(priceId, user.id);
-    console.log('[Stripe] Session created:', { sessionId, url });
+    console.log('[Stripe] Session created:', {
+      sessionId,
+      url,
+      sessionIdType: typeof sessionId,
+      urlType: typeof url,
+      urlLength: url?.length,
+      urlValid: url && url.startsWith('https://')
+    });
 
-    if (url) {
-      console.log('[Stripe] Redirecting immediately to:', url);
+    console.log('[Stripe] URL value:', url);
+    console.log('[Stripe] URL check - truthy?', !!url);
+    console.log('[Stripe] URL check - not empty?', url && url.length > 0);
 
-      // Try multiple redirect methods for maximum compatibility
+    if (url && url.length > 0) {
+      console.log('[Stripe] ✅ URL IS VALID - Starting redirect to:', url);
+      console.log('[Stripe] Document ready state:', document.readyState);
+      console.log('[Stripe] Window location before:', window.location.href);
 
       // Method 1: Create and click a link (works when window.location is blocked)
+      console.log('[Stripe] Method 1: Creating link element...');
       const link = document.createElement('a');
       link.href = url;
       link.target = '_self';
+      link.style.display = 'none';
       document.body.appendChild(link);
+      console.log('[Stripe] Method 1: Link created, clicking now...');
       link.click();
+      console.log('[Stripe] Method 1: Link clicked');
       document.body.removeChild(link);
 
       // Method 2: Direct location change as fallback
+      console.log('[Stripe] Method 2: Scheduling window.location.href...');
       setTimeout(() => {
+        console.log('[Stripe] Method 2: Executing window.location.href');
         window.location.href = url;
       }, 100);
 
       // Method 3: Replace as additional fallback
+      console.log('[Stripe] Method 3: Scheduling window.location.replace...');
       setTimeout(() => {
+        console.log('[Stripe] Method 3: Executing window.location.replace');
         window.location.replace(url);
       }, 200);
 
+      console.log('[Stripe] All redirect methods initiated, waiting...');
       // Return to prevent any further execution
       return;
+    } else {
+      console.error('[Stripe] ❌ URL IS INVALID OR EMPTY:', { url, type: typeof url });
     }
 
     // Fallback if no URL
