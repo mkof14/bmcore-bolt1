@@ -15,9 +15,9 @@ export default function Footer({ onNavigate }: FooterProps) {
           <div className="col-span-1 md:col-span-2">
             <div className="mb-4 flex items-center space-x-3">
               <picture>
-                <source srcSet="/logo-footer.webp" type="image/webp" />
+                <source srcSet="/logo-footer.webp?v=2" type="image/webp" />
                 <img
-                  src="/logo-footer.png"
+                  src="/logo-footer.png?v=2"
                   alt="BioMath Core Logo"
                   className="h-16 w-16 object-contain"
                   width="64"

@@ -50,8 +50,8 @@ export default function SignIn({ onNavigate, onSignIn }: SignInProps) {
         <div className="text-center mb-8">
           <div className="flex items-center justify-center gap-4 mb-6">
             <picture>
-              <source srcSet="/logo-header.webp" type="image/webp" />
-              <img src="/logo-header.png" alt="BioMath Core" className="h-16 w-16" width="64" height="64" />
+              <source srcSet="/logo-header.webp?v=2" type="image/webp" />
+              <img src="/logo-header.png?v=2" alt="BioMath Core" className="h-16 w-16" width="64" height="64" />
             </picture>
             <h1 className="text-4xl font-bold">
               <span className="text-blue-600 dark:text-blue-400">BioMath</span>
