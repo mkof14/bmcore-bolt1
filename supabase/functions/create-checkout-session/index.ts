@@ -31,23 +31,36 @@ Deno.serve(async (req) => {
     try {
       console.log('[Stripe] Attempting to load config from database...');
 
-      const { data: secretKeyConfig, error: secretError } = await supabaseAdmin
-        .from('stripe_config')
-        .select('value')
-        .eq('key', 'secret_key_live')
+      // Try api_keys_configuration first (used by API Keys Manager)
+      const { data: apiKeyConfig, error: apiError } = await supabaseAdmin
+        .from('api_keys_configuration')
+        .select('key_value')
+        .eq('key_name', 'stripe_secret')
         .maybeSingle();
 
-      if (secretError) {
-        console.warn('[Stripe] Error reading secret key:', secretError);
-      }
-
-      if (secretKeyConfig?.value &&
-          secretKeyConfig.value !== 'NEED_TO_SET' &&
-          secretKeyConfig.value.startsWith('sk_')) {
-        stripeSecretKey = secretKeyConfig.value;
-        console.log('[Stripe] ✅ Using secret key from database');
+      if (!apiError && apiKeyConfig?.key_value && apiKeyConfig.key_value.startsWith('sk_')) {
+        stripeSecretKey = apiKeyConfig.key_value;
+        console.log('[Stripe] ✅ Using secret key from api_keys_configuration');
       } else {
-        console.log('[Stripe] ⚠️ No valid secret key in database, using environment variable');
+        // Fallback to stripe_config table
+        const { data: secretKeyConfig, error: secretError } = await supabaseAdmin
+          .from('stripe_config')
+          .select('value')
+          .eq('key', 'secret_key_live')
+          .maybeSingle();
+
+        if (secretError) {
+          console.warn('[Stripe] Error reading secret key:', secretError);
+        }
+
+        if (secretKeyConfig?.value &&
+            secretKeyConfig.value !== 'NEED_TO_SET' &&
+            secretKeyConfig.value.startsWith('sk_')) {
+          stripeSecretKey = secretKeyConfig.value;
+          console.log('[Stripe] ✅ Using secret key from stripe_config');
+        } else {
+          console.log('[Stripe] ⚠️ No valid secret key in database, using environment variable');
+        }
       }
     } catch (error) {
       console.warn('[Stripe] Exception loading from database, using env:', error);

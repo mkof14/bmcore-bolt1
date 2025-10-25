@@ -32,7 +32,60 @@ export async function loadStripeConfigFromDB(): Promise<StripeConfigFromDB> {
   }
 
   try {
-    // Fetch all configuration from stripe_config
+    // Try api_keys_configuration first (used by API Keys Manager in Admin Panel)
+    const { data: apiKeys, error: apiError } = await supabase
+      .from('api_keys_configuration')
+      .select('key_name, key_value')
+      .in('key_name', ['stripe_publishable', 'stripe_secret', 'stripe_webhook_secret']);
+
+    if (!apiError && apiKeys && apiKeys.length > 0) {
+      console.log('[Stripe Config] Loading from api_keys_configuration');
+
+      const config: StripeConfigFromDB = {};
+
+      // Map API keys to expected format
+      apiKeys.forEach(({ key_name, key_value }) => {
+        if (key_name === 'stripe_publishable') config.publishable_key = key_value;
+        if (key_name === 'stripe_secret') config.secret_key = key_value;
+        if (key_name === 'stripe_webhook_secret') config.webhook_secret = key_value;
+      });
+
+      // Load price IDs from stripe_config or .env
+      const { data: stripeConfigs } = await supabase
+        .from('stripe_config')
+        .select('key, value')
+        .in('key', [
+          'price_daily_monthly', 'price_daily_yearly',
+          'price_core_monthly', 'price_core_yearly',
+          'price_max_monthly', 'price_max_yearly',
+          'currency', 'environment'
+        ]);
+
+      if (stripeConfigs) {
+        stripeConfigs.forEach(({ key, value }) => {
+          config[key as keyof StripeConfigFromDB] = value;
+        });
+      }
+
+      // Fallback to .env for missing price IDs
+      if (!config.price_daily_monthly) config.price_daily_monthly = import.meta.env.VITE_STRIPE_PRICE_DAILY_MONTHLY;
+      if (!config.price_daily_yearly) config.price_daily_yearly = import.meta.env.VITE_STRIPE_PRICE_DAILY_YEARLY;
+      if (!config.price_core_monthly) config.price_core_monthly = import.meta.env.VITE_STRIPE_PRICE_CORE_MONTHLY;
+      if (!config.price_core_yearly) config.price_core_yearly = import.meta.env.VITE_STRIPE_PRICE_CORE_YEARLY;
+      if (!config.price_max_monthly) config.price_max_monthly = import.meta.env.VITE_STRIPE_PRICE_MAX_MONTHLY;
+      if (!config.price_max_yearly) config.price_max_yearly = import.meta.env.VITE_STRIPE_PRICE_MAX_YEARLY;
+
+      console.log('[Stripe Config] Loaded from api_keys_configuration:', {
+        hasPublishableKey: !!config.publishable_key,
+        hasPriceIds: !!config.price_core_monthly
+      });
+
+      cachedConfig = config;
+      lastFetchTime = now;
+      return config;
+    }
+
+    // Fallback to stripe_config table
     const { data: configs, error } = await supabase
       .from('stripe_config')
       .select('key, value');
@@ -53,8 +106,8 @@ export async function loadStripeConfigFromDB(): Promise<StripeConfigFromDB> {
       config[key as keyof StripeConfigFromDB] = value;
     });
 
-    console.log('[Stripe Config] Loaded from database:', {
-      hasPublishableKey: !!config.publishable_key_live,
+    console.log('[Stripe Config] Loaded from stripe_config:', {
+      hasPublishableKey: !!config.publishable_key,
       hasPriceIds: !!config.price_core_monthly
     });
 
