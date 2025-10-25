@@ -46,14 +46,24 @@ export async function createCheckoutSession(
 
     console.log('[Stripe Service] Calling edge function...');
 
-    const currentOrigin = window.location.origin;
-    const currentHref = window.location.href;
-    const successUrl = `${currentOrigin}/member-zone?payment=success`;
-    const cancelUrl = `${currentOrigin}/pricing?payment=cancelled`;
+    // IMPORTANT: For Bolt.new and similar preview environments, we need the actual public URL
+    // not the internal webcontainer URL. We'll use an environment variable or fallback.
+    let baseUrl = import.meta.env.VITE_PUBLIC_URL || window.location.origin;
+
+    // If no public URL is set and we're in a webcontainer/preview environment,
+    // we MUST use window.location.origin as fallback (Stripe will handle it)
+    if (baseUrl.includes('webcontainer') || baseUrl.includes('localhost')) {
+      console.warn('[Stripe Service] Using preview/local URL - return navigation may not work from Stripe');
+    }
+
+    const successUrl = `${baseUrl}/member-zone?payment=success`;
+    const cancelUrl = `${baseUrl}/pricing?payment=cancelled`;
 
     console.log('[Stripe Service] URLs being sent:', {
-      currentOrigin,
-      currentHref,
+      windowOrigin: window.location.origin,
+      windowHref: window.location.href,
+      envPublicUrl: import.meta.env.VITE_PUBLIC_URL,
+      computedBaseUrl: baseUrl,
       successUrl,
       cancelUrl
     });
