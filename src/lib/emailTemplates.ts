@@ -1,5 +1,7 @@
 // All 38 Email Template Definitions for BioMath Core
 
+const EMAIL_LOGO_HEADER = `<div style="text-align:center;margin-bottom:32px;padding-bottom:24px;border-bottom:2px solid #E2E8F0;"><img src="https://biomathcore.com/logo-header.png" alt="BioMath Core" style="height:64px;width:64px;margin-bottom:12px;"/><div style="font-size:28px;font-weight:700;"><span style="color:#2563EB;">BioMath</span> <span style="color:#0B0F19;">Core</span></div></div>`;
+
 export interface EmailTemplateDefinition {
   name: string;
   slug: string;
@@ -26,7 +28,7 @@ export const EMAIL_TEMPLATES: EmailTemplateDefinition[] = [
     subject_en: 'Welcome to BioMath Core',
     subject_ru: 'Добро пожаловать в BioMath Core',
     preview_text: 'Your journey to better health starts here',
-    body_en: `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;font-family:Inter,system-ui,sans-serif;background:#FFFFFF;"><div style="max-width:600px;margin:0 auto;padding:40px 20px;"><h1 style="color:#2563EB;font-size:28px;margin:0 0 24px;">Welcome to BioMath Core</h1><p style="color:#0B0F19;font-size:16px;line-height:1.6;">Hi {{userName}},</p><p style="color:#0B0F19;font-size:16px;line-height:1.6;">We're excited to have you join BioMath Core! Your account is now active and ready to use.</p><a href="https://biomathcore.com/dashboard" style="display:inline-block;padding:12px 32px;background:#2563EB;color:#FFFFFF;text-decoration:none;border-radius:6px;font-weight:600;margin:24px 0;">Open Dashboard</a><p style="color:#64748B;font-size:14px;margin-top:32px;padding-top:24px;border-top:1px solid #E2E8F0;">© BioMath Core • <a href="https://biomathcore.com" style="color:#2563EB;text-decoration:none;">biomathcore.com</a> • <a href="mailto:support@biomathcore.com" style="color:#2563EB;text-decoration:none;">support@biomathcore.com</a></p></div></body></html>`,
+    body_en: `<!DOCTYPE html><html><head><meta charset="UTF-8"></head><body style="margin:0;padding:0;font-family:Inter,system-ui,sans-serif;background:#FFFFFF;"><div style="max-width:600px;margin:0 auto;padding:40px 20px;">${EMAIL_LOGO_HEADER}<h1 style="color:#2563EB;font-size:28px;margin:0 0 24px;">Welcome to BioMath Core</h1><p style="color:#0B0F19;font-size:16px;line-height:1.6;">Hi {{userName}},</p><p style="color:#0B0F19;font-size:16px;line-height:1.6;">We're excited to have you join BioMath Core! Your account is now active and ready to use.</p><a href="https://biomathcore.com/dashboard" style="display:inline-block;padding:12px 32px;background:#2563EB;color:#FFFFFF;text-decoration:none;border-radius:6px;font-weight:600;margin:24px 0;">Open Dashboard</a><p style="color:#64748B;font-size:14px;margin-top:32px;padding-top:24px;border-top:1px solid #E2E8F0;">© BioMath Core • <a href="https://biomathcore.com" style="color:#2563EB;text-decoration:none;">biomathcore.com</a> • <a href="mailto:support@biomathcore.com" style="color:#2563EB;text-decoration:none;">support@biomathcore.com</a></p></div></body></html>`,
     body_ru: `<!DOCTYPE html><html><body style="font-family:Inter,sans-serif;"><div style="max-width:600px;margin:0 auto;padding:40px;"><h1 style="color:#2563EB;">Добро пожаловать в BioMath Core</h1><p>Привет {{userName}}!</p><a href="https://biomathcore.com/dashboard" style="display:inline-block;padding:12px 32px;background:#2563EB;color:#FFF;text-decoration:none;border-radius:6px;">Открыть панель</a></div></body></html>`,
     variable_schema: [{ key: 'userName', type: 'string', required: true }],
     description: 'Welcome email sent to new users upon registration',
@@ -38,7 +40,7 @@ export const EMAIL_TEMPLATES: EmailTemplateDefinition[] = [
     subject_en: 'Verify your email for BioMath Core',
     subject_ru: 'Подтвердите email',
     preview_text: 'Click to verify your email address',
-    body_en: `<!DOCTYPE html><html><body style="font-family:Inter,sans-serif;background:#FFF;"><div style="max-width:600px;margin:0 auto;padding:40px 20px;"><h1 style="color:#2563EB;font-size:28px;">Verify Your Email</h1><p style="font-size:16px;color:#0B0F19;">Hi {{userName}},</p><p style="font-size:16px;color:#0B0F19;">Please verify your email address:</p><a href="{{verifyUrl}}" style="display:inline-block;padding:12px 32px;background:#2563EB;color:#FFF;text-decoration:none;border-radius:6px;margin:24px 0;">Verify Email</a><p style="color:#64748B;font-size:14px;">Or use code: <strong>{{code}}</strong></p><p style="color:#64748B;font-size:14px;margin-top:32px;border-top:1px solid #E2E8F0;padding-top:24px;">© BioMath Core</p></div></body></html>`,
+    body_en: `<!DOCTYPE html><html><body style="font-family:Inter,sans-serif;background:#FFF;"><div style="max-width:600px;margin:0 auto;padding:40px 20px;">${EMAIL_LOGO_HEADER}<h1 style="color:#2563EB;font-size:28px;">Verify Your Email</h1><p style="font-size:16px;color:#0B0F19;">Hi {{userName}},</p><p style="font-size:16px;color:#0B0F19;">Please verify your email address:</p><a href="{{verifyUrl}}" style="display:inline-block;padding:12px 32px;background:#2563EB;color:#FFF;text-decoration:none;border-radius:6px;margin:24px 0;">Verify Email</a><p style="color:#64748B;font-size:14px;">Or use code: <strong>{{code}}</strong></p><p style="color:#64748B;font-size:14px;margin-top:32px;border-top:1px solid #E2E8F0;padding-top:24px;">© BioMath Core</p></div></body></html>`,
     variable_schema: [
       { key: 'userName', type: 'string', required: true },
       { key: 'verifyUrl', type: 'string', required: true },
@@ -52,7 +54,7 @@ export const EMAIL_TEMPLATES: EmailTemplateDefinition[] = [
     category: 'welcome',
     subject_en: 'Sign in with your secure link',
     preview_text: 'Your secure sign-in link',
-    body_en: `<!DOCTYPE html><html><body style="font-family:Inter,sans-serif;"><div style="max-width:600px;margin:0 auto;padding:40px;"><h1 style="color:#2563EB;">Sign In to BioMath Core</h1><p>Hi {{userName}},</p><a href="{{magicUrl}}" style="display:inline-block;padding:12px 32px;background:#2563EB;color:#FFF;text-decoration:none;border-radius:6px;margin:24px 0;">Sign In</a><p style="color:#64748B;">Expires in {{expiresInMin}} minutes.</p><p style="color:#64748B;margin-top:32px;">© BioMath Core</p></div></body></html>`,
+    body_en: `<!DOCTYPE html><html><body style="font-family:Inter,sans-serif;"><div style="max-width:600px;margin:0 auto;padding:40px;">${EMAIL_LOGO_HEADER}<h1 style="color:#2563EB;">Sign In to BioMath Core</h1><p>Hi {{userName}},</p><a href="{{magicUrl}}" style="display:inline-block;padding:12px 32px;background:#2563EB;color:#FFF;text-decoration:none;border-radius:6px;margin:24px 0;">Sign In</a><p style="color:#64748B;">Expires in {{expiresInMin}} minutes.</p><p style="color:#64748B;margin-top:32px;">© BioMath Core</p></div></body></html>`,
     variable_schema: [
       { key: 'userName', type: 'string', required: true },
       { key: 'magicUrl', type: 'string', required: true },
@@ -66,7 +68,7 @@ export const EMAIL_TEMPLATES: EmailTemplateDefinition[] = [
     category: 'password_reset',
     subject_en: 'Reset your password',
     preview_text: 'Reset your BioMath Core password',
-    body_en: `<!DOCTYPE html><html><body style="font-family:Inter,sans-serif;"><div style="max-width:600px;margin:0 auto;padding:40px;"><h1 style="color:#2563EB;">Reset Your Password</h1><p>Hi {{userName}},</p><p>Click below to create a new password:</p><a href="{{resetUrl}}" style="display:inline-block;padding:12px 32px;background:#2563EB;color:#FFF;text-decoration:none;border-radius:6px;margin:24px 0;">Reset Password</a><p style="color:#64748B;">If you didn't request this, ignore this email.</p><p style="color:#64748B;margin-top:32px;">© BioMath Core</p></div></body></html>`,
+    body_en: `<!DOCTYPE html><html><body style="font-family:Inter,sans-serif;"><div style="max-width:600px;margin:0 auto;padding:40px;">${EMAIL_LOGO_HEADER}<h1 style="color:#2563EB;">Reset Your Password</h1><p>Hi {{userName}},</p><p>Click below to create a new password:</p><a href="{{resetUrl}}" style="display:inline-block;padding:12px 32px;background:#2563EB;color:#FFF;text-decoration:none;border-radius:6px;margin:24px 0;">Reset Password</a><p style="color:#64748B;">If you didn't request this, ignore this email.</p><p style="color:#64748B;margin-top:32px;">© BioMath Core</p></div></body></html>`,
     variable_schema: [
       { key: 'userName', type: 'string', required: true },
       { key: 'resetUrl', type: 'string', required: true },
@@ -79,7 +81,7 @@ export const EMAIL_TEMPLATES: EmailTemplateDefinition[] = [
     category: 'notification',
     subject_en: 'Your password was updated',
     preview_text: 'Password successfully changed',
-    body_en: `<!DOCTYPE html><html><body style="font-family:Inter,sans-serif;"><div style="max-width:600px;margin:0 auto;padding:40px;"><h1 style="color:#10B981;">Password Updated</h1><p>Hi {{userName}}, your password was updated at {{time}}.</p><p style="color:#64748B;margin-top:32px;">© BioMath Core</p></div></body></html>`,
+    body_en: `<!DOCTYPE html><html><body style="font-family:Inter,sans-serif;"><div style="max-width:600px;margin:0 auto;padding:40px;">${EMAIL_LOGO_HEADER}<h1 style="color:#10B981;">Password Updated</h1><p>Hi {{userName}}, your password was updated at {{time}}.</p><p style="color:#64748B;margin-top:32px;">© BioMath Core</p></div></body></html>`,
     variable_schema: [
       { key: 'userName', type: 'string', required: true },
       { key: 'time', type: 'string', required: true },
@@ -92,7 +94,7 @@ export const EMAIL_TEMPLATES: EmailTemplateDefinition[] = [
     category: 'notification',
     subject_en: 'Your profile is complete',
     preview_text: 'Profile setup finished',
-    body_en: `<!DOCTYPE html><html><body style="font-family:Inter,sans-serif;"><div style="max-width:600px;margin:0 auto;padding:40px;"><h1 style="color:#10B981;">Profile Complete!</h1><p>Hi {{userName}}, you're all set!</p><p style="color:#64748B;margin-top:32px;">© BioMath Core</p></div></body></html>`,
+    body_en: `<!DOCTYPE html><html><body style="font-family:Inter,sans-serif;"><div style="max-width:600px;margin:0 auto;padding:40px;">${EMAIL_LOGO_HEADER}<h1 style="color:#10B981;">Profile Complete!</h1><p>Hi {{userName}}, you're all set!</p><p style="color:#64748B;margin-top:32px;">© BioMath Core</p></div></body></html>`,
     variable_schema: [{ key: 'userName', type: 'string', required: true }],
     description: 'Profile completion notification',
   },
@@ -102,7 +104,7 @@ export const EMAIL_TEMPLATES: EmailTemplateDefinition[] = [
     category: 'billing_invoice',
     subject_en: 'Your trial has started',
     preview_text: 'Start exploring BioMath Core',
-    body_en: `<!DOCTYPE html><html><body style="font-family:Inter,sans-serif;"><div style="max-width:600px;margin:0 auto;padding:40px;"><h1 style="color:#2563EB;">Trial Started</h1><p>Hi {{userName}}, your {{planName}} trial is active until {{trialEndsAt}}.</p><a href="https://biomathcore.com/dashboard" style="display:inline-block;padding:12px 32px;background:#2563EB;color:#FFF;text-decoration:none;border-radius:6px;margin:24px 0;">Explore Features</a><p style="color:#64748B;margin-top:32px;">© BioMath Core</p></div></body></html>`,
+    body_en: `<!DOCTYPE html><html><body style="font-family:Inter,sans-serif;"><div style="max-width:600px;margin:0 auto;padding:40px;">${EMAIL_LOGO_HEADER}<h1 style="color:#2563EB;">Trial Started</h1><p>Hi {{userName}}, your {{planName}} trial is active until {{trialEndsAt}}.</p><a href="https://biomathcore.com/dashboard" style="display:inline-block;padding:12px 32px;background:#2563EB;color:#FFF;text-decoration:none;border-radius:6px;margin:24px 0;">Explore Features</a><p style="color:#64748B;margin-top:32px;">© BioMath Core</p></div></body></html>`,
     variable_schema: [
       { key: 'userName', type: 'string', required: true },
       { key: 'planName', type: 'string', required: true },
@@ -116,7 +118,7 @@ export const EMAIL_TEMPLATES: EmailTemplateDefinition[] = [
     category: 'billing_invoice',
     subject_en: 'Your trial ends soon',
     preview_text: 'Trial ending notification',
-    body_en: `<!DOCTYPE html><html><body style="font-family:Inter,sans-serif;"><div style="max-width:600px;margin:0 auto;padding:40px;"><h1 style="color:#F59E0B;">Trial Ending Soon</h1><p>Hi {{userName}}, your trial ends on {{trialEndsAt}}.</p><a href="https://biomathcore.com/pricing" style="display:inline-block;padding:12px 32px;background:#2563EB;color:#FFF;text-decoration:none;border-radius:6px;">View Plans</a><p style="color:#64748B;margin-top:32px;">© BioMath Core</p></div></body></html>`,
+    body_en: `<!DOCTYPE html><html><body style="font-family:Inter,sans-serif;"><div style="max-width:600px;margin:0 auto;padding:40px;">${EMAIL_LOGO_HEADER}<h1 style="color:#F59E0B;">Trial Ending Soon</h1><p>Hi {{userName}}, your trial ends on {{trialEndsAt}}.</p><a href="https://biomathcore.com/pricing" style="display:inline-block;padding:12px 32px;background:#2563EB;color:#FFF;text-decoration:none;border-radius:6px;">View Plans</a><p style="color:#64748B;margin-top:32px;">© BioMath Core</p></div></body></html>`,
     variable_schema: [
       { key: 'userName', type: 'string', required: true },
       { key: 'trialEndsAt', type: 'string', required: true },
@@ -129,7 +131,7 @@ export const EMAIL_TEMPLATES: EmailTemplateDefinition[] = [
     category: 'billing_invoice',
     subject_en: 'Your trial has ended',
     preview_text: 'Trial period complete',
-    body_en: `<!DOCTYPE html><html><body style="font-family:Inter,sans-serif;"><div style="max-width:600px;margin:0 auto;padding:40px;"><h1>Trial Ended</h1><p>Hi {{userName}}, subscribe to continue using BioMath Core.</p><a href="{{plansUrl}}" style="display:inline-block;padding:12px 32px;background:#2563EB;color:#FFF;text-decoration:none;border-radius:6px;">Choose a Plan</a><p style="color:#64748B;margin-top:32px;">© BioMath Core</p></div></body></html>`,
+    body_en: `<!DOCTYPE html><html><body style="font-family:Inter,sans-serif;"><div style="max-width:600px;margin:0 auto;padding:40px;">${EMAIL_LOGO_HEADER}<h1>Trial Ended</h1><p>Hi {{userName}}, subscribe to continue using BioMath Core.</p><a href="{{plansUrl}}" style="display:inline-block;padding:12px 32px;background:#2563EB;color:#FFF;text-decoration:none;border-radius:6px;">Choose a Plan</a><p style="color:#64748B;margin-top:32px;">© BioMath Core</p></div></body></html>`,
     variable_schema: [
       { key: 'userName', type: 'string', required: true },
       { key: 'plansUrl', type: 'string', required: true },
@@ -144,7 +146,7 @@ export const EMAIL_TEMPLATES: EmailTemplateDefinition[] = [
     category: 'payment_success',
     subject_en: 'Subscription activated',
     preview_text: 'Your subscription is now active',
-    body_en: `<!DOCTYPE html><html><body style="font-family:Inter,sans-serif;"><div style="max-width:600px;margin:0 auto;padding:40px;"><h1 style="color:#10B981;">Subscription Activated</h1><p>Hi {{userName}}, your {{planName}} subscription is active!</p><p>Amount: {{amount}} {{currency}}<br>Next billing: {{nextBillingAt}}</p><a href="https://biomathcore.com/dashboard" style="display:inline-block;padding:12px 32px;background:#2563EB;color:#FFF;text-decoration:none;border-radius:6px;margin:24px 0;">Go to Dashboard</a><p style="color:#64748B;margin-top:32px;">© BioMath Core</p></div></body></html>`,
+    body_en: `<!DOCTYPE html><html><body style="font-family:Inter,sans-serif;"><div style="max-width:600px;margin:0 auto;padding:40px;">${EMAIL_LOGO_HEADER}<h1 style="color:#10B981;">Subscription Activated</h1><p>Hi {{userName}}, your {{planName}} subscription is active!</p><p>Amount: {{amount}} {{currency}}<br>Next billing: {{nextBillingAt}}</p><a href="https://biomathcore.com/dashboard" style="display:inline-block;padding:12px 32px;background:#2563EB;color:#FFF;text-decoration:none;border-radius:6px;margin:24px 0;">Go to Dashboard</a><p style="color:#64748B;margin-top:32px;">© BioMath Core</p></div></body></html>`,
     variable_schema: [
       { key: 'userName', type: 'string', required: true },
       { key: 'planName', type: 'string', required: true },
@@ -160,7 +162,7 @@ export const EMAIL_TEMPLATES: EmailTemplateDefinition[] = [
     category: 'payment_failed',
     subject_en: 'We couldn\'t process your payment',
     preview_text: 'Payment issue detected',
-    body_en: `<!DOCTYPE html><html><body style="font-family:Inter,sans-serif;"><div style="max-width:600px;margin:0 auto;padding:40px;"><h1 style="color:#F59E0B;">Payment Issue</h1><p>Hi {{userName}}, we couldn't process your payment of {{amount}} {{currency}}.</p><a href="{{updatePaymentUrl}}" style="display:inline-block;padding:12px 32px;background:#2563EB;color:#FFF;text-decoration:none;border-radius:6px;">Update Payment Method</a><p style="color:#64748B;margin-top:32px;">© BioMath Core</p></div></body></html>`,
+    body_en: `<!DOCTYPE html><html><body style="font-family:Inter,sans-serif;"><div style="max-width:600px;margin:0 auto;padding:40px;">${EMAIL_LOGO_HEADER}<h1 style="color:#F59E0B;">Payment Issue</h1><p>Hi {{userName}}, we couldn't process your payment of {{amount}} {{currency}}.</p><a href="{{updatePaymentUrl}}" style="display:inline-block;padding:12px 32px;background:#2563EB;color:#FFF;text-decoration:none;border-radius:6px;">Update Payment Method</a><p style="color:#64748B;margin-top:32px;">© BioMath Core</p></div></body></html>`,
     variable_schema: [
       { key: 'userName', type: 'string', required: true },
       { key: 'amount', type: 'number', required: true },
@@ -175,7 +177,7 @@ export const EMAIL_TEMPLATES: EmailTemplateDefinition[] = [
     category: 'notification',
     subject_en: 'New sign-in detected',
     preview_text: 'Security alert',
-    body_en: `<!DOCTYPE html><html><body style="font-family:Inter,sans-serif;"><div style="max-width:600px;margin:0 auto;padding:40px;"><h1 style="color:#F59E0B;">New Sign-In Detected</h1><p>Hi {{userName}}, we detected a new sign-in:</p><p>Device: {{device}}<br>Location: {{city}}<br>IP: {{ip}}<br>Time: {{time}}</p><a href="https://biomathcore.com/security" style="display:inline-block;padding:12px 32px;background:#EF4444;color:#FFF;text-decoration:none;border-radius:6px;">Secure Account</a><p style="color:#64748B;margin-top:32px;">© BioMath Core</p></div></body></html>`,
+    body_en: `<!DOCTYPE html><html><body style="font-family:Inter,sans-serif;"><div style="max-width:600px;margin:0 auto;padding:40px;">${EMAIL_LOGO_HEADER}<h1 style="color:#F59E0B;">New Sign-In Detected</h1><p>Hi {{userName}}, we detected a new sign-in:</p><p>Device: {{device}}<br>Location: {{city}}<br>IP: {{ip}}<br>Time: {{time}}</p><a href="https://biomathcore.com/security" style="display:inline-block;padding:12px 32px;background:#EF4444;color:#FFF;text-decoration:none;border-radius:6px;">Secure Account</a><p style="color:#64748B;margin-top:32px;">© BioMath Core</p></div></body></html>`,
     variable_schema: [
       { key: 'userName', type: 'string', required: true },
       { key: 'device', type: 'string', required: true },

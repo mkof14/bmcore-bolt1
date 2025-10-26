@@ -1,44 +1,52 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, lazy, Suspense } from 'react';
 import { supabase } from './lib/supabase';
 import Header from './components/Header';
 import Footer from './components/Footer';
 import AIAssistantButton from './components/AIAssistantButton';
 import AIHealthAssistant from './components/AIHealthAssistantV2';
+import CookieBanner from './components/CookieBanner';
+import PWAInstallPrompt, { PWAUpdatePrompt } from './components/PWAInstallPrompt';
+import CommandPalette from './components/CommandPalette';
+import { LoadingPage } from './components/LoadingSpinner';
+import { analytics, identifyUser } from './lib/analytics';
+import { performanceMonitor } from './lib/performance';
+import { useServiceWorker } from './hooks/useServiceWorker';
 import Home from './pages/Home';
-import About from './pages/About';
-import Services from './pages/Services';
-import Pricing from './pages/Pricing';
-import Investors from './pages/Investors';
-import Science from './pages/Science';
-import API from './pages/API';
-import Contact from './pages/Contact';
-import SignIn from './pages/SignIn';
-import SignUp from './pages/SignUp';
-import MemberZone from './pages/MemberZone';
-import ServicesCatalog from './pages/ServicesCatalog';
-import ServiceDetail from './pages/ServiceDetail';
-import Devices from './pages/Devices';
-import Reports from './pages/Reports';
-import FAQ from './pages/FAQ';
-import Referral from './pages/Referral';
-import Ambassador from './pages/Ambassador';
-import LearningCenter from './pages/LearningCenter';
-import BiomathCoreSummary from './pages/BiomathCoreSummary';
-import SummaryText from './pages/SummaryText';
-import Blog from './pages/Blog';
-import News from './pages/News';
-import Careers from './pages/Careers';
-import CommandCenter from './pages/CommandCenter';
-import AdminPanel from './pages/AdminPanel';
-import PrivacyPolicy from './pages/legal/PrivacyPolicy';
-import TermsOfService from './pages/legal/TermsOfService';
-import Disclaimer from './pages/legal/Disclaimer';
-import HIPAANotice from './pages/legal/HIPAANotice';
-import Security from './pages/legal/Security';
-import GDPR from './pages/legal/GDPR';
-import DataPrivacy from './pages/legal/DataPrivacy';
-import TrustSafety from './pages/legal/TrustSafety';
-import Partnership from './pages/Partnership';
+
+const About = lazy(() => import('./pages/About'));
+const Services = lazy(() => import('./pages/Services'));
+const Pricing = lazy(() => import('./pages/Pricing'));
+const Investors = lazy(() => import('./pages/Investors'));
+const Science = lazy(() => import('./pages/Science'));
+const API = lazy(() => import('./pages/API'));
+const Contact = lazy(() => import('./pages/Contact'));
+const SignIn = lazy(() => import('./pages/SignIn'));
+const SignUp = lazy(() => import('./pages/SignUp'));
+const MemberZone = lazy(() => import('./pages/MemberZone'));
+const ServicesCatalog = lazy(() => import('./pages/ServicesCatalog'));
+const ServiceDetail = lazy(() => import('./pages/ServiceDetail'));
+const Devices = lazy(() => import('./pages/Devices'));
+const Reports = lazy(() => import('./pages/Reports'));
+const FAQ = lazy(() => import('./pages/FAQ'));
+const Referral = lazy(() => import('./pages/Referral'));
+const Ambassador = lazy(() => import('./pages/Ambassador'));
+const LearningCenter = lazy(() => import('./pages/LearningCenter'));
+const BiomathCoreSummary = lazy(() => import('./pages/BiomathCoreSummary'));
+const SummaryText = lazy(() => import('./pages/SummaryText'));
+const Blog = lazy(() => import('./pages/Blog'));
+const News = lazy(() => import('./pages/News'));
+const Careers = lazy(() => import('./pages/Careers'));
+const CommandCenter = lazy(() => import('./pages/CommandCenter'));
+const AdminPanel = lazy(() => import('./pages/AdminPanel'));
+const PrivacyPolicy = lazy(() => import('./pages/legal/PrivacyPolicy'));
+const TermsOfService = lazy(() => import('./pages/legal/TermsOfService'));
+const Disclaimer = lazy(() => import('./pages/legal/Disclaimer'));
+const HIPAANotice = lazy(() => import('./pages/legal/HIPAANotice'));
+const Security = lazy(() => import('./pages/legal/Security'));
+const GDPR = lazy(() => import('./pages/legal/GDPR'));
+const DataPrivacy = lazy(() => import('./pages/legal/DataPrivacy'));
+const TrustSafety = lazy(() => import('./pages/legal/TrustSafety'));
+const Partnership = lazy(() => import('./pages/Partnership'));
 
 type Page = 'home' | 'about' | 'services' | 'pricing' | 'investors' | 'science' | 'api' | 'contact' | 'signin' | 'signup' | 'member' | 'member-zone' | 'services-catalog' | 'service-detail' | 'devices' | 'reports' | 'faq' | 'referral' | 'ambassador' | 'learning' | 'learning-center' | 'biomath-core-summary' | 'summary-text' | 'blog' | 'news' | 'careers' | 'command-center' | 'admin-panel' | 'privacy-policy' | 'terms-of-service' | 'disclaimer' | 'hipaa-notice' | 'security' | 'gdpr' | 'data-privacy' | 'trust-safety' | 'partnership';
 
@@ -48,24 +56,116 @@ function App() {
   const [serviceDetailId, setServiceDetailId] = useState<string>('');
   const [categoryFilter, setCategoryFilter] = useState<string>('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+  const [hasSubscription, setHasSubscription] = useState(false);
+  const [isCheckingSubscription, setIsCheckingSubscription] = useState(false);
   const [isAssistantOpen, setIsAssistantOpen] = useState(false);
+  const [isCommandPaletteOpen, setIsCommandPaletteOpen] = useState(false);
+  const { isUpdateAvailable, updateServiceWorker } = useServiceWorker();
+
+  // Check subscription status
+  const checkSubscription = async (userId: string) => {
+    try {
+      setIsCheckingSubscription(true);
+      const { data } = await supabase
+        .from('user_subscriptions')
+        .select('status')
+        .eq('user_id', userId)
+        .in('status', ['active', 'trialing'])
+        .maybeSingle();
+
+      setHasSubscription(!!data);
+      return !!data;
+    } catch (error) {
+      console.error('Error checking subscription:', error);
+      setHasSubscription(false);
+      return false;
+    } finally {
+      setIsCheckingSubscription(false);
+    }
+  };
+
+  // Load Stripe configuration from database on startup
+  useEffect(() => {
+    const loadStripeConfig = async () => {
+      try {
+        const { loadStripeConfigFromDatabase } = await import('./config/stripe');
+        await loadStripeConfigFromDatabase();
+        console.log('[App] Stripe configuration loaded from database');
+      } catch (error) {
+        console.error('[App] Failed to load Stripe config:', error);
+      }
+    };
+
+    loadStripeConfig();
+  }, []);
 
   useEffect(() => {
     supabase.auth.getSession().then(({ data: { session } }) => {
       setIsAuthenticated(!!session);
+      if (session?.user) {
+        identifyUser(session.user.id, {
+          email: session.user.email
+        });
+        checkSubscription(session.user.id);
+      }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setIsAuthenticated(!!session);
+      if (session?.user) {
+        identifyUser(session.user.id, {
+          email: session.user.email
+        });
+        checkSubscription(session.user.id);
+      } else {
+        setHasSubscription(false);
+      }
     });
 
     return () => subscription.unsubscribe();
   }, []);
 
-  const handleNavigate = (page: string, data?: string) => {
-    if (page === 'member' && !isAuthenticated) {
+  useEffect(() => {
+    analytics.page(currentPage);
+  }, [currentPage]);
+
+  useEffect(() => {
+    const handleOpenCommandPalette = () => setIsCommandPaletteOpen(true);
+    const handleOpenAIAssistant = () => setIsAssistantOpen(true);
+
+    window.addEventListener('open-command-palette', handleOpenCommandPalette);
+    window.addEventListener('open-ai-assistant', handleOpenAIAssistant);
+
+    return () => {
+      window.removeEventListener('open-command-palette', handleOpenCommandPalette);
+      window.removeEventListener('open-ai-assistant', handleOpenAIAssistant);
+    };
+  }, []);
+
+  const handleNavigate = async (page: string, data?: string) => {
+    // Special handling for member-zone/member pages
+    if ((page === 'member' || page === 'member-zone') && !isAuthenticated) {
       setCurrentPage('signin');
-    } else if (page === 'service-detail' && data) {
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+      return;
+    }
+
+    // If trying to access member zone, check subscription
+    if ((page === 'member' || page === 'member-zone') && isAuthenticated) {
+      // Get current user
+      const { data: { user } } = await supabase.auth.getUser();
+      if (user) {
+        const hasActiveSub = await checkSubscription(user.id);
+        if (!hasActiveSub) {
+          // No subscription - redirect to pricing
+          setCurrentPage('pricing');
+          window.scrollTo({ top: 0, behavior: 'smooth' });
+          return;
+        }
+      }
+    }
+
+    if (page === 'service-detail' && data) {
       setServiceDetailId(data);
       setCurrentPage('service-detail');
     } else if (page === 'services-catalog' && data) {
@@ -183,7 +283,9 @@ function App() {
     <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors">
       {showHeaderFooter && <Header onNavigate={handleNavigate} currentPage={currentPage} />}
       <main>
-        {renderPage()}
+        <Suspense fallback={<LoadingPage text="Loading..." />}>
+          {renderPage()}
+        </Suspense>
       </main>
       {showHeaderFooter && <Footer onNavigate={handleNavigate} />}
 
@@ -195,6 +297,23 @@ function App() {
       <AIHealthAssistant
         isOpen={isAssistantOpen}
         onClose={() => setIsAssistantOpen(false)}
+      />
+
+      <CookieBanner />
+
+      <PWAInstallPrompt />
+
+      {isUpdateAvailable && (
+        <PWAUpdatePrompt onUpdate={updateServiceWorker} />
+      )}
+
+      <CommandPalette
+        isOpen={isCommandPaletteOpen}
+        onClose={() => setIsCommandPaletteOpen(false)}
+        onNavigate={(page) => {
+          handleNavigate(page);
+          setIsCommandPaletteOpen(false);
+        }}
       />
     </div>
   );

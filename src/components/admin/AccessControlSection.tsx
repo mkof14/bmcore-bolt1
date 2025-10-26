@@ -24,10 +24,14 @@ interface UserRole {
 
 interface Profile {
   id: string;
-  privacy_flags: {
+  email?: string;
+  name?: string;
+  privacy_flags?: {
     is_admin?: boolean;
   };
   created_at: string;
+  last_sign_in_at?: string;
+  roles?: string[];
 }
 
 const PERMISSION_CATEGORIES = {
@@ -120,7 +124,7 @@ export default function AccessControlSection() {
   const loadUsers = async () => {
     try {
       const { data, error } = await supabase
-        .from('profiles')
+        .from('admin_users_view')
         .select('*')
         .order('created_at', { ascending: false });
 
@@ -128,6 +132,13 @@ export default function AccessControlSection() {
       setUsers(data || []);
     } catch (error) {
       console.error('Error loading users:', error);
+
+      const { data: fallbackData } = await supabase
+        .from('profiles')
+        .select('id, email, name, privacy_flags, created_at')
+        .order('created_at', { ascending: false });
+
+      setUsers(fallbackData || []);
     }
   };
 
@@ -221,27 +232,73 @@ export default function AccessControlSection() {
 
   const handleAssignRole = async (userId: string, roleId: string) => {
     try {
-      const { error } = await supabase
+      const { data: currentUser } = await supabase.auth.getUser();
+
+      if (!currentUser.user) {
+        alert('You must be logged in to assign roles');
+        return;
+      }
+
+      console.log('=== Role Assignment Debug ===');
+      console.log('Current User ID:', currentUser.user.id);
+      console.log('Target User ID:', userId);
+      console.log('Role ID:', roleId);
+
+      // Check if current user is admin by querying their profile
+      const { data: profile, error: profileError } = await supabase
+        .from('profiles')
+        .select('is_admin')
+        .eq('id', currentUser.user.id)
+        .single();
+
+      console.log('Profile check:', profile);
+
+      if (profileError) {
+        console.error('Error checking profile:', profileError);
+        alert('Failed to verify admin status. Please try again.');
+        return;
+      }
+
+      if (!profile?.is_admin) {
+        alert('Permission denied: You must be an admin or super_admin to assign roles.');
+        return;
+      }
+
+      console.log('Admin check passed (is_admin = true), inserting role assignment...');
+
+      const { data, error } = await supabase
         .from('user_roles')
         .insert({
           user_id: userId,
           role_id: roleId,
-          assigned_by: (await supabase.auth.getUser()).data.user?.id,
-        });
+          assigned_by: currentUser.user.id,
+        })
+        .select();
 
       if (error) {
+        console.error('Error details:', error);
+        console.error('Error code:', error.code);
+        console.error('Error hint:', error.hint);
+        console.error('Error details:', error.details);
+
         if (error.code === '23505') {
           alert('User already has this role');
+        } else if (error.code === '42501') {
+          alert('Permission denied. You must be an admin to assign roles.');
+        } else if (error.message && error.message.includes('infinite recursion')) {
+          alert('System error: Infinite recursion detected. Please contact administrator.');
         } else {
-          throw error;
+          alert(`Failed to assign role: ${error.message}`);
         }
       } else {
-        loadUserRoles();
+        console.log('Role assigned successfully:', data);
+        await loadUserRoles();
         setShowAssignModal(false);
+        alert('Role assigned successfully!');
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error('Error assigning role:', error);
-      alert('Failed to assign role');
+      alert(`Failed to assign role: ${error.message || 'Unknown error'}`);
     }
   };
 
@@ -296,7 +353,9 @@ export default function AccessControlSection() {
   };
 
   const filteredUsers = users.filter(user =>
-    user.id.toLowerCase().includes(searchQuery.toLowerCase())
+    user.id.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.email?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+    user.name?.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
   return (
@@ -443,7 +502,7 @@ export default function AccessControlSection() {
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search users by ID..."
+                placeholder="Search users by email, name, or ID..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-3 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
@@ -451,8 +510,17 @@ export default function AccessControlSection() {
             </div>
           </div>
 
-          <div className="space-y-4">
-            {filteredUsers.map(user => {
+          {filteredUsers.length === 0 ? (
+            <div className="text-center py-12 text-gray-400">
+              <Users className="h-16 w-16 mx-auto mb-4 opacity-30" />
+              <p className="text-xl mb-2">No users found</p>
+              <p className="text-sm">
+                {searchQuery ? 'Try adjusting your search criteria' : 'No users are registered yet'}
+              </p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {filteredUsers.map(user => {
               const userRolesList = getUserRoles(user.id);
               return (
                 <div
@@ -465,49 +533,79 @@ export default function AccessControlSection() {
                         <div className="p-2 bg-blue-900/30 border border-blue-600/30 rounded-lg">
                           <Users className="h-5 w-5 text-blue-400" />
                         </div>
-                        <h3 className="text-base font-mono font-semibold text-white">{user.id}</h3>
+                        <div className="flex-1">
+                          <h3 className="text-base font-semibold text-white">
+                            {user.email || user.name || 'Unknown User'}
+                          </h3>
+                          <p className="text-xs text-gray-500 font-mono">{user.id}</p>
+                        </div>
                         {user.privacy_flags?.is_admin && (
                           <span className="px-2 py-1 bg-orange-900/30 border border-orange-600/30 text-orange-400 text-xs font-medium rounded-full">
                             Admin
                           </span>
                         )}
                       </div>
-                      <p className="text-sm text-gray-400 mb-3">
-                        Joined: {new Date(user.created_at).toLocaleDateString()}
-                      </p>
-                      {userRolesList.length > 0 ? (
-                        <div className="space-y-2">
-                          {userRolesList.map(ur => (
-                            <div
-                              key={ur.id}
-                              className="flex items-center justify-between p-3 bg-gray-800/50 border border-gray-700/30 rounded-lg"
-                            >
-                              <div className="flex items-center gap-2">
-                                <Shield className="h-4 w-4 text-orange-400" />
-                                <span className="text-sm font-medium text-white">{ur.roles?.name}</span>
-                                <span className="text-xs text-gray-500">
-                                  • Assigned {new Date(ur.assigned_at).toLocaleDateString()}
-                                </span>
-                              </div>
-                              <button
-                                onClick={() => handleRevokeRole(ur.id)}
-                                className="p-1 text-red-400 hover:bg-red-900/30 rounded transition-colors"
-                                title="Revoke Role"
+                      <div className="flex items-center gap-4 text-sm text-gray-400 mb-3">
+                        <span>Joined: {new Date(user.created_at).toLocaleDateString()}</span>
+                        {user.last_sign_in_at && (
+                          <span>• Last login: {new Date(user.last_sign_in_at).toLocaleDateString()}</span>
+                        )}
+                      </div>
+                      <div className="space-y-3">
+                        {userRolesList.length > 0 && (
+                          <div className="space-y-2">
+                            {userRolesList.map(ur => (
+                              <div
+                                key={ur.id}
+                                className="flex items-center justify-between p-3 bg-gray-800/50 border border-gray-700/30 rounded-lg"
                               >
-                                <UserMinus className="h-4 w-4" />
-                              </button>
-                            </div>
-                          ))}
+                                <div className="flex items-center gap-2">
+                                  <Shield className="h-4 w-4 text-orange-400" />
+                                  <span className="text-sm font-medium text-white">{ur.roles?.name}</span>
+                                  <span className="text-xs text-gray-500">
+                                    • Assigned {new Date(ur.assigned_at).toLocaleDateString()}
+                                  </span>
+                                </div>
+                                <button
+                                  onClick={() => handleRevokeRole(ur.id)}
+                                  className="p-1 text-red-400 hover:bg-red-900/30 rounded transition-colors"
+                                  title="Revoke Role"
+                                >
+                                  <UserMinus className="h-4 w-4" />
+                                </button>
+                              </div>
+                            ))}
+                          </div>
+                        )}
+
+                        <div className="flex items-center gap-2">
+                          <select
+                            onChange={(e) => {
+                              if (e.target.value) {
+                                handleAssignRole(user.id, e.target.value);
+                                e.target.value = '';
+                              }
+                            }}
+                            className="flex-1 px-3 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                          >
+                            <option value="">+ Assign role...</option>
+                            {roles
+                              .filter(role => !userRolesList.some(ur => ur.role_id === role.id))
+                              .map(role => (
+                                <option key={role.id} value={role.id}>
+                                  {role.name} {role.is_system ? '(System)' : ''}
+                                </option>
+                              ))}
+                          </select>
                         </div>
-                      ) : (
-                        <p className="text-sm text-gray-500 italic">No roles assigned</p>
-                      )}
+                      </div>
                     </div>
                   </div>
                 </div>
               );
             })}
-          </div>
+            </div>
+          )}
         </div>
       ) : (
         <div className="space-y-6">
@@ -664,10 +762,13 @@ export default function AccessControlSection() {
 
       {showAssignModal && (
         <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl max-w-md w-full">
+          <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl max-w-2xl w-full">
             <div className="p-6">
               <div className="flex items-center justify-between mb-6">
-                <h2 className="text-2xl font-bold text-white">Assign Role</h2>
+                <h2 className="text-2xl font-bold text-white flex items-center gap-2">
+                  <UserPlus className="h-6 w-6 text-orange-400" />
+                  Assign Role to User
+                </h2>
                 <button
                   onClick={() => setShowAssignModal(false)}
                   className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
@@ -676,53 +777,151 @@ export default function AccessControlSection() {
                 </button>
               </div>
 
-              <div className="space-y-4">
+              <div className="space-y-6">
                 <div>
                   <label className="block text-sm font-medium text-gray-400 mb-2">Select User</label>
-                  <select
-                    value={selectedUserId}
-                    onChange={(e) => setSelectedUserId(e.target.value)}
-                    className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-                  >
-                    <option value="">Choose a user...</option>
-                    {users.map(user => (
-                      <option key={user.id} value={user.id}>
-                        {user.id}
-                      </option>
-                    ))}
-                  </select>
+                  <div className="relative">
+                    <Users className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <select
+                      value={selectedUserId}
+                      onChange={(e) => setSelectedUserId(e.target.value)}
+                      className="w-full pl-10 pr-4 py-3 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    >
+                      <option value="">Choose a user...</option>
+                      {users.map(user => (
+                        <option key={user.id} value={user.id}>
+                          {user.id}
+                        </option>
+                      ))}
+                    </select>
+                  </div>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-2">Select Role</label>
-                  <div className="space-y-2 max-h-64 overflow-y-auto">
-                    {roles.map(role => (
-                      <button
-                        key={role.id}
-                        onClick={() => {
-                          if (selectedUserId) {
-                            handleAssignRole(selectedUserId, role.id);
-                          } else {
-                            alert('Please select a user first');
-                          }
-                        }}
-                        disabled={!selectedUserId}
-                        className="w-full p-3 bg-gray-800/50 border border-gray-700/30 rounded-lg hover:bg-gray-800 transition-colors text-left disabled:opacity-50 disabled:cursor-not-allowed"
-                      >
-                        <div className="flex items-center gap-2 mb-1">
-                          <Shield className="h-4 w-4 text-orange-400" />
-                          <span className="font-medium text-white">{role.name}</span>
-                        </div>
-                        <p className="text-xs text-gray-400">{role.description}</p>
-                      </button>
-                    ))}
-                  </div>
+                  <label className="block text-sm font-medium text-gray-400 mb-3">
+                    Select Role
+                    {selectedUserId && (
+                      <span className="ml-2 text-xs text-gray-500">
+                        (Click a role to assign)
+                      </span>
+                    )}
+                  </label>
+
+                  {(() => {
+                    const systemRoles = roles.filter(r => r.is_system);
+                    const customRoles = roles.filter(r => !r.is_system);
+
+                    return (
+                      <div className="space-y-4 max-h-96 overflow-y-auto">
+                        {systemRoles.length > 0 && (
+                          <div>
+                            <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                              System Roles
+                            </h4>
+                            <div className="space-y-2">
+                              {systemRoles.map(role => (
+                                <button
+                                  key={role.id}
+                                  onClick={() => {
+                                    if (selectedUserId) {
+                                      handleAssignRole(selectedUserId, role.id);
+                                    } else {
+                                      alert('Please select a user first');
+                                    }
+                                  }}
+                                  disabled={!selectedUserId}
+                                  className={`w-full p-4 rounded-lg border transition-all text-left ${
+                                    selectedUserId
+                                      ? 'bg-gray-800/50 border-gray-700/30 hover:bg-gray-800 hover:border-orange-500/50 cursor-pointer'
+                                      : 'bg-gray-800/20 border-gray-700/20 opacity-50 cursor-not-allowed'
+                                  }`}
+                                >
+                                  <div className="flex items-start gap-3">
+                                    <div className={`p-2 rounded-lg ${
+                                      role.name === 'super_admin' ? 'bg-purple-900/30 border border-purple-600/30' :
+                                      role.name === 'admin' ? 'bg-orange-900/30 border border-orange-600/30' :
+                                      'bg-blue-900/30 border border-blue-600/30'
+                                    }`}>
+                                      <Shield className={`h-5 w-5 ${
+                                        role.name === 'super_admin' ? 'text-purple-400' :
+                                        role.name === 'admin' ? 'text-orange-400' :
+                                        'text-blue-400'
+                                      }`} />
+                                    </div>
+                                    <div className="flex-1">
+                                      <div className="flex items-center gap-2 mb-1">
+                                        <span className="font-semibold text-white">{role.name}</span>
+                                        {role.name === 'super_admin' && (
+                                          <span className="px-2 py-0.5 bg-purple-900/30 border border-purple-600/30 text-purple-400 text-xs font-medium rounded-full">
+                                            ★ FULL ACCESS
+                                          </span>
+                                        )}
+                                      </div>
+                                      <p className="text-sm text-gray-400">{role.description}</p>
+                                      <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
+                                        <Users className="h-3 w-3" />
+                                        {getRoleUserCount(role.id)} {getRoleUserCount(role.id) === 1 ? 'user' : 'users'}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+
+                        {customRoles.length > 0 && (
+                          <div>
+                            <h4 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
+                              Custom Roles
+                            </h4>
+                            <div className="space-y-2">
+                              {customRoles.map(role => (
+                                <button
+                                  key={role.id}
+                                  onClick={() => {
+                                    if (selectedUserId) {
+                                      handleAssignRole(selectedUserId, role.id);
+                                    } else {
+                                      alert('Please select a user first');
+                                    }
+                                  }}
+                                  disabled={!selectedUserId}
+                                  className={`w-full p-4 rounded-lg border transition-all text-left ${
+                                    selectedUserId
+                                      ? 'bg-gray-800/50 border-gray-700/30 hover:bg-gray-800 hover:border-orange-500/50 cursor-pointer'
+                                      : 'bg-gray-800/20 border-gray-700/20 opacity-50 cursor-not-allowed'
+                                  }`}
+                                >
+                                  <div className="flex items-start gap-3">
+                                    <div className="p-2 bg-green-900/30 border border-green-600/30 rounded-lg">
+                                      <Shield className="h-5 w-5 text-green-400" />
+                                    </div>
+                                    <div className="flex-1">
+                                      <div className="flex items-center gap-2 mb-1">
+                                        <span className="font-semibold text-white">{role.name}</span>
+                                      </div>
+                                      <p className="text-sm text-gray-400">{role.description}</p>
+                                      <div className="flex items-center gap-2 mt-2 text-xs text-gray-500">
+                                        <Users className="h-3 w-3" />
+                                        {getRoleUserCount(role.id)} {getRoleUserCount(role.id) === 1 ? 'user' : 'users'}
+                                      </div>
+                                    </div>
+                                  </div>
+                                </button>
+                              ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    );
+                  })()}
                 </div>
               </div>
 
               <button
                 onClick={() => setShowAssignModal(false)}
-                className="w-full mt-6 px-6 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
+                className="w-full mt-6 px-6 py-3 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
               >
                 Cancel
               </button>

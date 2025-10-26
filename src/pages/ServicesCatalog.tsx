@@ -168,7 +168,7 @@ export default function ServicesCatalog({ onNavigate, initialCategory }: Service
   const IconComponent = selectedCategoryData ? iconMap[selectedCategoryData.icon] : null;
 
   return (
-    <div className="min-h-screen bg-gray-950 transition-colors pt-16">
+    <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors pt-16">
       {selectedCategoryData && heroData && IconComponent ? (
         <section className="relative h-80 overflow-hidden">
           <div
@@ -216,12 +216,21 @@ export default function ServicesCatalog({ onNavigate, initialCategory }: Service
             <BackButton onNavigate={onNavigate} />
 
             <div className="text-center mb-8">
-              <h1 className="text-5xl font-bold text-white mb-4">
-                Complete Services Catalog
-              </h1>
-              <p className="text-xl text-gray-300 max-w-3xl mx-auto mb-8">
-                Explore our comprehensive suite of 200+ biomathematical health services across 20 specialized categories
-              </p>
+              <div className="flex items-center justify-center gap-8 mb-4">
+                <div className="flex-1 text-right">
+                  <h1 className="text-5xl font-bold text-white mb-4">
+                    Complete Services Catalog
+                  </h1>
+                  <p className="text-xl text-gray-300">
+                    Explore our comprehensive suite of 200+ biomathematical health services across 20 specialized categories
+                  </p>
+                </div>
+                <img
+                  src="/Copilot_20251022_202220.png"
+                  alt="BioMath Services"
+                  className="w-48 h-48 object-contain"
+                />
+              </div>
 
               <div className="max-w-2xl mx-auto">
                 <div className="relative">
@@ -343,6 +352,27 @@ export default function ServicesCatalog({ onNavigate, initialCategory }: Service
               )}
             </div>
           )}
+        </div>
+      </section>
+
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 via-gray-950 to-gray-900">
+        <div className="max-w-4xl mx-auto text-center">
+          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+            Ready to Start Your Health Journey?
+          </h2>
+          <p className="text-xl text-gray-300 mb-8">
+            Choose a plan that matches your needs and get instant access to our comprehensive health analytics platform.
+          </p>
+          <button
+            onClick={() => onNavigate('pricing')}
+            className="inline-flex items-center gap-3 px-10 py-5 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white rounded-xl font-bold text-lg shadow-2xl shadow-orange-500/50 transition-all transform hover:scale-105"
+          >
+            View Pricing Plans
+            <ChevronRight className="h-6 w-6" />
+          </button>
+          <p className="mt-6 text-sm text-gray-400">
+            All plans include a 5-day free trial • Cancel anytime
+          </p>
         </div>
       </section>
     </div>

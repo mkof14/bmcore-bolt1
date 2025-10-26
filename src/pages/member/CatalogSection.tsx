@@ -109,14 +109,11 @@ export default function CatalogSection({ onSectionChange }: CatalogSectionProps)
         return;
       }
 
-      const planId = currentPlan === 'Core' ? 'core' : currentPlan === 'Daily' ? 'daily' : 'max';
+      showNotification('success', `Redirecting to pricing page for ${currentPlan} plan...`);
 
-      showNotification('success', `Redirecting to billing for ${currentPlan} plan upgrade...`);
-
+      // Redirect to pricing page (public page, not member section)
       setTimeout(() => {
-        if (onSectionChange) {
-          onSectionChange('billing');
-        }
+        window.location.hash = '#/pricing';
       }, 1500);
 
     } catch (error) {

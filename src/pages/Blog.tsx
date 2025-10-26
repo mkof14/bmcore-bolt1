@@ -2,6 +2,11 @@ import { BookOpen, Calendar, ArrowRight } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import BackButton from '../components/BackButton';
+import SEO from '../components/SEO';
+import LoadingSpinner, { SkeletonList } from '../components/LoadingSpinner';
+import ErrorMessage from '../components/ErrorMessage';
+import EmptyState from '../components/EmptyState';
+import { generateArticleSchema, injectStructuredData } from '../lib/structuredData';
 
 interface BlogProps {
   onNavigate: (page: string) => void;
@@ -55,7 +60,13 @@ export default function Blog({ onNavigate }: BlogProps) {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950 pt-20 pb-16">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-950 to-gray-900 pt-20 pb-16">
+      <SEO
+        title="Health & Wellness Blog - Expert Articles & Insights"
+        description="Explore our collection of articles on health analytics, wellness optimization, preventive care, and personalized medicine. Expert insights from BioMath Core."
+        keywords={['health blog', 'wellness articles', 'health insights', 'preventive care tips', 'personalized medicine blog', 'health technology articles']}
+        url="/blog"
+      />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <BackButton onNavigate={onNavigate} />
 
@@ -70,28 +81,28 @@ export default function Blog({ onNavigate }: BlogProps) {
         </div>
 
         {loading && (
-          <div className="text-center py-20">
-            <p className="text-gray-400 text-lg">Loading articles...</p>
+          <div className="py-20">
+            <SkeletonList count={6} />
           </div>
         )}
 
         {error && (
-          <div className="text-center py-20 bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700/50 rounded-2xl p-12">
-            <p className="text-red-400 font-semibold mb-3 text-xl">Error Loading Articles</p>
-            <p className="text-sm text-gray-400 mb-6">{error}</p>
-            <button
-              onClick={loadPosts}
-              className="px-6 py-3 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-lg hover:from-orange-500 hover:to-orange-600 transition-all duration-300 shadow-lg shadow-orange-600/20"
-            >
-              Try Again
-            </button>
+          <div className="py-12">
+            <ErrorMessage
+              title="Failed to Load Articles"
+              message={error}
+              onRetry={loadPosts}
+            />
           </div>
         )}
 
         {!loading && !error && posts.length === 0 && (
-          <div className="text-center py-20 bg-gradient-to-br from-gray-900 to-gray-800 border border-gray-700/50 rounded-2xl p-12">
-            <p className="text-gray-300 mb-4 text-lg">No articles published yet.</p>
-            <p className="text-sm text-gray-500">Check back soon for new content!</p>
+          <div className="py-20">
+            <EmptyState
+              icon={BookOpen}
+              title="No Articles Yet"
+              description="Check back soon for health insights, research, and wellness stories."
+            />
           </div>
         )}
 

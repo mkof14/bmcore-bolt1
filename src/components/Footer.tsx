@@ -9,17 +9,27 @@ export default function Footer({ onNavigate }: FooterProps) {
   const { theme, toggleTheme } = useTheme();
 
   return (
-    <footer className="bg-gray-950 border-t border-gray-800 transition-colors">
+    <footer className="bg-gray-100 dark:bg-gray-950 border-t border-gray-200 dark:border-gray-800 transition-colors">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-6 gap-8">
           <div className="col-span-1 md:col-span-2">
-            <div className="flex items-center mb-4">
+            <div className="mb-4 flex items-center space-x-3">
+              <picture>
+                <source srcSet="/logo-footer.webp?v=2" type="image/webp" />
+                <img
+                  src="/logo-footer.png?v=2"
+                  alt="BioMath Core Logo"
+                  className="h-16 w-16 object-contain"
+                  width="64"
+                  height="64"
+                />
+              </picture>
               <span className="text-3xl font-bold">
                 <span className="text-blue-500">BioMath</span>
-                <span className="text-white"> Core</span>
+                <span className="text-gray-900 dark:text-white"> Core</span>
               </span>
             </div>
-            <p className="text-sm text-gray-400 mb-4">
+            <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
               Biomathematics-based wellness intelligence platform for understanding your body.
             </p>
 
@@ -61,12 +71,12 @@ export default function Footer({ onNavigate }: FooterProps) {
             </div>
 
             <div className="mb-6">
-              <h3 className="text-sm font-semibold text-white mb-3">Newsletter</h3>
+              <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Newsletter</h3>
               <div className="flex max-w-md">
                 <input
                   type="email"
                   placeholder="Your email"
-                  className="flex-1 px-4 py-2 text-sm border border-gray-700 bg-gray-900 text-white rounded-l-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="flex-1 px-4 py-2 text-sm border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-l-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
                 <button className="px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-sm font-medium rounded-r-lg transition-all">
                   Subscribe
@@ -77,7 +87,7 @@ export default function Footer({ onNavigate }: FooterProps) {
             <div className="flex items-center space-x-4 mb-4">
               <button
                 onClick={toggleTheme}
-                className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm text-gray-400 hover:bg-gray-800 hover:text-white transition-colors"
+                className="flex items-center space-x-2 px-3 py-2 rounded-md text-sm text-gray-600 dark:text-gray-400 hover:bg-gray-200 dark:hover:bg-gray-800 hover:text-gray-900 dark:hover:text-white transition-colors"
               >
                 {theme === 'light' ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
                 <span>{theme === 'light' ? 'Dark' : 'Light'} Mode</span>
@@ -87,7 +97,7 @@ export default function Footer({ onNavigate }: FooterProps) {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-white mb-4">Navigation</h3>
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Navigation</h3>
             <ul className="space-y-2">
               <li>
                 <button onClick={() => onNavigate('home')} className="text-sm text-gray-400 hover:text-orange-500 transition-colors">
@@ -148,10 +158,10 @@ export default function Footer({ onNavigate }: FooterProps) {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-white mb-4">Legal & Safety</h3>
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Legal & Safety</h3>
             <ul className="space-y-2">
               <li>
-                <button onClick={() => onNavigate('trust-safety')} className="text-sm text-orange-500 hover:text-orange-400 transition-colors font-semibold">
+                <button onClick={() => onNavigate('trust-safety')} className="text-sm text-gray-400 hover:text-orange-500 transition-colors">
                   Trust & Safety
                 </button>
               </li>
@@ -194,7 +204,7 @@ export default function Footer({ onNavigate }: FooterProps) {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-white mb-4">Partnership</h3>
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Partnership</h3>
             <ul className="space-y-2">
               <li>
                 <button onClick={() => onNavigate('partnership')} className="text-sm text-gray-400 hover:text-orange-500 transition-colors">
@@ -205,7 +215,7 @@ export default function Footer({ onNavigate }: FooterProps) {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold text-white mb-4">Corporate</h3>
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4">Corporate</h3>
             <ul className="space-y-2">
               <li>
                 <button onClick={() => onNavigate('news')} className="text-sm text-gray-400 hover:text-orange-500 transition-colors">
@@ -234,7 +244,7 @@ export default function Footer({ onNavigate }: FooterProps) {
               </li>
             </ul>
 
-            <h3 className="text-sm font-semibold text-white mb-4 mt-6">Member Area</h3>
+            <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-4 mt-6">Member Area</h3>
             <ul className="space-y-2">
               <li>
                 <button onClick={() => onNavigate('member')} className="text-sm text-gray-400 hover:text-orange-500 transition-colors">
@@ -255,11 +265,11 @@ export default function Footer({ onNavigate }: FooterProps) {
           </div>
         </div>
 
-        <div className="mt-12 pt-8 border-t border-gray-800">
-          <p className="text-center text-sm text-gray-400 mb-3">
+        <div className="mt-12 pt-8 border-t border-gray-300 dark:border-gray-800">
+          <p className="text-center text-sm text-gray-600 dark:text-gray-400 mb-3">
             © 2025 BioMath Core. All rights reserved.
           </p>
-          <p className="text-center text-xs text-gray-500 max-w-3xl mx-auto">
+          <p className="text-center text-xs text-gray-500 dark:text-gray-500 max-w-3xl mx-auto">
             BioMath Core is a wellness platform, not a medical service. We do not diagnose, treat, or provide medical advice. Our platform offers guidance for wellness and preventive health support only. Always consult with qualified healthcare professionals for medical concerns.
           </p>
         </div>

@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { ChevronDown, ChevronUp, HelpCircle } from 'lucide-react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
+import SEO from '../components/SEO';
+import { generateFAQSchema, injectStructuredData } from '../lib/structuredData';
 
 interface FAQItemProps {
   question: string;
@@ -378,8 +380,25 @@ export default function FAQ({ onNavigate }: FAQProps) {
     }
   ];
 
+  useEffect(() => {
+    const allFaqs = faqSections.flatMap(section =>
+      section.items.map(item => ({
+        question: item.question,
+        answer: item.answer
+      }))
+    );
+    const faqSchema = generateFAQSchema(allFaqs);
+    injectStructuredData(faqSchema);
+  }, []);
+
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
+      <SEO
+        title="FAQ - Frequently Asked Questions"
+        description="Find answers to common questions about BioMath Core: services, pricing, data security, reports, and more. Get quick answers to your health analytics questions."
+        keywords={['biomath core faq', 'health platform questions', 'wellness service help', 'health analytics faq', 'common questions']}
+        url="/faq"
+      />
       <Header onNavigate={onNavigate} />
 
       <main className="flex-1">

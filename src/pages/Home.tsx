@@ -1,5 +1,12 @@
 import { Activity, Brain, Shield, Heart, Lightbulb, Sparkles, ArrowRight, Check, BookOpen } from 'lucide-react';
+import { useEffect } from 'react';
 import HealthCategories from '../components/HealthCategories';
+import SEO from '../components/SEO';
+import Testimonials from '../components/Testimonials';
+import StatsCounter from '../components/StatsCounter';
+import TrustSignals from '../components/TrustSignals';
+import CTASection, { CTABanner } from '../components/CTASection';
+import { generateOrganizationSchema, generateWebSiteSchema, injectStructuredData } from '../lib/structuredData';
 
 interface HomeProps {
   onNavigate: (page: string) => void;
@@ -39,9 +46,23 @@ export default function Home({ onNavigate }: HomeProps) {
     'Proactive self-care without clinical pressure'
   ];
 
+  useEffect(() => {
+    const orgSchema = generateOrganizationSchema();
+    const websiteSchema = generateWebSiteSchema();
+    injectStructuredData(orgSchema);
+    injectStructuredData(websiteSchema);
+  }, []);
+
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors">
-      <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:via-gray-950 dark:to-gray-900">
+      <SEO
+        title="AI-Powered Personalized Health Intelligence"
+        description="Transform your health data into actionable insights with AI-powered analysis, personalized recommendations, and comprehensive health tracking. Join BioMath Core for preventive wellness."
+        keywords={['AI health analytics', 'personalized medicine', 'preventive healthcare', 'wellness tracking', 'health intelligence', 'biomarkers analysis']}
+        url="/"
+      />
+
+      <section className="relative pt-20 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:via-gray-950 dark:to-gray-900">
         <div className="absolute inset-0 opacity-20">
           <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-orange-500/20 dark:from-orange-500/20 to-transparent"></div>
         </div>
@@ -51,13 +72,13 @@ export default function Home({ onNavigate }: HomeProps) {
             <h1 className="text-5xl md:text-6xl lg:text-7xl font-bold text-gray-900 dark:text-white mb-6">
               Welcome to BioMath Core
             </h1>
-            <p className="text-3xl md:text-4xl lg:text-5xl font-medium text-orange-600 dark:text-orange-500 mb-8">
-              Where data meets daily life.
+            <p className="text-3xl md:text-4xl lg:text-5xl font-medium text-blue-500 dark:text-blue-400 mb-8">
+              Where data meets daily life
             </p>
-            <h2 className="text-4xl md:text-5xl lg:text-6xl font-bold text-orange-700 dark:text-orange-400 mb-12">
-              All of Health. One Platform.
+            <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold text-gray-500 dark:text-gray-400 mb-12">
+              All of Health One Platform
             </h2>
-            <p className="text-lg md:text-xl text-gray-700 dark:text-gray-300 mb-12 max-w-5xl mx-auto leading-relaxed">
+            <p className="text-sm md:text-base text-gray-500 dark:text-gray-400 mb-12 max-w-5xl mx-auto leading-relaxed">
               From sleep to cognition, from movement to mood — BioMath Core brings clarity to your
               health journey. Track, understand, and optimize your wellbeing through intelligent, real-time insights tailored to you.
             </p>
@@ -82,7 +103,7 @@ export default function Home({ onNavigate }: HomeProps) {
 
       <HealthCategories onNavigate={onNavigate} />
 
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-900/50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-100 dark:bg-gray-900/50">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
             <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
@@ -98,14 +119,14 @@ export default function Home({ onNavigate }: HomeProps) {
             {coreValues.map((value, index) => {
               const Icon = value.icon;
               return (
-                <div key={index} className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-8">
+                <div key={index} className="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-8">
                   <div className="w-14 h-14 bg-blue-500/10 rounded-xl flex items-center justify-center mb-6">
-                    <Icon className="h-7 w-7 text-blue-400" />
+                    <Icon className="h-7 w-7 text-blue-500 dark:text-blue-400" />
                   </div>
-                  <h3 className="text-xl font-bold text-white mb-3">
+                  <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-3">
                     {value.title}
                   </h3>
-                  <p className="text-gray-400">
+                  <p className="text-gray-600 dark:text-gray-400">
                     {value.description}
                   </p>
                 </div>
@@ -115,13 +136,13 @@ export default function Home({ onNavigate }: HomeProps) {
         </div>
       </section>
 
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 to-gray-950">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950">
         <div className="max-w-5xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className="text-4xl font-bold text-white mb-4">
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
               How It Works
             </h2>
-            <p className="text-xl text-gray-400">
+            <p className="text-xl text-gray-600 dark:text-gray-400">
               Simple, supportive, effective
             </p>
           </div>
@@ -129,14 +150,14 @@ export default function Home({ onNavigate }: HomeProps) {
           <div className="grid md:grid-cols-3 gap-8">
             {howItWorks.map((item, index) => (
               <div key={index} className="relative">
-                <div className="bg-gray-900/50 backdrop-blur border border-gray-800 rounded-xl p-8 h-full">
+                <div className="bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-xl p-8 h-full">
                   <div className="w-16 h-16 bg-orange-500 rounded-full flex items-center justify-center text-white text-2xl font-bold mb-6">
                     {item.step}
                   </div>
-                  <h3 className="text-2xl font-bold text-white mb-3">
+                  <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
                     {item.title}
                   </h3>
-                  <p className="text-gray-400">
+                  <p className="text-gray-600 dark:text-gray-400">
                     {item.description}
                   </p>
                 </div>
@@ -151,29 +172,29 @@ export default function Home({ onNavigate }: HomeProps) {
         </div>
       </section>
 
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-900/50">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-100 dark:bg-gray-900/50">
         <div className="max-w-4xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-white mb-4">
+            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
               Who Is This For?
             </h2>
-            <p className="text-xl text-gray-400">
+            <p className="text-xl text-gray-600 dark:text-gray-400">
               BioMath Core is designed for people who want understanding, not overwhelm
             </p>
           </div>
 
           <div className="grid md:grid-cols-2 gap-4">
             {whoItsFor.map((item, index) => (
-              <div key={index} className="flex items-start space-x-3 p-4 bg-gray-900/50 backdrop-blur border border-gray-800 rounded-lg">
+              <div key={index} className="flex items-start space-x-3 p-4 bg-white dark:bg-gray-900/50 backdrop-blur border border-gray-200 dark:border-gray-800 rounded-lg">
                 <Check className="h-6 w-6 text-orange-500 flex-shrink-0 mt-0.5" />
-                <span className="text-gray-300">{item}</span>
+                <span className="text-gray-700 dark:text-gray-300">{item}</span>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 to-gray-950">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-50 to-gray-100 dark:from-gray-900 dark:to-gray-950">
         <div className="max-w-7xl mx-auto space-y-12">
           <div>
             <img
@@ -191,6 +212,7 @@ export default function Home({ onNavigate }: HomeProps) {
           </div>
         </div>
       </section>
+
     </div>
   );
 }

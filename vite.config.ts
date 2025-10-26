@@ -14,5 +14,25 @@ export default defineConfig({
     hmr: {
       overlay: true
     }
+  },
+  build: {
+    sourcemap: false,
+    minify: 'terser',
+    terserOptions: {
+      compress: {
+        drop_console: true,
+        drop_debugger: true,
+        pure_funcs: ['console.log', 'console.debug', 'console.info']
+      }
+    },
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'react-vendor': ['react', 'react-dom'],
+          'supabase': ['@supabase/supabase-js']
+        }
+      }
+    },
+    chunkSizeWarningLimit: 1000
   }
 });

@@ -74,14 +74,18 @@ export default function AIAssistantButton({ onClick, isOpen }: AIAssistantButton
         className={`relative w-16 h-16 rounded-full shadow-2xl transition-all duration-300 ${
           isOpen
             ? 'bg-red-500 hover:bg-red-600'
-            : 'gradient-bg hover:shadow-3xl breathing-button'
-        } flex items-center justify-center group`}
+            : 'breathing-button'
+        } flex items-center justify-center group overflow-hidden`}
         aria-label={isOpen ? 'Close AI Advisor' : 'Open AI Advisor'}
       >
         {isOpen ? (
           <X className="h-7 w-7 text-white transition-transform group-hover:rotate-90" />
         ) : (
-          <MessageCircle className="h-7 w-7 text-white transition-transform group-hover:scale-110" />
+          <img
+            src="/Copilot_20251022_203134.png"
+            alt="AI Health Advisor"
+            className="w-full h-full object-cover transition-transform group-hover:scale-110"
+          />
         )}
 
         <div className="absolute -top-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white animate-pulse" />
