@@ -85,10 +85,11 @@ export default function Header({ onNavigate, currentPage }: HeaderProps) {
                 </button>
                 <button
                   onClick={handleSignOut}
-                  className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors"
+                  className="flex items-center space-x-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 rounded-md transition-colors"
+                  title="Sign Out"
                 >
-                  <LogOut className="h-4 w-4" />
-                  <span>Sign Out</span>
+                  <LogOut className="h-3.5 w-3.5" />
+                  <span className="text-xs">Sign Out</span>
                 </button>
               </>
             ) : (
@@ -155,7 +156,7 @@ export default function Header({ onNavigate, currentPage }: HeaderProps) {
                         handleSignOut();
                         setMobileMenuOpen(false);
                       }}
-                      className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors w-full"
+                      className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 rounded-md transition-colors w-full"
                     >
                       <LogOut className="h-4 w-4" />
                       <span>Sign Out</span>

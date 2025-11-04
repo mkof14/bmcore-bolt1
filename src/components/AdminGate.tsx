@@ -4,9 +4,10 @@ import LoadingSpinner from './LoadingSpinner';
 
 interface AdminGateProps {
   children: ReactNode;
+  onNavigate?: (page: string) => void;
 }
 
-export default function AdminGate({ children }: AdminGateProps) {
+export default function AdminGate({ children, onNavigate }: AdminGateProps) {
   const [isAdmin, setIsAdmin] = useState<boolean | null>(null);
 
   useEffect(() => {
@@ -59,12 +60,12 @@ export default function AdminGate({ children }: AdminGateProps) {
           <p className="text-gray-600 dark:text-gray-300 mb-6">
             You do not have permission to access this page. Admin privileges are required.
           </p>
-          <a
-            href="#/"
+          <button
+            onClick={() => onNavigate ? onNavigate('home') : (window.location.hash = '#/')}
             className="inline-block px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white font-semibold rounded-lg transition-colors"
           >
             Go to Home
-          </a>
+          </button>
         </div>
       </div>
     );

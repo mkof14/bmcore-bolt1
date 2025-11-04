@@ -1,8 +1,17 @@
 import { useState, useEffect, useRef } from 'react';
-import { MessageSquare, Send, Users, Clock, CheckCircle, Loader } from 'lucide-react';
+import { MessageSquare, Send, Users, Clock, CheckCircle, Loader, Zap, Search, Filter } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
 import { useSession } from '../../hooks/useSession';
 import TypingIndicator from '../../components/TypingIndicator';
+
+const QUICK_REPLIES = [
+  { id: 1, text: "Thank you for reaching out! How can I help you today?" },
+  { id: 2, text: "I'm here to assist you. Let me look into that for you." },
+  { id: 3, text: "Could you provide more details about the issue you're experiencing?" },
+  { id: 4, text: "Thank you for your patience. I'm checking this now." },
+  { id: 5, text: "Is there anything else I can help you with today?" },
+  { id: 6, text: "That's a great question! Let me explain..." },
+];
 
 interface ChatRoom {
   id: string;
@@ -33,6 +42,9 @@ export default function SupportChatPanel() {
   const [sending, setSending] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
+  const [showQuickReplies, setShowQuickReplies] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [filterUnread, setFilterUnread] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const typingTimeoutRef = useRef<NodeJS.Timeout>();
   const user = useSession();
@@ -334,12 +346,41 @@ export default function SupportChatPanel() {
     <div className="flex h-[calc(100vh-200px)] bg-white dark:bg-gray-900 rounded-xl border border-gray-200 dark:border-gray-700">
       <div className="w-80 border-r border-gray-200 dark:border-gray-700 flex flex-col">
         <div className="p-4 border-b border-gray-200 dark:border-gray-700">
-          <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center space-x-2">
+          <h2 className="text-lg font-bold text-gray-900 dark:text-white flex items-center space-x-2 mb-3">
             <MessageSquare className="h-5 w-5 text-blue-600" />
             <span>Support Chats</span>
           </h2>
-          <p className="text-sm text-gray-600 dark:text-gray-400 mt-1">
-            {chatRooms.length} active conversations
+
+          {/* Search */}
+          <div className="relative mb-3">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-400" />
+            <input
+              type="text"
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              placeholder="Search conversations..."
+              className="w-full pl-10 pr-4 py-2 text-sm rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+            />
+          </div>
+
+          {/* Filter */}
+          <button
+            onClick={() => setFilterUnread(!filterUnread)}
+            className={`flex items-center space-x-2 px-3 py-1.5 text-sm rounded-lg transition-colors ${
+              filterUnread
+                ? 'bg-blue-100 dark:bg-blue-900/30 text-blue-700 dark:text-blue-400'
+                : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+            }`}
+          >
+            <Filter className="h-3.5 w-3.5" />
+            <span>Unread only</span>
+          </button>
+
+          <p className="text-sm text-gray-600 dark:text-gray-400 mt-3">
+            {chatRooms.filter(r =>
+              (!filterUnread || r.unread_count > 0) &&
+              (!searchQuery || r.user_name.toLowerCase().includes(searchQuery.toLowerCase()) || r.last_message?.toLowerCase().includes(searchQuery.toLowerCase()))
+            ).length} conversations
           </p>
         </div>
 
@@ -356,7 +397,12 @@ export default function SupportChatPanel() {
               </p>
             </div>
           ) : (
-            chatRooms.map((room) => (
+            chatRooms
+              .filter(r =>
+                (!filterUnread || r.unread_count > 0) &&
+                (!searchQuery || r.user_name.toLowerCase().includes(searchQuery.toLowerCase()) || r.last_message?.toLowerCase().includes(searchQuery.toLowerCase()))
+              )
+              .map((room) => (
               <button
                 key={room.id}
                 onClick={() => setSelectedRoom(room)}
@@ -457,6 +503,36 @@ export default function SupportChatPanel() {
               onSubmit={sendMessage}
               className="p-4 border-t border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
             >
+              {/* Quick Replies */}
+              <div className="mb-3">
+                <button
+                  type="button"
+                  onClick={() => setShowQuickReplies(!showQuickReplies)}
+                  className="flex items-center space-x-2 text-sm text-blue-600 dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300"
+                >
+                  <Zap className="h-4 w-4" />
+                  <span>{showQuickReplies ? 'Hide' : 'Show'} Quick Replies</span>
+                </button>
+
+                {showQuickReplies && (
+                  <div className="mt-2 flex flex-wrap gap-2">
+                    {QUICK_REPLIES.map((reply) => (
+                      <button
+                        key={reply.id}
+                        type="button"
+                        onClick={() => {
+                          setNewMessage(reply.text);
+                          setShowQuickReplies(false);
+                        }}
+                        className="px-3 py-1.5 text-xs bg-gray-100 dark:bg-gray-700 hover:bg-gray-200 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-300 rounded-full transition-colors"
+                      >
+                        {reply.text.slice(0, 30)}...
+                      </button>
+                    ))}
+                  </div>
+                )}
+              </div>
+
               <div className="flex items-end space-x-2">
                 <textarea
                   value={newMessage}
@@ -471,7 +547,7 @@ export default function SupportChatPanel() {
                     }
                   }}
                   placeholder="Type your response..."
-                  rows={2}
+                  rows={3}
                   className="flex-1 px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-900 text-gray-900 dark:text-white focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-sm"
                 />
                 <button
@@ -486,9 +562,14 @@ export default function SupportChatPanel() {
                   )}
                 </button>
               </div>
-              <p className="text-xs text-gray-500 dark:text-gray-500 mt-2">
-                Press Enter to send, Shift+Enter for new line
-              </p>
+              <div className="flex items-center justify-between mt-2">
+                <p className="text-xs text-gray-500 dark:text-gray-500">
+                  Press Enter to send, Shift+Enter for new line
+                </p>
+                <span className="text-xs text-gray-500 dark:text-gray-500">
+                  {newMessage.length} characters
+                </span>
+              </div>
             </form>
           </>
         ) : (

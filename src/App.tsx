@@ -257,11 +257,11 @@ function App() {
       case 'careers':
         return <Careers onNavigate={handleNavigate} />;
       case 'command-center':
-        return <AdminGate><CommandCenter onNavigate={handleNavigate} /></AdminGate>;
+        return <AdminGate onNavigate={handleNavigate}><CommandCenter onNavigate={handleNavigate} /></AdminGate>;
       case 'admin-panel':
-        return <AdminGate><AdminPanel onNavigate={handleNavigate} /></AdminGate>;
+        return <AdminGate onNavigate={handleNavigate}><AdminPanel onNavigate={handleNavigate} /></AdminGate>;
       case 'config-system':
-        return <AdminGate><ConfigSystem /></AdminGate>;
+        return <AdminGate onNavigate={handleNavigate}><ConfigSystem /></AdminGate>;
       case 'privacy-policy':
         return <PrivacyPolicy onNavigate={handleNavigate} />;
       case 'terms-of-service':
