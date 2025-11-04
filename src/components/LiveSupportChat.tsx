@@ -240,8 +240,10 @@ export default function LiveSupportChat({ isOpen, onClose }: LiveSupportChatProp
     }, 3000);
   };
 
-  const sendMessage = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const sendMessage = async (e?: React.FormEvent | React.KeyboardEvent) => {
+    if (e) {
+      e.preventDefault();
+    }
     if (!newMessage.trim() || !roomId || !user) return;
 
     const messageText = newMessage;
@@ -281,7 +283,7 @@ export default function LiveSupportChat({ isOpen, onClose }: LiveSupportChatProp
   if (!isOpen) return null;
 
   return (
-    <div className="fixed bottom-4 right-4 w-96 h-[600px] bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 flex flex-col z-50">
+    <div className="fixed bottom-4 right-20 w-96 h-[600px] bg-white dark:bg-gray-800 rounded-xl shadow-2xl border border-gray-200 dark:border-gray-700 flex flex-col z-40">
       <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-gradient-to-r from-green-600 to-green-700 text-white rounded-t-xl">
         <div>
           <h3 className="font-semibold text-lg">Live Support Chat</h3>

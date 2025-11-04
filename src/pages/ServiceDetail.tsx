@@ -3,6 +3,29 @@ import { ChevronLeft, Lock, Copy, Printer, Share2, Download, FileDown, ChevronDo
 import { serviceCategories } from '../data/services';
 import { supabase } from '../lib/supabase';
 
+const categoryColors: Record<string, string> = {
+  'critical-health': 'text-orange-400',
+  'everyday-wellness': 'text-green-400',
+  'longevity': 'text-pink-400',
+  'mental-wellness': 'text-cyan-400',
+  'fitness-performance': 'text-yellow-400',
+  'womens-health': 'text-pink-400',
+  'mens-health': 'text-blue-400',
+  'beauty-skincare': 'text-pink-400',
+  'nutrition-diet': 'text-green-400',
+  'sleep-recovery': 'text-indigo-400',
+  'environmental-health': 'text-teal-400',
+  'family-health': 'text-orange-400',
+  'preventive-medicine': 'text-cyan-400',
+  'biohacking': 'text-blue-400',
+  'senior-care': 'text-slate-300',
+  'eye-health': 'text-blue-400',
+  'digital-therapeutics': 'text-indigo-400',
+  'general-sexual': 'text-red-400',
+  'mens-sexual-health': 'text-blue-400',
+  'womens-sexual-health': 'text-pink-400',
+};
+
 interface ServiceDetailProps {
   onNavigate: (page: string, param?: string) => void;
   serviceId?: string;
@@ -183,7 +206,7 @@ export default function ServiceDetail({ onNavigate, serviceId }: ServiceDetailPr
 
           {/* Header */}
           <div className="mb-6">
-            <h1 className="text-4xl font-bold text-white mb-3">
+            <h1 className={`text-4xl font-bold mb-3 ${categoryColors[categoryId] || 'text-white'}`}>
               {service.name}
             </h1>
             <p className="text-lg text-gray-300">

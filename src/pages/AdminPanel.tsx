@@ -1,4 +1,4 @@
-import {  Settings, Users, FileText, Newspaper, Briefcase, FolderOpen, BarChart3, Shield, Menu, X, LayoutDashboard, Mail, CreditCard, Key, Map, Gift, Database } from 'lucide-react';
+import {  Settings, Users, FileText, Newspaper, Briefcase, FolderOpen, BarChart3, Shield, Menu, X, LayoutDashboard, Mail, CreditCard, Key, Map, Gift, Database, MessageSquare } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import BackButton from '../components/BackButton';
 import BlogManager from '../components/admin/BlogManager';
@@ -15,6 +15,7 @@ import AllAPIKeysManager from '../components/admin/AllAPIKeysManager';
 import SiteMapManager from '../components/admin/SiteMapManager';
 import InvitationManager from '../components/admin/InvitationManager';
 import ConfigSystem from './admin/ConfigSystem';
+import SupportChatPanel from './admin/SupportChatPanel';
 import { supabase } from '../lib/supabase';
 
 interface AdminPanelProps {
@@ -27,6 +28,7 @@ export default function AdminPanel({ onNavigate }: AdminPanelProps) {
 
   const menuItems = [
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
+    { id: 'support-chat', label: 'Support Chat', icon: MessageSquare },
     { id: 'config-system', label: 'Config System (Vault)', icon: Database },
     { id: 'stripe', label: 'Stripe Configuration', icon: CreditCard },
     { id: 'api-keys', label: 'API Keys & Services', icon: Key },
@@ -95,6 +97,7 @@ export default function AdminPanel({ onNavigate }: AdminPanelProps) {
             <BackButton onNavigate={onNavigate} />
 
             {activeSection === 'dashboard' && <DashboardSection />}
+            {activeSection === 'support-chat' && <SupportChatPanel />}
             {activeSection === 'config-system' && <ConfigSystem />}
             {activeSection === 'stripe' && <StripeConfigManager />}
             {activeSection === 'api-keys' && <AllAPIKeysManager />}
