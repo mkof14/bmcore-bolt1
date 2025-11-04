@@ -42,7 +42,7 @@ export default function SignIn({ onNavigate, onSignIn }: SignInProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-950 dark:to-gray-900 transition-colors flex items-center justify-center px-4 py-16">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-gray-950 dark:to-gray-900 transition-colors flex items-center justify-center px-4 py-24">
       <div className="max-w-md w-full">
         <div className="mb-4">
           <BackButton onNavigate={onNavigate} />
@@ -137,7 +137,8 @@ export default function SignIn({ onNavigate, onSignIn }: SignInProps) {
             <button
               type="submit"
               disabled={loading}
-              className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold rounded-lg transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+              className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 dark:bg-blue-500 dark:hover:bg-blue-600 dark:active:bg-blue-700 text-white font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation select-none"
+              style={{ WebkitTapHighlightColor: 'transparent' }}
             >
               {loading ? 'Signing in...' : 'Sign In'}
             </button>

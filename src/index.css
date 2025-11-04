@@ -12,6 +12,10 @@
 }
 
 @layer utilities {
+  .page-content {
+    @apply pt-20 pb-8;
+  }
+
   .hover-lift {
     @apply transition-all duration-300 ease-out;
   }

@@ -2,6 +2,7 @@ import { Mail, Send, MessageCircle, Clock, AlertCircle } from 'lucide-react';
 import { useState } from 'react';
 import BackButton from '../components/BackButton';
 import SEO from '../components/SEO';
+import LiveSupportChat from '../components/LiveSupportChat';
 
 interface ContactProps {
   onNavigate: (page: string) => void;
@@ -216,13 +217,6 @@ export default function Contact({ onNavigate }: ContactProps) {
               >
                 {chatOpen ? 'Close Chat' : 'Start Chat'}
               </button>
-              {chatOpen && (
-                <div className="mt-4 p-4 bg-gray-50 dark:bg-gray-900 rounded-lg">
-                  <p className="text-xs text-gray-600 dark:text-gray-400 text-center">
-                    Chat feature coming soon. Please use the contact form or email.
-                  </p>
-                </div>
-              )}
             </div>
 
             <div className="bg-white dark:bg-gray-800 rounded-xl p-6 border border-gray-200 dark:border-gray-700">
@@ -268,6 +262,8 @@ export default function Contact({ onNavigate }: ContactProps) {
           </div>
         </div>
       </div>
+
+      <LiveSupportChat isOpen={chatOpen} onClose={() => setChatOpen(false)} />
     </div>
   );
 }

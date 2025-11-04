@@ -1,6 +1,8 @@
-import { Menu, X, Moon, Sun, Activity } from 'lucide-react';
+import { Menu, X, Moon, Sun, Activity, LogOut, Home } from 'lucide-react';
 import { useState } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
+import { useSession } from '../hooks/useSession';
+import { supabase } from '../lib/supabase';
 
 interface HeaderProps {
   onNavigate: (page: string) => void;
@@ -10,6 +12,12 @@ interface HeaderProps {
 export default function Header({ onNavigate, currentPage }: HeaderProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const { theme, toggleTheme } = useTheme();
+  const user = useSession();
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    onNavigate('home');
+  };
 
   const navItems = [
     { name: 'Home', path: 'home' },
@@ -65,12 +73,32 @@ export default function Header({ onNavigate, currentPage }: HeaderProps) {
             >
               {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
             </button>
-            <button
-              onClick={() => onNavigate('signin')}
-              className="px-4 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors"
-            >
-              Sign In / Sign Up
-            </button>
+            {user ? (
+              <>
+                <button
+                  onClick={() => onNavigate('home')}
+                  className="p-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
+                  aria-label="Go Home"
+                  title="Go Home"
+                >
+                  <Home className="h-5 w-5" />
+                </button>
+                <button
+                  onClick={handleSignOut}
+                  className="flex items-center space-x-2 px-4 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors"
+                >
+                  <LogOut className="h-4 w-4" />
+                  <span>Sign Out</span>
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={() => onNavigate('signin')}
+                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors"
+              >
+                Sign In / Sign Up
+              </button>
+            )}
           </div>
 
           <div className="md:hidden flex items-center space-x-2">
@@ -109,16 +137,41 @@ export default function Header({ onNavigate, currentPage }: HeaderProps) {
                   {item.name}
                 </button>
               ))}
-              <div className="pt-4">
-                <button
-                  onClick={() => {
-                    onNavigate('signin');
-                    setMobileMenuOpen(false);
-                  }}
-                  className="px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 text-left transition-colors"
-                >
-                  Sign In / Sign Up
-                </button>
+              <div className="pt-4 space-y-2">
+                {user ? (
+                  <>
+                    <button
+                      onClick={() => {
+                        onNavigate('home');
+                        setMobileMenuOpen(false);
+                      }}
+                      className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 text-left transition-colors w-full"
+                    >
+                      <Home className="h-4 w-4" />
+                      <span>Go Home</span>
+                    </button>
+                    <button
+                      onClick={() => {
+                        handleSignOut();
+                        setMobileMenuOpen(false);
+                      }}
+                      className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-white bg-red-600 hover:bg-red-700 rounded-md transition-colors w-full"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      <span>Sign Out</span>
+                    </button>
+                  </>
+                ) : (
+                  <button
+                    onClick={() => {
+                      onNavigate('signin');
+                      setMobileMenuOpen(false);
+                    }}
+                    className="px-3 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md text-left transition-colors w-full"
+                  >
+                    Sign In / Sign Up
+                  </button>
+                )}
               </div>
             </div>
           </div>
