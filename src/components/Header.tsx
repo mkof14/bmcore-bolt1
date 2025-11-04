@@ -1,4 +1,4 @@
-import { Menu, X, Moon, Sun, Activity, LogOut, Home } from 'lucide-react';
+import { Menu, X, Moon, Sun, Activity, LogOut } from 'lucide-react';
 import { useState } from 'react';
 import { useTheme } from '../contexts/ThemeContext';
 import { useSession } from '../hooks/useSession';
@@ -74,24 +74,14 @@ export default function Header({ onNavigate, currentPage }: HeaderProps) {
               {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
             </button>
             {user ? (
-              <>
-                <button
-                  onClick={() => onNavigate('home')}
-                  className="p-2 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors"
-                  aria-label="Go Home"
-                  title="Go Home"
-                >
-                  <Home className="h-5 w-5" />
-                </button>
-                <button
-                  onClick={handleSignOut}
-                  className="flex items-center space-x-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 rounded-md transition-colors"
-                  title="Sign Out"
-                >
-                  <LogOut className="h-3.5 w-3.5" />
-                  <span className="text-xs">Sign Out</span>
-                </button>
-              </>
+              <button
+                onClick={handleSignOut}
+                className="flex items-center space-x-1.5 px-3 py-1.5 text-sm font-medium text-gray-600 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200 rounded-md transition-colors"
+                title="Sign Out"
+              >
+                <LogOut className="h-3.5 w-3.5" />
+                <span className="text-xs">Sign Out</span>
+              </button>
             ) : (
               <button
                 onClick={() => onNavigate('signin')}
@@ -140,28 +130,16 @@ export default function Header({ onNavigate, currentPage }: HeaderProps) {
               ))}
               <div className="pt-4 space-y-2">
                 {user ? (
-                  <>
-                    <button
-                      onClick={() => {
-                        onNavigate('home');
-                        setMobileMenuOpen(false);
-                      }}
-                      className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 text-left transition-colors w-full"
-                    >
-                      <Home className="h-4 w-4" />
-                      <span>Go Home</span>
-                    </button>
-                    <button
-                      onClick={() => {
-                        handleSignOut();
-                        setMobileMenuOpen(false);
-                      }}
-                      className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white border border-gray-300 dark:border-gray-600 hover:border-gray-400 dark:hover:border-gray-500 rounded-md transition-colors w-full"
-                    >
-                      <LogOut className="h-4 w-4" />
-                      <span>Sign Out</span>
-                    </button>
-                  </>
+                  <button
+                    onClick={() => {
+                      handleSignOut();
+                      setMobileMenuOpen(false);
+                    }}
+                    className="flex items-center space-x-2 px-3 py-2 text-sm font-medium text-gray-700 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white rounded-md transition-colors w-full"
+                  >
+                    <LogOut className="h-4 w-4" />
+                    <span>Sign Out</span>
+                  </button>
                 ) : (
                   <button
                     onClick={() => {

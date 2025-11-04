@@ -62,7 +62,7 @@ export default function Home({ onNavigate }: HomeProps) {
         url="/"
       />
 
-      <section className="relative pt-20 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:via-gray-950 dark:to-gray-900">
+      <section className="relative pt-32 pb-20 px-4 sm:px-6 lg:px-8 overflow-hidden bg-gradient-to-br from-gray-50 to-white dark:from-gray-900 dark:via-gray-950 dark:to-gray-900">
         <div className="absolute inset-0 opacity-20">
           <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-orange-500/20 dark:from-orange-500/20 to-transparent"></div>
         </div>
