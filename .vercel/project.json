@@ -1,14 +1,14 @@
 {
-  "projectId": "prj_JzdZIs0kwlzcIn0xgMBqiAPx1WZv",
+  "projectId": "prj_83foQynKvTsRJh4qBz0duaed8C4E",
   "orgId": "team_l5dGj3GG7OjpYXyo0d6L5RNZ",
-  "projectName": "bmcorebolt1",
+  "projectName": "bmcore-bolt1",
   "settings": {
-    "createdAt": 1761447784595,
+    "createdAt": 1762060955939,
     "framework": "vite",
     "devCommand": null,
-    "installCommand": "npm install",
-    "buildCommand": "npm run build",
-    "outputDirectory": "dist",
+    "installCommand": null,
+    "buildCommand": null,
+    "outputDirectory": null,
     "rootDirectory": null,
     "directoryListing": false,
     "nodeVersion": "22.x"
