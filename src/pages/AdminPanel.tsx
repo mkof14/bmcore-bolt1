@@ -29,7 +29,6 @@ export default function AdminPanel({ onNavigate }: AdminPanelProps) {
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'support-chat', label: 'Support Chat', icon: MessageSquare },
     { id: 'config-system', label: 'Config System (Vault)', icon: Database },
-    { id: 'stripe', label: 'Stripe Configuration', icon: CreditCard },
     { id: 'api-keys', label: 'API Keys & Services', icon: Key },
     { id: 'sitemap', label: 'Site Map & Pages', icon: Map },
     { id: 'users', label: 'User Management', icon: Users },
@@ -98,7 +97,6 @@ export default function AdminPanel({ onNavigate }: AdminPanelProps) {
             {activeSection === 'dashboard' && <DashboardSection />}
             {activeSection === 'support-chat' && <SupportChatPanel />}
             {activeSection === 'config-system' && <ConfigSystem />}
-            {activeSection === 'stripe' && <StripeConfigManager />}
             {activeSection === 'api-keys' && <AllAPIKeysManager />}
             {activeSection === 'sitemap' && <SiteMapManager />}
             {activeSection === 'users' && <UserManagementSection />}
