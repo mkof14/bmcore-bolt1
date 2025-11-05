@@ -13,7 +13,7 @@ export type ConfigKey = {
 };
 
 export type ConfigSection = {
-  group: "Supabase" | "Flags" | "Stripe" | "AI" | "Email" | "Analytics" | "Storage" | "Devices";
+  group: "Supabase" | "Flags" | "AI" | "Email" | "Analytics" | "Storage" | "Devices";
   title: string;
   subtitle?: string;
   keys: ConfigKey[];
@@ -53,17 +53,6 @@ export const CONFIG_SECTIONS: ConfigSection[] = [
       { key: "VITE_QA_MODE", label: "QA Mode", required: true, scope: "flag", envTarget: "both", example: "1" },
       { key: "VITE_DUAL_OPINION_ENABLED", label: "Dual Opinion ON", required: true, scope: "flag", envTarget: "both", example: "1" },
       { key: "REPORTS_PDF_ENABLED", label: "PDF Export", required: true, scope: "flag", envTarget: "both", example: "1" }
-    ]
-  },
-  {
-    group: "Stripe",
-    title: "Stripe (payments)",
-    subtitle: "Keep disabled until keys ready.",
-    keys: [
-      { key: "VITE_STRIPE_ENABLED", label: "Stripe Enabled", required: false, scope: "flag", envTarget: "both", example: "0|1" },
-      { key: "VITE_STRIPE_PUBLISHABLE_KEY", label: "Publishable (pk_…)", required: false, scope: "client_public", envTarget: "both", example: "pk_live_…", validator: { regex: "^pk_" } },
-      { key: "STRIPE_SECRET_KEY", label: "Secret key (sk_…)", required: false, scope: "server_private", envTarget: "production", example: "sk_live_…", validator: { regex: "^sk_" } },
-      { key: "STRIPE_WEBHOOK_SECRET", label: "Webhook (whsec_…)", required: false, scope: "server_private", envTarget: "production", validator: { regex: "^whsec_" } }
     ]
   },
   {
