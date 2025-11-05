@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Mail, Lock, User, AlertCircle, CheckCircle, Gift, Eye, EyeOff } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import BackButton from '../components/BackButton';
@@ -20,6 +20,7 @@ export default function SignUp({ onNavigate }: SignUpProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
   const [success, setSuccess] = useState(false);
+  const submittingRef = useRef(false);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
@@ -28,10 +29,15 @@ export default function SignUp({ onNavigate }: SignUpProps) {
     });
   };
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const handleSubmit = async (e?: React.FormEvent | React.MouseEvent) => {
+    if (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    }
 
-    if (loading) return;
+    if (loading || submittingRef.current) return;
+
+    submittingRef.current = true;
 
     setLoading(true);
     setError('');
@@ -40,12 +46,14 @@ export default function SignUp({ onNavigate }: SignUpProps) {
     if (formData.password !== formData.confirmPassword) {
       setError('Passwords do not match');
       setLoading(false);
+      submittingRef.current = false;
       return;
     }
 
     if (formData.password.length < 6) {
       setError('Password must be at least 6 characters');
       setLoading(false);
+      submittingRef.current = false;
       return;
     }
 
@@ -83,6 +91,7 @@ export default function SignUp({ onNavigate }: SignUpProps) {
       }
     } finally {
       setLoading(false);
+      submittingRef.current = false;
     }
   };
 
@@ -245,6 +254,7 @@ export default function SignUp({ onNavigate }: SignUpProps) {
 
             <button
               type="submit"
+              onClick={handleSubmit}
               disabled={loading || success}
               className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 dark:bg-blue-500 dark:hover:bg-blue-600 dark:active:bg-blue-700 text-white font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none"
             >
