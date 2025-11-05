@@ -518,7 +518,7 @@ export default function BillingSection() {
         <button
           onClick={handleManageBilling}
           className="p-4 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl hover:border-blue-500/50 transition-all text-left group"
-          title="Manage via Stripe Customer Portal"
+          title="Manage Billing Cycle"
         >
           <RefreshCw className="h-6 w-6 text-blue-400 mb-2 group-hover:rotate-180 transition-transform duration-500" />
           <h3 className="text-white font-semibold mb-1">Change Billing Cycle</h3>
@@ -528,7 +528,7 @@ export default function BillingSection() {
         <button
           onClick={handleManageBilling}
           className="p-4 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl hover:border-purple-500/50 transition-all text-left group"
-          title="Opens Stripe portal in new tab"
+          title="Manage Payment Methods"
         >
           <ExternalLink className="h-6 w-6 text-purple-400 mb-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
           <h3 className="text-white font-semibold mb-1">Payment Methods</h3>

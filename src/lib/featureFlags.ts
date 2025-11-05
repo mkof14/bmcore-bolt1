@@ -76,10 +76,8 @@ export const FeatureFlags = {
   AI_HEALTH_ASSISTANT: "ai.health_assistant",
   DEVICES_INTEGRATION: "devices.integration",
   REPORTS_GENERATION: "reports.generation",
-  STRIPE_PAYMENTS: "stripe.payments",
   KILLSWITCH_OPENAI: "killswitch.openai",
   KILLSWITCH_ANTHROPIC: "killswitch.anthropic",
-  KILLSWITCH_STRIPE: "killswitch.stripe",
 } as const;
 
 export async function isFeatureEnabled(flag: string): Promise<boolean> {
@@ -91,7 +89,7 @@ export async function isFeatureEnabled(flag: string): Promise<boolean> {
   return await getFeatureFlag(flag);
 }
 
-export async function checkKillSwitch(service: "openai" | "anthropic" | "stripe"): Promise<boolean> {
+export async function checkKillSwitch(service: "openai" | "anthropic"): Promise<boolean> {
   const killswitchKey = `killswitch.${service}`;
   const isKilled = await getFeatureFlag(killswitchKey);
   return !isKilled;

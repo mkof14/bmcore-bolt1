@@ -246,8 +246,7 @@ export default function SignUp({ onNavigate }: SignUpProps) {
             <button
               type="submit"
               disabled={loading || success}
-              className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 dark:bg-blue-500 dark:hover:bg-blue-600 dark:active:bg-blue-700 text-white font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed touch-manipulation select-none"
-              style={{ WebkitTapHighlightColor: 'transparent' }}
+              className="w-full px-6 py-3 bg-blue-600 hover:bg-blue-700 active:bg-blue-800 dark:bg-blue-500 dark:hover:bg-blue-600 dark:active:bg-blue-700 text-white font-semibold rounded-lg transition-all disabled:opacity-50 disabled:cursor-not-allowed disabled:pointer-events-none"
             >
               {loading ? 'Creating Account...' : 'Create Account'}
             </button>

@@ -1,6 +1,6 @@
 export type KeyScope = "client_public" | "server_private" | "flag";
 export type EnvTarget = "preview" | "production" | "both";
-export type KeyCategory = "core" | "payments" | "ai" | "email" | "analytics" | "devices" | "storage" | "admin";
+export type KeyCategory = "core" | "ai" | "email" | "analytics" | "devices" | "storage" | "admin";
 
 export type KeySpec = {
   key: string;
@@ -23,11 +23,6 @@ export const KEY_SPECS: KeySpec[] = [
   { key: "VERCEL_TOKEN", label: "Vercel API Token", scope: "server_private", envTarget: "production", category: "admin", company: "Vercel", description: "API token for deployment management" },
   { key: "VERCEL_PROJECT_ID", label: "Vercel Project ID", scope: "server_private", envTarget: "production", category: "admin", company: "Vercel", description: "Project identifier" },
   { key: "VERCEL_TEAM_ID", label: "Vercel Team ID", scope: "server_private", envTarget: "production", category: "admin", company: "Vercel", description: "Team identifier (optional)" },
-
-  { key: "VITE_STRIPE_ENABLED", label: "Stripe Enabled", scope: "flag", envTarget: "both", category: "payments", company: "Stripe", example: "0|1", description: "Enable/disable Stripe integration" },
-  { key: "VITE_STRIPE_PUBLISHABLE_KEY", label: "Stripe Publishable Key", scope: "client_public", envTarget: "both", category: "payments", company: "Stripe", example: "pk_live_…", description: "Public key for client-side", validator: { regex: "^pk_(live|test)_" } },
-  { key: "STRIPE_SECRET_KEY", label: "Stripe Secret Key", scope: "server_private", envTarget: "production", category: "payments", company: "Stripe", example: "sk_live_…", description: "Secret key for server operations", validator: { regex: "^sk_(live|test)_" } },
-  { key: "STRIPE_WEBHOOK_SECRET", label: "Stripe Webhook Secret", scope: "server_private", envTarget: "production", category: "payments", company: "Stripe", description: "Webhook signature verification", validator: { regex: "^whsec_" } },
 
   { key: "VITE_GEMINI_API_KEY", label: "Google AI (Gemini) Key", scope: "client_public", envTarget: "both", category: "ai", company: "Google AI", description: "Gemini 1.5/2.0 for Health Advisor", example: "AIza..." },
   { key: "VITE_ANTHROPIC_API_KEY", label: "Anthropic (Claude) Key", scope: "client_public", envTarget: "both", category: "ai", company: "Anthropic", description: "Claude for report analysis", example: "sk-ant-..." },
@@ -62,7 +57,6 @@ export const KEY_SPECS: KeySpec[] = [
 
 export const CATEGORIES = [
   { id: "core" as KeyCategory, label: "Core Infrastructure", icon: "🏗️", description: "Database, hosting, and essential services" },
-  { id: "payments" as KeyCategory, label: "Payments & Billing", icon: "💳", description: "Stripe payment processing" },
   { id: "ai" as KeyCategory, label: "Artificial Intelligence", icon: "🤖", description: "AI models and assistants" },
   { id: "email" as KeyCategory, label: "Email & Notifications", icon: "✉️", description: "Email delivery services" },
   { id: "analytics" as KeyCategory, label: "Analytics & Monitoring", icon: "📈", description: "Tracking and error monitoring" },
