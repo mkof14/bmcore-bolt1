@@ -2,7 +2,6 @@ import { useState } from 'react';
 import { Shield, ChevronDown, Check, Zap, Users } from 'lucide-react';
 import BackButton from '../components/BackButton';
 import PaymentConfirmationModal from '../components/PaymentConfirmationModal';
-import { createSubscription } from '../lib/subscriptionService';
 import { supabase } from '../lib/supabase';
 import SEO from '../components/SEO';
 

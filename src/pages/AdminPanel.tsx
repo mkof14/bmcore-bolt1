@@ -1,4 +1,4 @@
-import {  Settings, Users, FileText, Newspaper, Briefcase, FolderOpen, BarChart3, Shield, Menu, X, LayoutDashboard, Mail, CreditCard, Key, Map, Gift, Database, MessageSquare } from 'lucide-react';
+import {  Settings, Users, FileText, Newspaper, Briefcase, FolderOpen, BarChart3, Shield, Menu, X, LayoutDashboard, Mail, Key, Map, Gift, Database, MessageSquare } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import BackButton from '../components/BackButton';
 import BlogManager from '../components/admin/BlogManager';
@@ -10,7 +10,6 @@ import SettingsSection from '../components/admin/SettingsSection';
 import AnalyticsSection from '../components/admin/AnalyticsSection';
 import UserManagementSection from '../components/admin/UserManagementSection';
 import MarketingDocumentsSection from '../components/admin/MarketingDocumentsSection';
-import StripeConfigManager from '../components/admin/StripeConfigManager';
 import AllAPIKeysManager from '../components/admin/AllAPIKeysManager';
 import SiteMapManager from '../components/admin/SiteMapManager';
 import InvitationManager from '../components/admin/InvitationManager';

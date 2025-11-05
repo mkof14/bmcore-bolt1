@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import { Shield, ChevronDown, Check, Zap, Users } from 'lucide-react';
 import BackButton from '../components/BackButton';
 import PaymentConfirmationModal from '../components/PaymentConfirmationModal';
-import { createSubscription } from '../lib/subscriptionService';
 import { supabase } from '../lib/supabase';
 import SEO from '../components/SEO';
 import ComparisonTable from '../components/ComparisonTable';
@@ -572,21 +571,8 @@ export default function Pricing({ onNavigate }: PricingProps) {
 
       console.log('[Pricing] User authenticated:', user.id);
 
-      // Use dynamic import for stripeService
-      console.log('[Pricing] Importing stripeService...');
-      const { redirectToCheckout } = await import('../lib/stripeService');
-
-      console.log('[Pricing] Starting redirect to Stripe...');
-      console.log('[Pricing] Plan ID:', selectedPlan.id);
-      console.log('[Pricing] Interval:', billingPeriod === 'monthly' ? 'monthly' : 'yearly');
-
-      // Redirect to Stripe Checkout - this will navigate away from the page
-      await redirectToCheckout(selectedPlan.id, billingPeriod === 'monthly' ? 'monthly' : 'yearly');
-
-      console.log('[Pricing] After redirect call - should not reach here');
-
-      // Keep modal open and processing state while redirecting
-      // Don't reset state - user will be redirected to Stripe
+      setError('Payment processing is currently unavailable. Please contact support.');
+      setIsProcessing(false);
     } catch (err: any) {
       console.error('[Pricing] Checkout error:', err);
 

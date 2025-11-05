@@ -206,15 +206,7 @@ export default function BillingSection() {
   };
 
   const handleManageBilling = async () => {
-    try {
-      // Open Stripe Customer Portal for managing payment methods and billing
-      const { createPortalSession } = await import('../../lib/stripeService');
-      const portalUrl = await createPortalSession();
-      window.open(portalUrl, '_blank');
-    } catch (error) {
-      console.error('Error opening billing portal:', error);
-      alert('Unable to open billing portal. Please make sure you have an active subscription.');
-    }
+    alert('Billing portal is currently unavailable. Please contact support.');
   };
 
   const handleUpgradePlan = () => {
