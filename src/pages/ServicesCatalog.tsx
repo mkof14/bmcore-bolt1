@@ -1,14 +1,16 @@
-import { useState, useEffect } from 'react';
-import { Search, ChevronRight, Heart, Brain, Users, Activity, Sparkles, Moon, Shield, Zap, Apple, Leaf, Eye, Tablet, Hourglass, ArrowLeft, TrendingUp, Dumbbell, Flower2, User, Droplets, HeartHandshake, Smartphone, Fingerprint, Target, Blend } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { Search, ChevronRight, Heart, Brain, Users, Activity, Sparkles, Moon, Shield, Zap, Apple, Leaf, Eye, Tablet, Hourglass, ArrowLeft, TrendingUp, Dumbbell, Flower2, User, Droplets, HeartHandshake, Smartphone, Fingerprint, Target, Blend, X } from 'lucide-react';
+import type { LucideProps } from 'lucide-react';
 import { serviceCategories } from '../data/services';
 import BackButton from '../components/BackButton';
+import SEO from '../components/SEO';
 
 interface ServicesCatalogProps {
   onNavigate: (page: string, categoryId?: string) => void;
   initialCategory?: string;
 }
 
-const iconMap: Record<string, React.ComponentType<{ className?: string }>> = {
+const iconMap: Record<string, React.ComponentType<LucideProps>> = {
   Heart,
   Brain,
   Users,
@@ -147,18 +149,19 @@ export default function ServicesCatalog({ onNavigate, initialCategory }: Service
     }
   }, [initialCategory]);
 
-  const filteredCategories = serviceCategories.filter(category => {
-    if (!searchQuery) return true;
-    const query = searchQuery.toLowerCase();
-    return (
-      category.name.toLowerCase().includes(query) ||
-      category.description.toLowerCase().includes(query) ||
+  const normalizedQuery = searchQuery.trim().toLowerCase();
+
+  const filteredCategories = useMemo(() => {
+    if (!normalizedQuery) return serviceCategories;
+    return serviceCategories.filter((category) => (
+      category.name.toLowerCase().includes(normalizedQuery) ||
+      category.description.toLowerCase().includes(normalizedQuery) ||
       category.services.some(service =>
-        service.name.toLowerCase().includes(query) ||
-        service.description.toLowerCase().includes(query)
+        service.name.toLowerCase().includes(normalizedQuery) ||
+        service.description.toLowerCase().includes(normalizedQuery)
       )
-    );
-  });
+    ));
+  }, [normalizedQuery]);
 
   const selectedCategoryData = selectedCategory
     ? serviceCategories.find(c => c.id === selectedCategory)
@@ -166,9 +169,23 @@ export default function ServicesCatalog({ onNavigate, initialCategory }: Service
 
   const heroData = selectedCategoryData ? categoryHeroData[selectedCategoryData.id] : null;
   const IconComponent = selectedCategoryData ? iconMap[selectedCategoryData.icon] : null;
+  const filteredServices = useMemo(() => {
+    if (!selectedCategoryData) return [];
+    if (!normalizedQuery) return selectedCategoryData.services;
+    return selectedCategoryData.services.filter(service => (
+      service.name.toLowerCase().includes(normalizedQuery) ||
+      service.description.toLowerCase().includes(normalizedQuery)
+    ));
+  }, [selectedCategoryData, normalizedQuery]);
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors pt-16">
+      <SEO
+        title="Services Catalog - 200+ Health Analytics Services"
+        description="Explore BioMath Core’s full catalog of health analytics services across 20 categories. Find the right wellness insights for your goals."
+        keywords={['health services catalog', 'biomath core services', 'wellness categories', 'AI health insights', 'biomathematics services']}
+        url="/services-catalog"
+      />
       {selectedCategoryData && heroData && IconComponent ? (
         <section className="relative h-80 overflow-hidden">
           <div
@@ -208,27 +225,31 @@ export default function ServicesCatalog({ onNavigate, initialCategory }: Service
           </div>
         </section>
       ) : (
-        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 via-gray-950 to-gray-900 relative overflow-hidden">
-          <div className="absolute inset-0 opacity-20">
-            <div className="absolute top-0 right-0 w-1/2 h-full bg-gradient-to-l from-orange-500/20 to-transparent"></div>
+        <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[radial-gradient(circle_at_top,_#fff6ed,_transparent_55%),linear-gradient(135deg,#f8fafc,white)] dark:bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.18),_transparent_55%),linear-gradient(135deg,#0f172a,#020617)] relative overflow-hidden">
+          <div className="absolute inset-0 opacity-30">
+            <div className="absolute -top-20 left-10 w-56 h-56 rounded-full bg-orange-400/20 blur-3xl"></div>
+            <div className="absolute top-10 right-10 w-72 h-72 rounded-full bg-blue-500/20 blur-3xl"></div>
           </div>
           <div className="max-w-7xl mx-auto relative z-10">
             <BackButton onNavigate={onNavigate} />
 
             <div className="text-center mb-8">
-              <div className="flex items-center justify-center gap-8 mb-4">
-                <div className="flex-1 text-right">
-                  <h1 className="text-5xl font-bold text-white mb-4">
+              <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-orange-200/80 bg-white/70 text-[11px] font-semibold uppercase tracking-[0.32em] text-orange-700 backdrop-blur dark:bg-white/10 dark:text-orange-200 dark:border-orange-300/20 mb-5">
+                All Services
+              </div>
+              <div className="flex flex-col lg:flex-row items-center justify-center gap-8 mb-4">
+                <div className="text-center lg:text-left">
+                  <h1 className="text-5xl md:text-6xl font-semibold tracking-tight text-gray-900 dark:text-white mb-4">
                     Complete Services Catalog
                   </h1>
-                  <p className="text-xl text-gray-300">
-                    Explore our comprehensive suite of 200+ biomathematical health services across 20 specialized categories
+                  <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl">
+                    Explore 200+ biomathematical health services across 20 specialized categories.
                   </p>
                 </div>
                 <img
                   src="/Copilot_20251022_202220.png"
                   alt="BioMath Services"
-                  className="w-48 h-48 object-contain"
+                  className="w-40 h-40 object-contain"
                 />
               </div>
 
@@ -240,8 +261,21 @@ export default function ServicesCatalog({ onNavigate, initialCategory }: Service
                     placeholder="Search categories or services..."
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
-                    className="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-700 bg-gray-800 text-white focus:border-orange-500 focus:outline-none transition-colors"
+                    className="w-full pl-12 pr-12 py-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 focus:border-orange-500 focus:outline-none transition-colors shadow-sm"
                   />
+                  {searchQuery && (
+                    <button
+                      onClick={() => setSearchQuery('')}
+                      className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 dark:hover:text-white transition-colors"
+                      aria-label="Clear search"
+                      type="button"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  )}
+                </div>
+                <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                  Showing {filteredCategories.length} {filteredCategories.length === 1 ? 'category' : 'categories'}
                 </div>
               </div>
             </div>
@@ -250,7 +284,7 @@ export default function ServicesCatalog({ onNavigate, initialCategory }: Service
       )}
 
       {selectedCategoryData && (
-        <section className="py-8 px-4 sm:px-6 lg:px-8 bg-gray-900/50 border-b border-gray-800">
+        <section className="py-8 px-4 sm:px-6 lg:px-8 bg-white dark:bg-gray-950 border-b border-gray-200 dark:border-gray-800">
           <div className="max-w-7xl mx-auto">
             <div className="max-w-2xl mx-auto">
               <div className="relative">
@@ -260,21 +294,34 @@ export default function ServicesCatalog({ onNavigate, initialCategory }: Service
                   placeholder="Search services..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-4 rounded-xl border-2 border-gray-700 bg-gray-800 text-white focus:border-orange-500 focus:outline-none transition-colors"
+                  className="w-full pl-12 pr-12 py-4 rounded-xl border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white placeholder-gray-400 focus:border-orange-500 focus:outline-none transition-colors shadow-sm"
                 />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 dark:hover:text-white transition-colors"
+                    aria-label="Clear search"
+                    type="button"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+              <div className="mt-2 text-sm text-gray-500 dark:text-gray-400">
+                Showing {filteredServices.length} {filteredServices.length === 1 ? 'service' : 'services'}
               </div>
             </div>
           </div>
         </section>
       )}
 
-      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-gray-950">
+      <section className="py-12 px-4 sm:px-6 lg:px-8 bg-slate-50 dark:bg-gray-950">
         <div className="max-w-7xl mx-auto">
           {!selectedCategoryData ? (
             <div>
               {filteredCategories.length === 0 ? (
                 <div className="text-center py-12">
-                  <p className="text-xl text-gray-400">No categories found matching your search.</p>
+                  <p className="text-xl text-gray-500 dark:text-gray-400">No categories found matching your search.</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -284,23 +331,23 @@ export default function ServicesCatalog({ onNavigate, initialCategory }: Service
                       <button
                         key={category.id}
                         onClick={() => setSelectedCategory(category.id)}
-                        className="group p-6 rounded-2xl border border-gray-800 hover:border-gray-700 bg-gray-900/50 backdrop-blur hover:shadow-2xl hover:shadow-orange-500/20 transition-all text-left"
+                        className="group p-6 rounded-2xl border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 bg-white dark:bg-gray-900/50 backdrop-blur hover:shadow-2xl hover:shadow-orange-500/20 transition-all text-left"
                       >
                         <div className="flex items-start space-x-4 mb-4">
-                          <div className={`flex-shrink-0 w-14 h-14 bg-gray-800/50 rounded-xl flex items-center justify-center`}>
+                          <div className={`flex-shrink-0 w-14 h-14 bg-gray-100 dark:bg-gray-800/50 rounded-xl flex items-center justify-center`}>
                             <IconComponent className={`h-7 w-7 ${categoryHeroData[category.id]?.iconColor || 'text-orange-400'}`} />
                           </div>
                           <div className="flex-1">
                             <h3 className={`text-xl font-bold ${categoryHeroData[category.id]?.textColor || 'text-orange-400'} mb-1`}>
                               {category.name}
                             </h3>
-                            <p className="text-sm font-medium text-gray-400">
+                            <p className="text-sm font-medium text-gray-500 dark:text-gray-400">
                               {category.services.length} Services
                             </p>
                           </div>
                           <ChevronRight className="h-6 w-6 text-gray-400 group-hover:text-orange-500 flex-shrink-0 transition-colors" />
                         </div>
-                        <p className="text-sm text-gray-400">
+                        <p className="text-sm text-gray-600 dark:text-gray-400">
                           {category.description}
                         </p>
                       </button>
@@ -311,43 +358,32 @@ export default function ServicesCatalog({ onNavigate, initialCategory }: Service
             </div>
           ) : (
             <div>
-              {selectedCategoryData.services.filter(service => {
-                if (!searchQuery) return true;
-                const query = searchQuery.toLowerCase();
-                return (
-                  service.name.toLowerCase().includes(query) ||
-                  service.description.toLowerCase().includes(query)
-                );
-              }).length === 0 ? (
+              {filteredServices.length === 0 ? (
                 <div className="text-center py-12">
-                  <p className="text-xl text-gray-400">No services found matching your search.</p>
+                  <p className="text-xl text-gray-500 dark:text-gray-400">No services found matching your search.</p>
                 </div>
               ) : (
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                  {selectedCategoryData.services
-                    .filter(service => {
-                      if (!searchQuery) return true;
-                      const query = searchQuery.toLowerCase();
-                      return (
-                        service.name.toLowerCase().includes(query) ||
-                        service.description.toLowerCase().includes(query)
-                      );
-                    })
-                    .map((service) => (
-                      <button
-                        key={service.id}
-                        onClick={() => onNavigate('service-detail', `${selectedCategoryData.id}/${service.id}`)}
-                        className="group p-5 rounded-xl border border-gray-800 hover:border-gray-700 bg-gray-900/50 backdrop-blur hover:shadow-2xl hover:shadow-orange-500/20 transition-all text-left"
-                      >
-                        <div className="flex items-start justify-between mb-2">
-                          <h3 className="font-semibold text-lg text-white group-hover:text-orange-400 transition-colors pr-2">
-                            {service.name}
-                          </h3>
-                          <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-orange-500 flex-shrink-0 transition-colors" />
-                        </div>
-                        <p className="text-sm text-gray-400">{service.description}</p>
-                      </button>
-                    ))}
+                  {filteredServices.map((service) => (
+                    <button
+                      key={service.id}
+                      onClick={() => onNavigate('service-detail', `${selectedCategoryData.id}/${service.id}`)}
+                      className="group p-5 rounded-xl border border-gray-200 dark:border-gray-800 hover:border-gray-300 dark:hover:border-gray-700 bg-white dark:bg-gray-900/50 backdrop-blur hover:shadow-2xl hover:shadow-orange-500/20 transition-all text-left"
+                    >
+                      <div className="flex items-start justify-between mb-2">
+                        <h3 className="font-semibold text-lg text-gray-900 dark:text-white group-hover:text-orange-400 transition-colors pr-2">
+                          {service.name}
+                        </h3>
+                        <ChevronRight className="h-5 w-5 text-gray-400 group-hover:text-orange-500 flex-shrink-0 transition-colors" />
+                      </div>
+                      <p className="text-sm text-gray-600 dark:text-gray-400">{service.description}</p>
+                      <div className="mt-3">
+                        <span className="inline-flex items-center gap-1 rounded-full px-2 py-1 text-xs font-semibold bg-blue-50 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300 border border-blue-200 dark:border-blue-800">
+                          Multi-Model Mode
+                        </span>
+                      </div>
+                    </button>
+                  ))}
                 </div>
               )}
             </div>
@@ -355,9 +391,9 @@ export default function ServicesCatalog({ onNavigate, initialCategory }: Service
         </div>
       </section>
 
-      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-gray-900 via-gray-950 to-gray-900">
+      <section className="py-16 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-950 via-gray-950 to-slate-900">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+          <h2 className="text-4xl md:text-5xl font-semibold text-white mb-6">
             Ready to Start Your Health Journey?
           </h2>
           <p className="text-xl text-gray-300 mb-8">

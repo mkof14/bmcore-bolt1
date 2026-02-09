@@ -3,6 +3,12 @@ import { supabase } from "./supabase";
 const flagCache = new Map<string, { enabled: boolean; timestamp: number }>();
 const CACHE_TTL = 60000;
 
+const logFlagError = (message: string, error?: unknown) => {
+  if (import.meta.env.DEV) {
+    console.warn(message, error);
+  }
+};
+
 export async function getFeatureFlag(flagKey: string): Promise<boolean> {
   const cached = flagCache.get(flagKey);
   if (cached && Date.now() - cached.timestamp < CACHE_TTL) {
@@ -17,12 +23,14 @@ export async function getFeatureFlag(flagKey: string): Promise<boolean> {
       .maybeSingle();
 
     if (error || !data) {
+      if (error) logFlagError("Feature flag fetch failed", error);
       return false;
     }
 
     flagCache.set(flagKey, { enabled: data.enabled, timestamp: Date.now() });
     return data.enabled;
-  } catch {
+  } catch (error) {
+    logFlagError("Feature flag fetch error", error);
     return false;
   }
 }
@@ -32,6 +40,7 @@ export async function getAllFeatureFlags(): Promise<Record<string, boolean>> {
     const { data, error } = await supabase.from("feature_flags").select("flag_key, enabled");
 
     if (error || !data) {
+      if (error) logFlagError("Feature flags load failed", error);
       return {};
     }
 
@@ -42,7 +51,8 @@ export async function getAllFeatureFlags(): Promise<Record<string, boolean>> {
     }
 
     return flags;
-  } catch {
+  } catch (error) {
+    logFlagError("Feature flags load error", error);
     return {};
   }
 }

@@ -67,7 +67,12 @@ export default function DualOpinionView({
               <span>Create Report</span>
             </button>
             <button
-              onClick={() => onAddGoals(mergedView.combinedRecommendations)}
+              onClick={() => onAddGoals(mergedView.combinedRecommendations.map((rec) => ({
+                title: rec.title,
+                description: rec.description,
+                priority: rec.priority,
+                actionable: true
+              })))}
               className="flex items-center space-x-2 px-4 py-2 bg-green-600 hover:bg-green-700 text-white rounded-lg transition-colors"
             >
               <Target className="h-4 w-4" />

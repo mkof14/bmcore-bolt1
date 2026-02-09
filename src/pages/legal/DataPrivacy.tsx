@@ -7,18 +7,21 @@ interface DataPrivacyProps {
 
 export default function DataPrivacy({ onNavigate }: DataPrivacyProps) {
   return (
-    <div className="min-h-screen bg-white pt-20 pb-16">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-b from-white via-orange-50/40 to-white pt-20 pb-16">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <BackButton onNavigate={onNavigate} />
         <div className="text-center mb-12">
+          <span className="inline-flex items-center rounded-full border border-orange-200 bg-white/80 px-4 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-orange-700">
+            Legal
+          </span>
           <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-2xl mb-4">
             <Database className="h-8 w-8 text-purple-600" />
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Data Privacy</h1>
+          <h1 className="text-4xl font-semibold text-gray-900 mb-4">Data Privacy</h1>
           <p className="text-gray-700">Last updated: October 21, 2025</p>
         </div>
 
-        <div className="prose prose-lg max-w-none">
+        <div className="prose prose-lg max-w-none rounded-3xl border border-slate-200 bg-white/90 p-8 shadow-xl">
           <div className="bg-purple-50 border border-purple-200 rounded-xl p-6 mb-8">
             <p className="text-gray-900 font-medium mb-0">
               Your privacy is fundamental to BioMath Core. This page explains our commitment to protecting your personal and health data.

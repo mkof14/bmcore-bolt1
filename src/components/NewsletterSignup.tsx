@@ -72,7 +72,6 @@ export default function NewsletterSignup({ variant = 'inline', className = '' }:
         setMessage('');
       }, 5000);
     } catch (error) {
-      console.error('Newsletter signup error:', error);
       setStatus('error');
       setMessage('Something went wrong. Please try again.');
     }

@@ -1,11 +1,4 @@
-export const API_KEYS = {
-  OPENAI: import.meta.env.VITE_OPENAI_API_KEY || '',
-  GEMINI: import.meta.env.VITE_GEMINI_API_KEY || '',
-  COPILOT: import.meta.env.VITE_GITHUB_COPILOT_TOKEN || '',
-  ANTHROPIC: import.meta.env.VITE_ANTHROPIC_API_KEY || '',
-  ELEVENLABS: import.meta.env.VITE_ELEVENLABS_API_KEY || '',
-  SENDGRID: import.meta.env.VITE_SENDGRID_API_KEY || '',
-  RESEND: import.meta.env.VITE_RESEND_API_KEY || '',
+export const PUBLIC_CONFIG = {
   GOOGLE_ANALYTICS: import.meta.env.VITE_GA_MEASUREMENT_ID || '',
   SENTRY_DSN: import.meta.env.VITE_SENTRY_DSN || '',
   VAPID_PUBLIC: import.meta.env.VITE_VAPID_PUBLIC_KEY || '',
@@ -54,6 +47,6 @@ export function validateAPIKeys() {
   return true;
 }
 
-export function isServiceEnabled(service: keyof typeof API_KEYS): boolean {
-  return !!API_KEYS[service];
+export function isServiceEnabled(service: keyof typeof PUBLIC_CONFIG): boolean {
+  return !!PUBLIC_CONFIG[service];
 }

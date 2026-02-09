@@ -60,7 +60,10 @@ export function useBackgroundSync() {
       await db.add('pending-sync', syncData);
 
       const registration = await navigator.serviceWorker.ready;
-      await registration.sync.register('sync-data');
+      const syncManager = (registration as any).sync;
+      if (syncManager?.register) {
+        await syncManager.register('sync-data');
+      }
 
       setState((prev) => ({
         ...prev,

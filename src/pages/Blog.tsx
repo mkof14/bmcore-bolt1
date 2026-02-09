@@ -1,4 +1,4 @@
-import { BookOpen, Calendar, ArrowRight } from 'lucide-react';
+import { BookOpen, Calendar, ArrowRight, Share2, Copy, X } from 'lucide-react';
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import BackButton from '../components/BackButton';
@@ -7,6 +7,7 @@ import LoadingSpinner, { SkeletonList } from '../components/LoadingSpinner';
 import ErrorMessage from '../components/ErrorMessage';
 import EmptyState from '../components/EmptyState';
 import { generateArticleSchema, injectStructuredData } from '../lib/structuredData';
+import { notifyUserInfo } from '../lib/adminNotify';
 
 interface BlogProps {
   onNavigate: (page: string) => void;
@@ -17,6 +18,7 @@ interface BlogPost {
   title: string;
   slug: string;
   excerpt: string;
+  content: string;
   featured_image: string;
   category: string;
   published_at: string;
@@ -26,10 +28,26 @@ export default function Blog({ onNavigate }: BlogProps) {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string>('');
+  const [selectedPost, setSelectedPost] = useState<BlogPost | null>(null);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [categoryFilter, setCategoryFilter] = useState('all');
+  const [visibleCount, setVisibleCount] = useState(6);
 
   useEffect(() => {
     loadPosts();
   }, []);
+
+  useEffect(() => {
+    if (!selectedPost) return;
+    const onKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setSelectedPost(null);
+        window.location.hash = '#/blog';
+      }
+    };
+    window.addEventListener('keydown', onKeyDown);
+    return () => window.removeEventListener('keydown', onKeyDown);
+  }, [selectedPost]);
 
   async function loadPosts() {
     try {
@@ -38,29 +56,70 @@ export default function Blog({ onNavigate }: BlogProps) {
 
       const { data, error: fetchError } = await supabase
         .from('blog_posts')
-        .select('id, title, slug, excerpt, featured_image, category, published_at')
+        .select('id, title, slug, excerpt, content, featured_image, category, published_at')
         .eq('status', 'published')
         .order('published_at', { ascending: false })
         .limit(12);
 
       if (fetchError) {
-        console.error('Supabase error:', fetchError);
-        setError(`Database error: ${fetchError.message}`);
+        setError('Blog load failed');
         return;
       }
 
-      console.log('Loaded posts:', data);
-      setPosts(data || []);
+      const loadedPosts = data || [];
+      setPosts(loadedPosts);
+
+      const params = new URLSearchParams(window.location.hash.split('?')[1] || '');
+      const slug = params.get('post');
+      if (slug) {
+        const match = loadedPosts.find((post) => post.slug === slug);
+        if (match) setSelectedPost(match);
+      }
     } catch (err) {
-      console.error('Error loading posts:', err);
-      setError(`Failed to load: ${err instanceof Error ? err.message : 'Unknown error'}`);
+      setError('Blog load failed');
     } finally {
       setLoading(false);
     }
   }
 
+  const categories = Array.from(
+    new Set(posts.map(post => post.category).filter(Boolean))
+  );
+
+  const filteredPosts = posts.filter((post) => {
+    const query = searchQuery.trim().toLowerCase();
+    const matchesQuery = !query ||
+      post.title.toLowerCase().includes(query) ||
+      (post.excerpt || '').toLowerCase().includes(query) ||
+      (post.content || '').toLowerCase().includes(query);
+    const matchesCategory = categoryFilter === 'all' || post.category === categoryFilter;
+    return matchesQuery && matchesCategory;
+  });
+
+  const visiblePosts = filteredPosts.slice(0, visibleCount);
+
+  const handleCopyLink = (post: BlogPost) => {
+    const link = `${window.location.origin}/#/blog?post=${post.slug}`;
+    navigator.clipboard.writeText(link);
+    window.location.hash = `#/blog?post=${post.slug}`;
+    notifyUserInfo('Link copied');
+  };
+
+  const handleShare = async (post: BlogPost) => {
+    const link = `${window.location.origin}/#/blog?post=${post.slug}`;
+    if (navigator.share) {
+      await navigator.share({
+        title: post.title,
+        text: post.excerpt,
+        url: link,
+      });
+      return;
+    }
+    handleCopyLink(post);
+  };
+
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-950 to-gray-900 pt-20 pb-16">
+    <div className="min-h-screen bg-white dark:bg-gray-950 pt-20 pb-16">
       <SEO
         title="Health & Wellness Blog - Expert Articles & Insights"
         description="Explore our collection of articles on health analytics, wellness optimization, preventive care, and personalized medicine. Expert insights from BioMath Core."
@@ -71,11 +130,11 @@ export default function Blog({ onNavigate }: BlogProps) {
         <BackButton onNavigate={onNavigate} />
 
         <div className="text-center mb-16">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-gray-800 to-gray-900 border border-orange-600/30 rounded-xl mb-6 shadow-lg shadow-orange-600/10">
-            <BookOpen className="h-10 w-10 text-orange-500" />
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-orange-200/80 bg-white/70 text-[11px] font-semibold uppercase tracking-[0.32em] text-orange-700 backdrop-blur dark:bg-white/10 dark:text-orange-200 dark:border-orange-300/20 mb-6">
+            Blog
           </div>
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">Blog</h1>
-          <p className="text-xl text-gray-300 max-w-3xl mx-auto leading-relaxed">
+          <h1 className="text-5xl md:text-6xl font-semibold tracking-tight text-gray-900 dark:text-white mb-6">Blog</h1>
+          <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto leading-relaxed">
             Insights, research, and stories about health, wellness, and the future of personalized care
           </p>
         </div>
@@ -107,47 +166,189 @@ export default function Blog({ onNavigate }: BlogProps) {
         )}
 
         {!loading && !error && posts.length > 0 && (
-          <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {posts.map((post) => (
-              <article
-                key={post.id}
-                className="group relative bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-2xl overflow-hidden hover:border-orange-600/50 transition-all duration-500 cursor-pointer"
+          <div>
+            <div className="flex flex-col md:flex-row gap-3 md:items-center md:justify-between mb-8">
+              <div className="relative w-full md:max-w-md">
+                <input
+                  type="text"
+                  value={searchQuery}
+                  onChange={(e) => {
+                    setSearchQuery(e.target.value);
+                    setVisibleCount(6);
+                  }}
+                  placeholder="Search articles..."
+                  className="w-full px-4 py-2 pr-10 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                />
+                {searchQuery && (
+                  <button
+                    onClick={() => setSearchQuery('')}
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-700 dark:hover:text-white"
+                    aria-label="Clear search"
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                )}
+              </div>
+              <div className="text-sm text-gray-500 dark:text-gray-400">
+                {filteredPosts.length} results
+              </div>
+              <select
+                value={categoryFilter}
+                onChange={(e) => {
+                  setCategoryFilter(e.target.value);
+                  setVisibleCount(6);
+                }}
+                className="w-full md:w-56 px-4 py-2 bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-orange-900/0 to-orange-900/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500"></div>
-                {post.featured_image && (
-                  <div className="aspect-video bg-gray-800 relative overflow-hidden">
-                    <img
-                      src={post.featured_image}
-                      alt={post.title}
-                      className="w-full h-full object-cover"
-                    />
+                <option value="all">All categories</option>
+                {categories.map((category) => (
+                  <option key={category} value={category}>
+                    {category}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {filteredPosts.length === 0 ? (
+              <div className="py-20">
+                <EmptyState
+                  icon={BookOpen}
+                  title="No Results"
+                  description="Try a different search term or category."
+                />
+              </div>
+            ) : (
+              <>
+                <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {visiblePosts.map((post) => (
+                    <article
+                      key={post.id}
+                      onClick={() => {
+                        setSelectedPost(post);
+                        window.location.hash = `#/blog?post=${post.slug}`;
+                      }}
+                      className="group relative bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl overflow-hidden hover:border-orange-400/60 transition-all duration-300 cursor-pointer shadow-sm"
+                    >
+                      {post.featured_image && (
+                        <div className="aspect-video bg-gray-100 dark:bg-gray-800 relative overflow-hidden">
+                          <img
+                            src={post.featured_image}
+                            alt={post.title}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                      )}
+                      <div className="p-6 relative">
+                        {post.category && (
+                          <span className="inline-block px-3 py-1 bg-orange-50 border border-orange-200 text-orange-600 text-xs font-medium rounded-full mb-3">
+                            {post.category}
+                          </span>
+                        )}
+                        <h2 className="text-xl font-semibold text-gray-900 dark:text-white mb-3 line-clamp-2 group-hover:text-orange-600 transition-colors">
+                          {post.title}
+                        </h2>
+                        <p className="text-gray-600 dark:text-gray-400 mb-4 line-clamp-3 leading-relaxed">
+                          {post.excerpt}
+                        </p>
+                        <div className="flex items-center justify-between text-sm text-gray-500">
+                          <div className="flex items-center gap-2">
+                            <Calendar className="h-4 w-4 text-orange-500" />
+                            <span>{new Date(post.published_at).toLocaleDateString()}</span>
+                          </div>
+                          <ArrowRight className="h-4 w-4 text-orange-500 group-hover:text-orange-400 transition-colors" />
+                        </div>
+                      </div>
+                    </article>
+                  ))}
+                </div>
+
+                {visiblePosts.length < filteredPosts.length && (
+                  <div className="mt-10 text-center">
+                    <button
+                      onClick={() => setVisibleCount((count) => count + 6)}
+                      className="px-6 py-3 bg-gray-900 text-white rounded-lg transition-colors hover:bg-gray-800"
+                    >
+                      Load more
+                    </button>
                   </div>
                 )}
-                <div className="p-6 relative">
-                  {post.category && (
-                    <span className="inline-block px-3 py-1 bg-orange-900/30 border border-orange-600/20 text-orange-400 text-xs font-medium rounded-full mb-3">
-                      {post.category}
-                    </span>
-                  )}
-                  <h2 className="text-xl font-bold text-white mb-3 line-clamp-2 group-hover:text-orange-50 transition-colors">
-                    {post.title}
-                  </h2>
-                  <p className="text-gray-400 mb-4 line-clamp-3 leading-relaxed">
-                    {post.excerpt}
-                  </p>
-                  <div className="flex items-center justify-between text-sm text-gray-500">
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4 text-orange-500" />
-                      <span>{new Date(post.published_at).toLocaleDateString()}</span>
-                    </div>
-                    <ArrowRight className="h-4 w-4 text-orange-500 group-hover:text-orange-400 transition-colors" />
-                  </div>
-                </div>
-              </article>
-            ))}
+              </>
+            )}
           </div>
         )}
       </div>
+
+      {selectedPost && (
+        <div
+          className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4"
+          onClick={(event) => {
+            if (event.target === event.currentTarget) {
+              setSelectedPost(null);
+              window.location.hash = '#/blog';
+            }
+          }}
+        >
+          <div className="bg-white dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-2xl max-w-3xl w-full max-h-[90vh] overflow-y-auto shadow-xl">
+            <div className="p-6 border-b border-gray-200 dark:border-gray-800 flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xs text-orange-500 font-semibold tracking-wider uppercase mb-2">
+                  {selectedPost.category || 'Health'}
+                </p>
+                <h2 className="text-2xl md:text-3xl font-semibold text-gray-900 dark:text-white">
+                  {selectedPost.title}
+                </h2>
+                <p className="text-sm text-gray-500 dark:text-gray-400 mt-2">
+                  {new Date(selectedPost.published_at).toLocaleDateString()}
+                </p>
+              </div>
+              <div className="flex items-center gap-2">
+                <button
+                  onClick={() => handleShare(selectedPost)}
+                  className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white bg-gray-100 dark:bg-gray-800/60 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                  title="Share"
+                >
+                  <Share2 className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => handleCopyLink(selectedPost)}
+                  className="p-2 text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white bg-gray-100 dark:bg-gray-800/60 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                  title="Copy link"
+                >
+                  <Copy className="h-4 w-4" />
+                </button>
+                <button
+                  onClick={() => {
+                    setSelectedPost(null);
+                    window.location.hash = '#/blog';
+                  }}
+                  className="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white bg-gray-100 dark:bg-gray-800/60 hover:bg-gray-200 dark:hover:bg-gray-800 rounded-lg transition-colors"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+            {selectedPost.featured_image && (
+              <div className="aspect-video bg-gray-100 dark:bg-gray-900">
+                <img
+                  src={selectedPost.featured_image}
+                  alt={selectedPost.title}
+                  className="w-full h-full object-cover"
+                />
+              </div>
+            )}
+            <div className="p-6">
+              {selectedPost.excerpt && (
+                <p className="text-gray-700 dark:text-gray-300 text-lg mb-4">
+                  {selectedPost.excerpt}
+                </p>
+              )}
+              <div className="text-gray-700 dark:text-gray-300 leading-relaxed whitespace-pre-line">
+                {selectedPost.content}
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

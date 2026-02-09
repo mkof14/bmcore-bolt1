@@ -129,26 +129,24 @@ export async function exportAndDownloadUserData(userId: string, format: 'json' |
 
 export async function deleteUserData(userId: string): Promise<void> {
   try {
-    const tables = [
-      'ai_conversations',
-      'device_readings',
-      'habit_tracking',
-      'health_goals',
-      'health_reports',
-      'questionnaire_responses',
-      'health_data',
-      'second_opinion_requests',
-      'medical_files',
-      'user_subscriptions',
-      'user_services',
-      'profiles'
-    ];
+    const { data: sessionData } = await supabase.auth.getSession();
+    const token = sessionData?.session?.access_token;
+    if (!token) throw new Error('Authentication required');
 
-    for (const table of tables) {
-      await supabase.from(table).delete().eq('user_id', userId);
+    const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+    const res = await fetch(`${supabaseUrl}/functions/v1/gdpr-delete-user`, {
+      method: 'POST',
+      headers: {
+        'content-type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({ userId }),
+    });
+
+    const data = await res.json().catch(() => null);
+    if (!res.ok || data?.ok === false) {
+      throw new Error(data?.error || 'Failed to delete user data');
     }
-
-    await supabase.auth.admin.deleteUser(userId);
   } catch (error) {
     console.error('Error deleting user data:', error);
     throw new Error('Failed to delete user data');

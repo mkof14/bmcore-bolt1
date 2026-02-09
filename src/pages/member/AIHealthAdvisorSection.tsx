@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Sparkles, Send, Brain, AlertCircle } from 'lucide-react';
+import ReportBrandHeader from '../../components/report/ReportBrandHeader';
 
 export default function AIHealthAdvisorSection() {
   const [question, setQuestion] = useState('');
@@ -34,21 +35,28 @@ export default function AIHealthAdvisorSection() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+        <h1 className="text-3xl font-semibold text-gray-900 mb-2 flex items-center gap-3">
           <Sparkles className="h-8 w-8 text-orange-500" />
           AI Health Advisor
         </h1>
-        <p className="text-gray-400">
+        <p className="text-gray-600">
           Get dual AI expert opinions on your health questions for comprehensive insights
         </p>
       </div>
 
-      <div className="mb-6 p-4 bg-yellow-900/20 border border-yellow-600/30 rounded-xl">
+      <ReportBrandHeader
+        title="BioMath Core"
+        subtitle="AI Health Advisor"
+        variant="strip"
+        className="mb-6"
+      />
+
+      <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded-2xl">
         <div className="flex items-start gap-3">
-          <AlertCircle className="h-5 w-5 text-yellow-500 flex-shrink-0 mt-0.5" />
+          <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
           <div>
-            <p className="text-sm text-yellow-200 font-medium mb-1">Medical Disclaimer</p>
-            <p className="text-xs text-yellow-300/80">
+            <p className="text-sm text-yellow-700 font-medium mb-1">Medical Disclaimer</p>
+            <p className="text-xs text-yellow-700/80">
               AI responses are for informational purposes only. Always consult qualified healthcare
               professionals for medical advice, diagnosis, or treatment.
             </p>
@@ -56,8 +64,9 @@ export default function AIHealthAdvisorSection() {
         </div>
       </div>
 
-      <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl p-6 mb-6">
-        <h3 className="text-lg font-semibold text-white mb-4">Ask Your Health Question</h3>
+      <div className="bg-white/90 border border-slate-200 rounded-2xl p-6 shadow-lg mb-6">
+        <ReportBrandHeader variant="strip" subtitle="Ask Your Question" className="mb-4" />
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Ask Your Health Question</h3>
         <div className="space-y-4">
           <textarea
             value={question}
@@ -65,7 +74,7 @@ export default function AIHealthAdvisorSection() {
             onKeyPress={handleKeyPress}
             rows={4}
             placeholder="Type your health question here... (e.g., 'What are the benefits of regular exercise for heart health?')"
-            className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
+            className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500 resize-none"
           />
           <button
             onClick={handleSubmit}
@@ -88,18 +97,19 @@ export default function AIHealthAdvisorSection() {
       </div>
 
       {loading && (
-        <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-orange-600/30 rounded-xl p-6 mb-6">
+        <div className="bg-white/90 border border-orange-200 rounded-2xl p-6 mb-6 shadow-lg">
+          <ReportBrandHeader variant="strip" subtitle="Dual AI Processing" className="mb-4" />
           <div className="space-y-3">
             <div className="flex items-center gap-3">
               <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-orange-500"></div>
-              <p className="text-white font-semibold">Analyzing your question with dual AI models...</p>
+              <p className="text-gray-900 font-semibold">Analyzing your question with dual AI models...</p>
             </div>
             <div className="space-y-2 pl-8">
-              <div className="flex items-center gap-2 text-sm text-gray-400">
+              <div className="flex items-center gap-2 text-sm text-gray-600">
                 <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse"></div>
                 <span>AI Model #1: Evidence-based analysis</span>
               </div>
-              <div className="flex items-center gap-2 text-sm text-gray-400">
+              <div className="flex items-center gap-2 text-sm text-gray-600">
                 <div className="w-2 h-2 bg-blue-500 rounded-full animate-pulse"></div>
                 <span>AI Model #2: Contextual analysis</span>
               </div>
@@ -110,66 +120,69 @@ export default function AIHealthAdvisorSection() {
 
       {!loading && responses.opinion1 && responses.opinion2 && (
         <div>
-          <h3 className="text-xl font-semibold text-white mb-4 flex items-center gap-2">
+          <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
             <Brain className="h-6 w-6 text-orange-500" />
             Dual AI Opinions
           </h3>
 
           <div className="grid md:grid-cols-2 gap-6">
-            <div className="bg-gradient-to-br from-blue-900/20 via-blue-800/10 to-gray-900 border border-blue-600/30 rounded-xl p-6">
+            <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6">
+              <ReportBrandHeader variant="strip" subtitle="Opinion #1" className="mb-4" />
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-blue-900/30 border border-blue-600/30 rounded-lg">
-                  <Brain className="h-5 w-5 text-blue-400" />
+                <div className="p-2 bg-blue-100 border border-blue-200 rounded-lg">
+                  <Brain className="h-5 w-5 text-blue-600" />
                 </div>
                 <div>
-                  <h4 className="text-lg font-semibold text-white">AI Opinion #1</h4>
-                  <p className="text-xs text-blue-400">Evidence-Based Perspective</p>
+                  <h4 className="text-lg font-semibold text-gray-900">AI Opinion #1</h4>
+                  <p className="text-xs text-blue-600">Evidence-Based Perspective</p>
                 </div>
               </div>
-              <div className="prose prose-invert prose-sm max-w-none">
-                <p className="text-gray-300 whitespace-pre-wrap">{responses.opinion1}</p>
+              <div className="prose prose-sm max-w-none">
+                <p className="text-gray-700 whitespace-pre-wrap">{responses.opinion1}</p>
               </div>
-              <div className="mt-4 pt-4 border-t border-blue-600/20">
+              <div className="mt-4 pt-4 border-t border-blue-200">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-gray-500">Confidence:</span>
-                  <span className="text-blue-400 font-semibold">85%</span>
+                  <span className="text-blue-700 font-semibold">85%</span>
                 </div>
                 <div className="flex items-center justify-between text-xs mt-2">
                   <span className="text-gray-500">Sources:</span>
-                  <span className="text-blue-400 font-semibold">Medical research</span>
+                  <span className="text-blue-700 font-semibold">Medical research</span>
                 </div>
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-green-900/20 via-green-800/10 to-gray-900 border border-green-600/30 rounded-xl p-6">
+            <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
+              <ReportBrandHeader variant="strip" subtitle="Opinion #2" className="mb-4" />
               <div className="flex items-center gap-3 mb-4">
-                <div className="p-2 bg-green-900/30 border border-green-600/30 rounded-lg">
-                  <Brain className="h-5 w-5 text-green-400" />
+                <div className="p-2 bg-emerald-100 border border-emerald-200 rounded-lg">
+                  <Brain className="h-5 w-5 text-emerald-600" />
                 </div>
                 <div>
-                  <h4 className="text-lg font-semibold text-white">AI Opinion #2</h4>
-                  <p className="text-xs text-green-400">Contextual Perspective</p>
+                  <h4 className="text-lg font-semibold text-gray-900">AI Opinion #2</h4>
+                  <p className="text-xs text-emerald-600">Contextual Perspective</p>
                 </div>
               </div>
-              <div className="prose prose-invert prose-sm max-w-none">
-                <p className="text-gray-300 whitespace-pre-wrap">{responses.opinion2}</p>
+              <div className="prose prose-sm max-w-none">
+                <p className="text-gray-700 whitespace-pre-wrap">{responses.opinion2}</p>
               </div>
-              <div className="mt-4 pt-4 border-t border-green-600/20">
+              <div className="mt-4 pt-4 border-t border-emerald-200">
                 <div className="flex items-center justify-between text-xs">
                   <span className="text-gray-500">Confidence:</span>
-                  <span className="text-green-400 font-semibold">78%</span>
+                  <span className="text-emerald-700 font-semibold">78%</span>
                 </div>
                 <div className="flex items-center justify-between text-xs mt-2">
                   <span className="text-gray-500">Personalization:</span>
-                  <span className="text-green-400 font-semibold">High</span>
+                  <span className="text-emerald-700 font-semibold">High</span>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="mt-6 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl p-6">
-            <h4 className="text-lg font-semibold text-white mb-3">Key Insights</h4>
-            <ul className="space-y-2 text-sm text-gray-300">
+          <div className="mt-6 bg-white/90 border border-slate-200 rounded-2xl p-6 shadow-lg">
+            <ReportBrandHeader variant="strip" subtitle="Key Insights" className="mb-4" />
+            <h4 className="text-lg font-semibold text-gray-900 mb-3">Key Insights</h4>
+            <ul className="space-y-2 text-sm text-gray-700">
               <li className="flex items-start gap-2">
                 <span className="text-orange-500 mt-1">•</span>
                 <span>Both AI models agree on the importance of consulting healthcare professionals</span>
@@ -188,7 +201,7 @@ export default function AIHealthAdvisorSection() {
                 setQuestion('');
                 setResponses({ opinion1: null, opinion2: null });
               }}
-              className="mt-4 px-6 py-2 bg-blue-900/30 border border-blue-600/30 text-blue-400 rounded-lg hover:bg-blue-900/50 transition-colors"
+              className="mt-4 px-6 py-2 bg-blue-50 border border-blue-200 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors"
             >
               Ask Another Question
             </button>
@@ -198,8 +211,8 @@ export default function AIHealthAdvisorSection() {
 
       {!loading && !responses.opinion1 && (
         <div className="text-center py-12">
-          <Brain className="h-16 w-16 text-gray-600 mx-auto mb-4" />
-          <p className="text-gray-400 mb-2">No questions asked yet</p>
+          <Brain className="h-16 w-16 text-gray-400 mx-auto mb-4" />
+          <p className="text-gray-600 mb-2">No questions asked yet</p>
           <p className="text-sm text-gray-500">Ask a health question to get dual AI expert opinions</p>
         </div>
       )}

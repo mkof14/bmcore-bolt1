@@ -110,11 +110,11 @@ export async function cleanupOldData(retentionDays: number = 90): Promise<number
     const cutoffDate = new Date();
     cutoffDate.setDate(cutoffDate.getDate() - retentionDays);
 
-    const { count, error } = await supabase
+    const { data, error } = await supabase
       .from("analytics_events")
       .delete()
       .lt("created_at", cutoffDate.toISOString())
-      .select("*", { count: "exact" });
+      .select("*");
 
     if (error) {
       console.error("Failed to cleanup old data:", error);
@@ -124,10 +124,10 @@ export async function cleanupOldData(retentionDays: number = 90): Promise<number
     await logAuditEvent({
       action: "cleanup_old_data",
       entity: "analytics_events",
-      metadata: { deletedCount: count || 0, retentionDays },
+      metadata: { deletedCount: data?.length || 0, retentionDays },
     });
 
-    return count || 0;
+    return data?.length || 0;
   } catch (error) {
     console.error("Data cleanup error:", error);
     return 0;

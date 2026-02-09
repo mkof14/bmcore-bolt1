@@ -2,6 +2,7 @@ import { BarChart3, TrendingUp, Users, DollarSign, Activity, ArrowUp, ArrowDown 
 import { useState, useEffect } from 'react';
 import { supabase } from '../lib/supabase';
 import BackButton from '../components/BackButton';
+import { notifyError } from '../lib/adminNotify';
 
 interface CommandCenterProps {
   onNavigate: (page: string) => void;
@@ -56,7 +57,7 @@ export default function CommandCenter({ onNavigate }: CommandCenterProps) {
         });
       }
     } catch (error) {
-      console.error('Error loading metrics:', error);
+      notifyError('Metrics load failed');
     }
   }
 
@@ -72,36 +73,39 @@ export default function CommandCenter({ onNavigate }: CommandCenterProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 pt-20 pb-16">
+    <div className="min-h-screen bg-gradient-to-b from-white via-orange-50/30 to-white dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 pt-20 pb-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <BackButton onNavigate={onNavigate} />
 
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-white mb-2">Command Center</h1>
-          <p className="text-gray-400">Real-time business analytics and platform metrics</p>
+          <span className="inline-flex items-center rounded-full border border-orange-200 bg-white/80 px-4 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-orange-700 dark:border-white/15 dark:bg-gray-900/60 dark:text-orange-300">
+            Operations
+          </span>
+          <h1 className="mt-5 text-4xl font-semibold text-gray-900 dark:text-white mb-2">Command Center</h1>
+          <p className="text-gray-600 dark:text-gray-400">Real-time business analytics and platform metrics</p>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
           {cards.map((card, idx) => {
             const Icon = card.icon;
             return (
-              <div key={idx} className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl p-6 hover:border-orange-600/50 transition-all duration-300">
+              <div key={idx} className="bg-white/90 dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 border border-slate-200 dark:border-gray-700/50 rounded-2xl p-6 hover:border-orange-600/50 transition-all duration-300 shadow-sm">
                 <div className="flex items-center justify-between mb-4">
                   <Icon className="h-8 w-8 text-orange-500" />
-                  <div className={`flex items-center gap-1 text-sm font-medium ${card.positive ? 'text-green-400' : 'text-red-400'}`}>
+                  <div className={`flex items-center gap-1 text-sm font-medium ${card.positive ? 'text-green-600 dark:text-green-400' : 'text-red-600 dark:text-red-400'}`}>
                     {card.positive ? <ArrowUp className="h-4 w-4" /> : <ArrowDown className="h-4 w-4" />}
                     {card.change}
                   </div>
                 </div>
-                <h3 className="text-sm font-medium text-gray-400 mb-1">{card.label}</h3>
-                <p className="text-3xl font-bold text-white">{card.value}</p>
+                <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">{card.label}</h3>
+                <p className="text-3xl font-bold text-gray-900 dark:text-white">{card.value}</p>
               </div>
             );
           })}
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8 mb-8">
-          <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6">
+          <div className="bg-white/90 dark:bg-gray-900 border border-slate-200 dark:border-gray-800 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Revenue Trend (Last 30 Days)</h2>
             <div className="h-64 flex items-end justify-between gap-2">
               {Array.from({ length: 30 }).map((_, i) => {
@@ -117,7 +121,7 @@ export default function CommandCenter({ onNavigate }: CommandCenterProps) {
             </div>
           </div>
 
-          <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6">
+          <div className="bg-white/90 dark:bg-gray-900 border border-slate-200 dark:border-gray-800 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
             <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">User Growth (Last 30 Days)</h2>
             <div className="h-64 flex items-end justify-between gap-2">
               {Array.from({ length: 30 }).map((_, i) => {
@@ -134,7 +138,7 @@ export default function CommandCenter({ onNavigate }: CommandCenterProps) {
           </div>
         </div>
 
-        <div className="bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-800 rounded-xl p-6">
+        <div className="bg-white/90 dark:bg-gray-900 border border-slate-200 dark:border-gray-800 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow">
           <h2 className="text-xl font-bold text-gray-900 dark:text-white mb-4">Service Usage</h2>
           <div className="grid md:grid-cols-3 gap-6">
             <div>

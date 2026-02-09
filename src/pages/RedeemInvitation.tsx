@@ -62,7 +62,7 @@ export default function RedeemInvitation() {
         setSignUpData({ ...signUpData, email: data.email });
       }
     } catch (err: any) {
-      setError(err.message || 'Failed to check invitation');
+      setError(err.message || 'Invitation check failed');
     } finally {
       setChecking(false);
     }
@@ -104,7 +104,7 @@ export default function RedeemInvitation() {
 
       await redeemInvitation();
     } catch (err: any) {
-      setError(err.message || 'Failed to create account');
+      setError(err.message || 'Account create failed');
       setLoading(false);
     }
   };
@@ -121,7 +121,7 @@ export default function RedeemInvitation() {
       if (error) throw error;
 
       if (!data.success) {
-        throw new Error(data.error || 'Failed to redeem invitation');
+        throw new Error(data.error || 'Invitation redeem failed');
       }
 
       setSuccess(true);
@@ -129,7 +129,7 @@ export default function RedeemInvitation() {
         window.location.hash = '#/member-zone';
       }, 3000);
     } catch (err: any) {
-      setError(err.message || 'Failed to redeem invitation');
+      setError(err.message || 'Invitation redeem failed');
     } finally {
       setRedeeming(false);
       setLoading(false);

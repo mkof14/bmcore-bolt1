@@ -7,18 +7,21 @@ interface TrustSafetyProps {
 
 export default function TrustSafety({ onNavigate }: TrustSafetyProps) {
   return (
-    <div className="min-h-screen bg-white pt-20 pb-16">
-      <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-b from-white via-orange-50/40 to-white pt-20 pb-16">
+      <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <BackButton onNavigate={onNavigate} />
         <div className="text-center mb-12">
+          <span className="inline-flex items-center rounded-full border border-orange-200 bg-white/80 px-4 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-orange-700">
+            Legal
+          </span>
           <div className="inline-flex items-center justify-center w-16 h-16 bg-green-100 rounded-2xl mb-4">
             <ShieldCheck className="h-8 w-8 text-green-600" />
           </div>
-          <h1 className="text-4xl font-bold text-gray-900 mb-4">Trust & Safety</h1>
+          <h1 className="text-4xl font-semibold text-gray-900 mb-4">Trust & Safety</h1>
           <p className="text-gray-700">Last updated: October 21, 2025</p>
         </div>
 
-        <div className="prose prose-lg max-w-none">
+        <div className="prose prose-lg max-w-none rounded-3xl border border-slate-200 bg-white/90 p-8 shadow-xl">
           <div className="bg-green-50 border border-green-200 rounded-xl p-6 mb-8">
             <p className="text-gray-900 font-medium mb-0">
               BioMath Core is committed to maintaining a safe, trustworthy platform. This page outlines our trust and safety commitments.

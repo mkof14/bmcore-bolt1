@@ -13,6 +13,8 @@ import {
   CreditCard,
   User,
   Settings,
+  Database,
+  Bell,
   ChevronLeft,
   ChevronRight
 } from 'lucide-react';
@@ -49,6 +51,8 @@ export default function MemberSidebar({ currentSection, onSectionChange, hasActi
       items: [
         { id: 'questionnaires', label: 'Questionnaires', icon: ClipboardList },
         { id: 'reports', label: 'Reports', icon: FileText },
+        { id: 'signal-hub', label: 'Signal Hub', icon: Database },
+        { id: 'reminders', label: 'Reminders', icon: Bell },
         { id: 'second-opinion', label: 'Second Opinion', icon: Scale },
       ]
     },

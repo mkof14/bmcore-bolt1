@@ -307,6 +307,7 @@ export interface AssistantPersona {
   avatar_url: string | null;
   voice_id: string | null;
   characteristics: Record<string, unknown>;
+  reasoning_style?: 'evidence_based' | 'contextual' | string;
   active: boolean;
   sort_order: number;
   created_at: string;

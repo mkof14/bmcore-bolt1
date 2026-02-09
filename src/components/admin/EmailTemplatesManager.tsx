@@ -1,8 +1,13 @@
-import { useState, useEffect } from 'react';
-import { Mail, Plus, Edit2, Trash2, Send, Eye, Search, Filter, Download, Upload, RefreshCw } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { Mail, Plus, Edit2, Trash2, Send, Search, Filter, Download, Upload, RefreshCw } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
-import { EMAIL_TEMPLATES, seedEmailTemplates } from '../../lib/emailTemplates';
-import { createEmailProvider, renderTemplate, htmlToPlainText } from '../../lib/emailProvider';
+import { adminDb } from '../../lib/adminApi';
+import { seedEmailTemplatesAdmin } from '../../lib/emailTemplates';
+import { sendEmail, renderTemplate, htmlToPlainText } from '../../lib/emailProvider';
+import { notifyError, notifyInfo, notifySuccess } from '../../lib/adminNotify';
+import StateCard from '../ui/StateCard';
+import ErrorBanner from '../ui/ErrorBanner';
+import ModalShell from '../ui/ModalShell';
 
 interface EmailTemplate {
   id: string;
@@ -47,6 +52,7 @@ export default function EmailTemplatesManager() {
   const [templates, setTemplates] = useState<EmailTemplate[]>([]);
   const [logs, setLogs] = useState<EmailLog[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
   const [categoryFilter, setCategoryFilter] = useState<string>('all');
   const [showTemplateModal, setShowTemplateModal] = useState(false);
@@ -69,8 +75,7 @@ export default function EmailTemplatesManager() {
   });
 
   useEffect(() => {
-    loadTemplates();
-    loadLogs();
+    Promise.all([loadTemplates(), loadLogs()]).finally(() => setLoading(false));
   }, []);
 
   const handleSeedTemplates = async () => {
@@ -78,13 +83,12 @@ export default function EmailTemplatesManager() {
 
     try {
       setLoading(true);
-      const results = await seedEmailTemplates(supabase);
+      const results = await seedEmailTemplatesAdmin();
       const successCount = results.filter(r => r.success).length;
-      alert(`Successfully seeded ${successCount}/${results.length} templates!`);
-      loadTemplates();
+      notifySuccess(`Seeded ${successCount}/${results.length} templates`);
+      await loadTemplates();
     } catch (error) {
-      console.error('Error seeding templates:', error);
-      alert('Failed to seed templates');
+      notifyError('Template seed failed');
     } finally {
       setLoading(false);
     }
@@ -112,8 +116,7 @@ export default function EmailTemplatesManager() {
       a.click();
       URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Error exporting templates:', error);
-      alert('Failed to export templates');
+      notifyError('Template export failed');
     }
   };
 
@@ -129,17 +132,19 @@ export default function EmailTemplatesManager() {
         throw new Error('Invalid template file format');
       }
 
-      const { error } = await supabase
-        .from('email_templates')
-        .upsert(importData.templates, { onConflict: 'slug' });
+      const result = await adminDb({
+        table: 'email_templates',
+        action: 'upsert',
+        data: importData.templates,
+        onConflict: 'slug',
+      });
 
-      if (error) throw error;
+      if (!result.ok) throw new Error(result.error || 'Template import failed');
 
-      alert(`Successfully imported ${importData.templates.length} templates!`);
+      notifySuccess(`Imported ${importData.templates.length} templates`);
       loadTemplates();
     } catch (error) {
-      console.error('Error importing templates:', error);
-      alert('Failed to import templates');
+      notifyError('Template import failed');
     }
 
     // Reset file input
@@ -155,10 +160,10 @@ export default function EmailTemplatesManager() {
 
       if (error) throw error;
       setTemplates(data || []);
+      setError(null);
     } catch (error) {
-      console.error('Error loading templates:', error);
-    } finally {
-      setLoading(false);
+      notifyError('Template load failed');
+      setError('Unable to load email templates.');
     }
   };
 
@@ -173,7 +178,8 @@ export default function EmailTemplatesManager() {
       if (error) throw error;
       setLogs(data || []);
     } catch (error) {
-      console.error('Error loading logs:', error);
+      notifyError('Email log load failed');
+      setError('Unable to load email logs.');
     }
   };
 
@@ -245,25 +251,28 @@ export default function EmailTemplatesManager() {
       };
 
       if (selectedTemplate) {
-        const { error } = await supabase
-          .from('email_templates')
-          .update(templateData)
-          .eq('id', selectedTemplate.id);
+        const result = await adminDb({
+          table: 'email_templates',
+          action: 'update',
+          data: templateData,
+          match: { id: selectedTemplate.id },
+        });
 
-        if (error) throw error;
+        if (!result.ok) throw new Error(result.error || 'Template update failed');
       } else {
-        const { error } = await supabase
-          .from('email_templates')
-          .insert(templateData);
+        const result = await adminDb({
+          table: 'email_templates',
+          action: 'insert',
+          data: templateData,
+        });
 
-        if (error) throw error;
+        if (!result.ok) throw new Error(result.error || 'Template create failed');
       }
 
       setShowTemplateModal(false);
       loadTemplates();
     } catch (error) {
-      console.error('Error saving template:', error);
-      alert('Failed to save template');
+      notifyError('Template save failed');
     }
   };
 
@@ -271,30 +280,27 @@ export default function EmailTemplatesManager() {
     if (!confirm('Are you sure you want to delete this template?')) return;
 
     try {
-      const { error } = await supabase
-        .from('email_templates')
-        .delete()
-        .eq('id', id);
+      const result = await adminDb({
+        table: 'email_templates',
+        action: 'delete',
+        match: { id },
+      });
 
-      if (error) throw error;
+      if (!result.ok) throw new Error(result.error || 'Template delete failed');
       loadTemplates();
     } catch (error) {
-      console.error('Error deleting template:', error);
-      alert('Failed to delete template');
+      notifyError('Template delete failed');
     }
   };
 
   const handleSendEmail = async () => {
     if (!selectedTemplate || !sendFormData.recipientEmail) {
-      alert('Please provide recipient email');
+      notifyInfo('Please provide recipient email');
       return;
     }
 
     try {
-      const emailProvider = createEmailProvider();
-
-      // Send the email using the configured provider
-      const result = await emailProvider.send({
+      const result = await sendEmail({
         to: sendFormData.recipientEmail,
         subject: sendFormData.customSubject,
         html: sendFormData.customBody,
@@ -302,9 +308,10 @@ export default function EmailTemplatesManager() {
       });
 
       // Log the send attempt
-      const { error: logError } = await supabase
-        .from('email_sends')
-        .insert({
+      const logResult = await adminDb({
+        table: 'email_sends',
+        action: 'insert',
+        data: {
           template_id: selectedTemplate.id,
           recipient_email: sendFormData.recipientEmail,
           subject: sendFormData.customSubject,
@@ -313,38 +320,42 @@ export default function EmailTemplatesManager() {
           variables_used: {},
           send_type: 'test',
           status: result.success ? 'sent' : 'failed',
-          provider: emailProvider.name,
+          provider: result.provider || "edge",
           provider_message_id: result.messageId,
           sent_at: result.success ? new Date().toISOString() : null,
           error_message: result.error || null,
-        });
+        },
+      });
 
-      if (logError) console.error('Error logging email:', logError);
 
       if (result.success) {
-        alert(`Email sent successfully via ${emailProvider.name}!`);
+        notifySuccess(`Email sent via ${result.provider || "edge"}`);
         setShowSendModal(false);
         loadLogs();
       } else {
-        alert(`Failed to send email: ${result.error}`);
+        notifyError(`Email send failed: ${result.error}`);
       }
     } catch (error) {
-      console.error('Error sending email:', error);
-      alert('Failed to send email');
+      notifyError('Email send failed');
     }
   };
 
-  const filteredTemplates = templates.filter(template => {
-    const matchesSearch = template.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-                          template.slug.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCategory = categoryFilter === 'all' || template.category === categoryFilter;
-    return matchesSearch && matchesCategory;
-  });
+  const filteredTemplates = useMemo(() => {
+    const q = searchQuery.trim().toLowerCase();
+    return templates.filter((template) => {
+      const matchesSearch =
+        !q ||
+        template.name.toLowerCase().includes(q) ||
+        template.slug.toLowerCase().includes(q);
+      const matchesCategory = categoryFilter === 'all' || template.category === categoryFilter;
+      return matchesSearch && matchesCategory;
+    });
+  }, [templates, searchQuery, categoryFilter]);
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+        <h1 className="text-3xl font-semibold text-gray-900 flex items-center gap-3">
           <Mail className="h-8 w-8 text-orange-500" />
           Email Templates
         </h1>
@@ -384,13 +395,15 @@ export default function EmailTemplatesManager() {
         </div>
       </div>
 
-      <div className="mb-6 flex gap-4 border-b border-gray-700/50">
+      {error && <ErrorBanner message={error} className="mb-4" />}
+
+      <div className="mb-6 flex gap-4 border-b border-slate-200">
         <button
           onClick={() => setActiveTab('templates')}
           className={`px-4 py-3 font-medium transition-colors ${
             activeTab === 'templates'
               ? 'text-orange-500 border-b-2 border-orange-500'
-              : 'text-gray-400 hover:text-white'
+              : 'text-gray-600 hover:text-gray-900'
           }`}
         >
           Templates
@@ -400,7 +413,7 @@ export default function EmailTemplatesManager() {
           className={`px-4 py-3 font-medium transition-colors ${
             activeTab === 'logs'
               ? 'text-orange-500 border-b-2 border-orange-500'
-              : 'text-gray-400 hover:text-white'
+              : 'text-gray-600 hover:text-gray-900'
           }`}
         >
           Email Logs
@@ -411,21 +424,21 @@ export default function EmailTemplatesManager() {
         <div>
           <div className="mb-6 flex gap-4">
             <div className="flex-1 relative">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-600" />
               <input
                 type="text"
                 placeholder="Search templates..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="w-full pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
               />
             </div>
             <div className="relative">
-              <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Filter className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-600" />
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="pl-10 pr-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
               >
                 <option value="all">All Categories</option>
                 {CATEGORIES.map(cat => (
@@ -436,26 +449,26 @@ export default function EmailTemplatesManager() {
           </div>
 
           {loading ? (
-            <div className="text-center text-gray-400 py-12">Loading templates...</div>
+            <StateCard title="Loading templates..." description="Fetching your latest email templates." />
           ) : filteredTemplates.length === 0 ? (
-            <div className="text-center text-gray-400 py-12">No templates found</div>
+            <StateCard title="No templates found" description="Try adjusting filters or create a new template." />
           ) : (
             <div className="grid gap-4">
               {filteredTemplates.map(template => (
                 <div
                   key={template.id}
-                  className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl p-6"
+                  className="bg-white/90 border border-slate-200 rounded-2xl p-6 shadow-lg"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex-1">
                       <div className="flex items-center gap-3 mb-2">
-                        <h3 className="text-lg font-semibold text-white">{template.name}</h3>
+                        <h3 className="text-lg font-semibold text-gray-900">{template.name}</h3>
                         <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                           template.status === 'active'
                             ? 'bg-green-900/30 border border-green-600/30 text-green-400'
                             : template.status === 'draft'
                             ? 'bg-yellow-900/30 border border-yellow-600/30 text-yellow-400'
-                            : 'bg-gray-800/50 border border-gray-700/30 text-gray-400'
+                            : 'bg-slate-50 border border-slate-200 text-gray-600'
                         }`}>
                           {template.status}
                         </span>
@@ -463,12 +476,12 @@ export default function EmailTemplatesManager() {
                           {CATEGORIES.find(c => c.value === template.category)?.label}
                         </span>
                       </div>
-                      <p className="text-sm text-gray-400 mb-2">{template.slug}</p>
+                      <p className="text-sm text-gray-600 mb-2">{template.slug}</p>
                       {template.description && (
                         <p className="text-sm text-gray-500">{template.description}</p>
                       )}
                       <div className="mt-3">
-                        <p className="text-sm text-gray-400">
+                        <p className="text-sm text-gray-600">
                           <span className="font-medium">Subject:</span> {template.subject_en}
                         </p>
                         {template.variable_schema && template.variable_schema.length > 0 && (
@@ -510,41 +523,44 @@ export default function EmailTemplatesManager() {
       )}
 
       {activeTab === 'logs' && (
-        <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl overflow-hidden">
+        <div className="bg-white/90 border border-slate-200 rounded-2xl overflow-hidden shadow-lg">
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-800/50 border-b border-gray-700/50">
+              <thead className="bg-slate-50 border-b border-slate-200">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">Recipient</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">Subject</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase">Sent At</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Recipient</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Subject</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase">Sent At</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-700/50">
+              <tbody className="divide-y divide-slate-200">
                 {logs.length === 0 ? (
                   <tr>
-                    <td colSpan={4} className="px-6 py-8 text-center text-gray-400">
-                      No email logs found
+                    <td colSpan={4} className="px-6 py-10 text-center">
+                      <div className="rounded-xl border border-slate-200 bg-slate-50 p-6 text-gray-600">
+                        <p className="text-base font-semibold text-gray-900 mb-1">No email logs found</p>
+                        <p className="text-sm text-gray-500">Once emails are sent, delivery logs will appear here.</p>
+                      </div>
                     </td>
                   </tr>
                 ) : (
                   logs.map(log => (
                     <tr key={log.id}>
-                      <td className="px-6 py-4 text-sm text-white">{log.recipient_email}</td>
-                      <td className="px-6 py-4 text-sm text-gray-300">{log.subject}</td>
+                      <td className="px-6 py-4 text-sm text-gray-900">{log.recipient_email}</td>
+                      <td className="px-6 py-4 text-sm text-gray-600">{log.subject}</td>
                       <td className="px-6 py-4">
                         <span className={`px-2 py-1 text-xs font-medium rounded-full ${
                           log.status === 'sent'
-                            ? 'bg-green-900/30 border border-green-600/30 text-green-400'
+                            ? 'bg-emerald-50 border border-emerald-200 text-emerald-700'
                             : log.status === 'failed'
-                            ? 'bg-red-900/30 border border-red-600/30 text-red-400'
-                            : 'bg-yellow-900/30 border border-yellow-600/30 text-yellow-400'
+                            ? 'bg-red-50 border border-red-200 text-red-700'
+                            : 'bg-amber-50 border border-amber-200 text-amber-700'
                         }`}>
                           {log.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 text-sm text-gray-400">
+                      <td className="px-6 py-4 text-sm text-gray-600">
                         {log.sent_at ? new Date(log.sent_at).toLocaleString() : '-'}
                       </td>
                     </tr>
@@ -557,42 +573,41 @@ export default function EmailTemplatesManager() {
       )}
 
       {showTemplateModal && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-            <div className="p-6">
-              <h2 className="text-2xl font-bold text-white mb-6">
-                {selectedTemplate ? 'Edit Template' : 'Create Template'}
-              </h2>
-
-              <div className="space-y-4">
+        <ModalShell
+          title={selectedTemplate ? 'Edit Template' : 'Create Template'}
+          icon={<Mail className="h-6 w-6 text-orange-500" />}
+          onClose={() => setShowTemplateModal(false)}
+          panelClassName="max-w-4xl"
+        >
+          <div className="space-y-4">
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-400 mb-2">Template Name</label>
+                    <label className="block text-sm font-medium text-gray-600 mb-2">Template Name</label>
                     <input
                       type="text"
                       value={formData.name}
                       onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                      className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
                     />
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-400 mb-2">Slug</label>
+                    <label className="block text-sm font-medium text-gray-600 mb-2">Slug</label>
                     <input
                       type="text"
                       value={formData.slug}
                       onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                      className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
                     />
                   </div>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-4">
                   <div>
-                    <label className="block text-sm font-medium text-gray-400 mb-2">Category</label>
+                    <label className="block text-sm font-medium text-gray-600 mb-2">Category</label>
                     <select
                       value={formData.category}
                       onChange={(e) => setFormData({ ...formData, category: e.target.value })}
-                      className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
                     >
                       {CATEGORIES.map(cat => (
                         <option key={cat.value} value={cat.value}>{cat.label}</option>
@@ -600,11 +615,11 @@ export default function EmailTemplatesManager() {
                     </select>
                   </div>
                   <div>
-                    <label className="block text-sm font-medium text-gray-400 mb-2">Status</label>
+                    <label className="block text-sm font-medium text-gray-600 mb-2">Status</label>
                     <select
                       value={formData.status}
                       onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                      className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                      className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
                     >
                       <option value="draft">Draft</option>
                       <option value="active">Active</option>
@@ -614,38 +629,38 @@ export default function EmailTemplatesManager() {
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-2">Description</label>
+                  <label className="block text-sm font-medium text-gray-600 mb-2">Description</label>
                   <input
                     type="text"
                     value={formData.description}
                     onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                    className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-2">Subject</label>
+                  <label className="block text-sm font-medium text-gray-600 mb-2">Subject</label>
                   <input
                     type="text"
                     value={formData.subject_en}
                     onChange={(e) => setFormData({ ...formData, subject_en: e.target.value })}
-                    className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-2">Body (HTML)</label>
+                  <label className="block text-sm font-medium text-gray-600 mb-2">Body (HTML)</label>
                   <textarea
                     value={formData.body_en}
                     onChange={(e) => setFormData({ ...formData, body_en: e.target.value })}
                     rows={12}
-                    className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white font-mono text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 font-mono text-sm focus:outline-none focus:ring-2 focus:ring-orange-500"
                     placeholder="<!DOCTYPE html><html><body>...</body></html>"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-2">
+                  <label className="block text-sm font-medium text-gray-600 mb-2">
                     Variables (comma-separated)
                   </label>
                   <input
@@ -653,65 +668,64 @@ export default function EmailTemplatesManager() {
                     value={formData.variables}
                     onChange={(e) => setFormData({ ...formData, variables: e.target.value })}
                     placeholder="user_name, user_email, amount"
-                    className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
               </div>
 
-              <div className="flex gap-3 mt-6">
-                <button
-                  onClick={handleSaveTemplate}
-                  className="px-6 py-2 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-lg hover:from-orange-500 hover:to-orange-600 transition-all"
-                >
-                  Save Template
-                </button>
-                <button
-                  onClick={() => setShowTemplateModal(false)}
-                  className="px-6 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
+          <div className="flex gap-3 mt-6">
+            <button
+              onClick={handleSaveTemplate}
+              className="px-6 py-2 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-lg hover:from-orange-500 hover:to-orange-600 transition-all"
+            >
+              Save Template
+            </button>
+            <button
+              onClick={() => setShowTemplateModal(false)}
+              className="px-6 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 border border-slate-200 transition-colors"
+            >
+              Cancel
+            </button>
           </div>
-        </div>
+        </ModalShell>
       )}
 
       {showSendModal && selectedTemplate && (
-        <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-          <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl max-w-2xl w-full">
-            <div className="p-6">
-              <h2 className="text-2xl font-bold text-white mb-6">Send Email</h2>
-
-              <div className="space-y-4">
+        <ModalShell
+          title="Send Email"
+          icon={<Send className="h-6 w-6 text-blue-400" />}
+          onClose={() => setShowSendModal(false)}
+          panelClassName="max-w-2xl"
+        >
+          <div className="space-y-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-2">Recipient Email</label>
+                  <label className="block text-sm font-medium text-gray-600 mb-2">Recipient Email</label>
                   <input
                     type="email"
                     value={sendFormData.recipientEmail}
                     onChange={(e) => setSendFormData({ ...sendFormData, recipientEmail: e.target.value })}
                     placeholder="user@example.com"
-                    className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-2">Subject</label>
+                  <label className="block text-sm font-medium text-gray-600 mb-2">Subject</label>
                   <input
                     type="text"
                     value={sendFormData.customSubject}
                     onChange={(e) => setSendFormData({ ...sendFormData, customSubject: e.target.value })}
-                    className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-2">Body</label>
+                  <label className="block text-sm font-medium text-gray-600 mb-2">Body</label>
                   <textarea
                     value={sendFormData.customBody}
                     onChange={(e) => setSendFormData({ ...sendFormData, customBody: e.target.value })}
                     rows={10}
-                    className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
                   />
                 </div>
 
@@ -722,24 +736,22 @@ export default function EmailTemplatesManager() {
                 </div>
               </div>
 
-              <div className="flex gap-3 mt-6">
-                <button
-                  onClick={handleSendEmail}
-                  className="px-6 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg hover:from-blue-500 hover:to-blue-600 transition-all flex items-center gap-2"
-                >
-                  <Send className="h-5 w-5" />
-                  Send Email
-                </button>
-                <button
-                  onClick={() => setShowSendModal(false)}
-                  className="px-6 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
-                >
-                  Cancel
-                </button>
-              </div>
-            </div>
+          <div className="flex gap-3 mt-6">
+            <button
+              onClick={handleSendEmail}
+              className="px-6 py-2 bg-gradient-to-r from-blue-600 to-blue-500 text-white rounded-lg hover:from-blue-500 hover:to-blue-600 transition-all flex items-center gap-2"
+            >
+              <Send className="h-5 w-5" />
+              Send Email
+            </button>
+            <button
+              onClick={() => setShowSendModal(false)}
+              className="px-6 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 border border-slate-200 transition-colors"
+            >
+              Cancel
+            </button>
           </div>
-        </div>
+        </ModalShell>
       )}
     </div>
   );

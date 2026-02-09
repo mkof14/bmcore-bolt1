@@ -1,14 +1,12 @@
 import { useState, useEffect } from 'react';
 import {
   Sun,
-  TrendingUp,
   Target,
   Check,
   Plus,
   FileText,
   Activity,
   Clock,
-  Zap,
   Heart,
   MessageSquare,
   Calendar,
@@ -16,7 +14,10 @@ import {
   Info
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { notifyUserError, notifyUserSuccess } from '../../lib/adminNotify';
 import BackButton from '../../components/BackButton';
+import ModalShell from '../../components/ui/ModalShell';
+import ReportBrandHeader from '../../components/report/ReportBrandHeader';
 import type { DailySnapshot, UserGoal, Habit, HabitCompletion, HealthReport } from '../../types/database';
 
 interface DashboardSectionProps {
@@ -74,28 +75,40 @@ export default function DashboardSection({ onBack }: DashboardSectionProps = {})
           .maybeSingle()
       ]);
 
+      const queryErrors = [snapshotRes.error, goalsRes.error, habitsRes.error, reportsRes.error].filter(Boolean);
+      if (queryErrors.length > 0) {
+        throw queryErrors[0];
+      }
+
       setTodaySnapshot(snapshotRes.data);
       setActiveGoals(goalsRes.data || []);
       setLatestReport(reportsRes.data);
 
-      if (habitsRes.data) {
-        const habitsWithCompletions = await Promise.all(
-          habitsRes.data.map(async (habit) => {
-            const { data: completion } = await supabase
-              .from('habit_completions')
-              .select('*')
-              .eq('habit_id', habit.id)
-              .eq('completion_date', today)
-              .maybeSingle();
+      if (habitsRes.data && habitsRes.data.length > 0) {
+        const habitIds = habitsRes.data.map((habit) => habit.id);
+        const { data: completions } = await supabase
+          .from('habit_completions')
+          .select('*')
+          .in('habit_id', habitIds)
+          .eq('completion_date', today);
 
-            return { habit, completion };
-          })
-        );
+        const completionMap = new Map<string, HabitCompletion>();
+        (completions || []).forEach((completion) => {
+          completionMap.set(completion.habit_id, completion);
+        });
+
+        const habitsWithCompletions = habitsRes.data.map((habit) => ({
+          habit,
+          completion: completionMap.get(habit.id) || null
+        }));
+
         setTodayHabits(habitsWithCompletions);
+      } else {
+        setTodayHabits([]);
       }
 
     } catch (error) {
-      console.error('Error loading dashboard:', error);
+      notifyUserError('Dashboard load failed');
     } finally {
       setLoading(false);
     }
@@ -120,9 +133,9 @@ export default function DashboardSection({ onBack }: DashboardSectionProps = {})
       if (error) throw error;
       setShowCreateGoal(false);
       loadDashboardData();
+      notifyUserSuccess('Goal created');
     } catch (error) {
-      console.error('Error creating goal:', error);
-      alert('Failed to create goal');
+      notifyUserError('Goal creation failed');
     }
   }
 
@@ -155,38 +168,7 @@ export default function DashboardSection({ onBack }: DashboardSectionProps = {})
 
       loadDashboardData();
     } catch (error) {
-      console.error('Error toggling habit:', error);
-    }
-  }
-
-  async function generateMockSnapshot() {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      const today = new Date().toISOString().split('T')[0];
-
-      const mockSnapshot: Partial<DailySnapshot> = {
-        user_id: user.id,
-        snapshot_date: today,
-        state_summary: 'Your body is in recovery mode',
-        state_reason: 'Sleep is supporting recovery, but your nervous system hasn\'t returned to normal tone yet',
-        suggestion_of_day: {
-          title: '2 minutes of breathing after 3 PM',
-          description: 'A short breathing practice will lower nervous system tension and support recovery',
-          action: 'breathing'
-        },
-        energy_level: 'moderate',
-        recovery_status: 'recovering'
-      };
-
-      await supabase
-        .from('daily_snapshots')
-        .upsert(mockSnapshot, { onConflict: 'user_id,snapshot_date' });
-
-      loadDashboardData();
-    } catch (error) {
-      console.error('Error generating snapshot:', error);
+      notifyUserError('Habit update failed');
     }
   }
 
@@ -202,30 +184,23 @@ export default function DashboardSection({ onBack }: DashboardSectionProps = {})
     <div className="space-y-6">
       {onBack && <BackButton onClick={onBack} label="Back to Home" />}
       <div>
-        <h1 className="text-3xl font-bold text-white mb-2">
+        <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-2">
           Dashboard
         </h1>
-        <p className="text-gray-400">
-          Your wellness command center: today's state, goals, and habits
+        <p className="text-gray-600 dark:text-gray-400">
+          Your wellness command center for today's state, goals, and habits
         </p>
       </div>
 
       {!todaySnapshot ? (
-        <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-xl p-8 border-2 border-dashed border-gray-700/50 text-center">
+        <div className="bg-white/90 dark:bg-gradient-to-br dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 rounded-xl p-8 border-2 border-dashed border-slate-200 dark:border-gray-700/50 text-center shadow-sm">
           <Sun className="h-12 w-12 text-orange-500 mx-auto mb-4" />
-          <h3 className="text-xl font-bold text-white mb-2">
-            Ready to see how your body is today?
+          <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-2">
+            Ready for today's snapshot?
           </h3>
-          <p className="text-gray-400 mb-6 max-w-md mx-auto">
-            Your daily snapshot will show your current state and suggest one gentle step
+          <p className="text-gray-600 dark:text-gray-400 mb-6 max-w-md mx-auto">
+            Your snapshot appears after new data arrives from devices or reports.
           </p>
-          <button
-            onClick={generateMockSnapshot}
-            className="inline-flex items-center px-6 py-3 bg-gradient-to-r from-orange-600 to-orange-500 hover:from-orange-500 hover:to-orange-600 text-white rounded-lg font-semibold transition-all duration-300 shadow-lg shadow-orange-600/20"
-          >
-            <Zap className="h-5 w-5 mr-2" />
-            Generate Today's Snapshot
-          </button>
         </div>
       ) : (
         <TodaySnapshotCard snapshot={todaySnapshot} />
@@ -270,15 +245,21 @@ function TodaySnapshotCard({ snapshot }: { snapshot: DailySnapshot }) {
   };
 
   return (
-    <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-xl p-6 border border-gray-700/50">
+    <div className="bg-white/90 rounded-2xl p-6 border border-slate-200 shadow-lg">
+      <ReportBrandHeader
+        title="BioMath Core"
+        subtitle="Daily Snapshot"
+        variant="strip"
+        className="mb-4"
+      />
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center space-x-3">
           <Sun className="h-8 w-8 text-orange-500" />
           <div>
-            <h2 className="text-xl font-bold text-white">
+            <h2 className="text-xl font-semibold text-gray-900">
               Today
             </h2>
-            <p className="text-sm text-gray-400">
+            <p className="text-sm text-gray-500">
               {new Date(snapshot.snapshot_date).toLocaleDateString('en-US', {
                 month: 'long',
                 day: 'numeric'
@@ -306,12 +287,12 @@ function TodaySnapshotCard({ snapshot }: { snapshot: DailySnapshot }) {
         </div>
       </div>
 
-      <div className="bg-gray-800/50 border border-gray-700/30 rounded-lg p-4 mb-4">
-        <p className="text-lg font-semibold text-white mb-2">
+      <div className="bg-white/90 border border-slate-200 rounded-2xl p-4 mb-4 shadow-sm">
+        <p className="text-lg font-semibold text-gray-900 mb-2">
           {snapshot.state_summary}
         </p>
         {snapshot.state_reason && (
-          <p className="text-gray-700 dark:text-gray-300 text-sm">
+          <p className="text-gray-600 dark:text-gray-300 text-sm">
             {snapshot.state_reason}
           </p>
         )}
@@ -325,8 +306,8 @@ function TodaySnapshotCard({ snapshot }: { snapshot: DailySnapshot }) {
         </button>
 
         {showExplanation && (
-          <div className="mt-3 p-3 bg-gray-900/50 border border-gray-700/30 rounded-lg">
-            <p className="text-sm text-gray-700 dark:text-gray-300">
+          <div className="mt-3 p-3 bg-slate-50 border border-slate-200 rounded-lg">
+            <p className="text-sm text-gray-600 dark:text-gray-300">
               When your nervous system stays active during rest, your body doesn't fully switch to recovery mode.
               This is common after sustained effort and means gentle support is more helpful than pushing harder.
             </p>
@@ -335,7 +316,7 @@ function TodaySnapshotCard({ snapshot }: { snapshot: DailySnapshot }) {
       </div>
 
       {snapshot.suggestion_of_day && (
-        <div className="bg-gray-900/50 border border-orange-600/20 rounded-lg p-4">
+        <div className="bg-orange-50/80 border border-orange-200 rounded-2xl p-4">
           <div className="flex items-start space-x-3">
             <Heart className="h-6 w-6 text-orange-500 flex-shrink-0 mt-0.5" />
             <div>
@@ -363,19 +344,19 @@ function TodaySnapshotCard({ snapshot }: { snapshot: DailySnapshot }) {
           </button>
           {showSecondOpinion && (
             <div className="mt-3 space-y-3">
-              <div className="bg-gray-900/50 rounded-lg p-3 border border-gray-700/30">
-                <p className="text-xs font-semibold text-purple-900 dark:text-purple-300 mb-1">
+              <div className="bg-white/90 rounded-lg p-3 border border-slate-200">
+                <p className="text-xs font-semibold text-purple-700 dark:text-purple-300 mb-1">
                   Opinion A (Physiological)
                 </p>
-                <p className="text-sm text-gray-700 dark:text-gray-300">
+                <p className="text-sm text-gray-600 dark:text-gray-300">
                   {snapshot.second_opinion_a}
                 </p>
               </div>
-              <div className="bg-gray-900/50 rounded-lg p-3 border border-gray-700/30">
-                <p className="text-xs font-semibold text-pink-900 dark:text-pink-300 mb-1">
+              <div className="bg-white/90 rounded-lg p-3 border border-slate-200">
+                <p className="text-xs font-semibold text-pink-700 dark:text-pink-300 mb-1">
                   Opinion B (Lifestyle)
                 </p>
-                <p className="text-sm text-gray-700 dark:text-gray-300">
+                <p className="text-sm text-gray-600 dark:text-gray-300">
                   {snapshot.second_opinion_b}
                 </p>
               </div>
@@ -389,7 +370,13 @@ function TodaySnapshotCard({ snapshot }: { snapshot: DailySnapshot }) {
 
 function GoalsCard({ goals, onCreateGoal }: { goals: UserGoal[]; onCreateGoal: () => void }) {
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-800">
+    <div className="bg-white/90 dark:bg-gray-900 rounded-xl p-6 border border-slate-200 dark:border-gray-800 shadow-sm">
+      <ReportBrandHeader
+        title="BioMath Core"
+        subtitle="Goals Overview"
+        variant="strip"
+        className="mb-4"
+      />
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-2">
           <Target className="h-6 w-6 text-blue-600 dark:text-blue-400" />
@@ -476,7 +463,13 @@ function HabitsCard({
   };
 
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-800">
+    <div className="bg-white/90 dark:bg-gray-900 rounded-xl p-6 border border-slate-200 dark:border-gray-800 shadow-sm">
+      <ReportBrandHeader
+        title="BioMath Core"
+        subtitle="Habit Tracker"
+        variant="strip"
+        className="mb-4"
+      />
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center space-x-2">
           <Activity className="h-6 w-6 text-green-600 dark:text-green-400" />
@@ -547,6 +540,12 @@ function HabitsCard({
 function LatestReportCard({ report }: { report: HealthReport }) {
   return (
     <div className="bg-gradient-to-br from-purple-50 to-pink-50 dark:from-purple-900/20 dark:to-pink-900/20 rounded-xl p-6 border border-purple-200 dark:border-purple-800">
+      <ReportBrandHeader
+        title="BioMath Core"
+        subtitle="Latest Report"
+        variant="strip"
+        className="mb-4"
+      />
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center space-x-3">
           <FileText className="h-6 w-6 text-purple-600 dark:text-purple-400" />
@@ -589,7 +588,13 @@ function LatestReportCard({ report }: { report: HealthReport }) {
 
 function QuickActionsCard() {
   return (
-    <div className="bg-white dark:bg-gray-900 rounded-xl p-6 border border-gray-200 dark:border-gray-800">
+    <div className="bg-white/90 dark:bg-gray-900 rounded-xl p-6 border border-slate-200 dark:border-gray-800 shadow-sm">
+      <ReportBrandHeader
+        title="BioMath Core"
+        subtitle="Quick Actions"
+        variant="strip"
+        className="mb-4"
+      />
       <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">
         Quick Actions
       </h3>
@@ -638,69 +643,70 @@ function CreateGoalModal({ onClose, onCreate }: { onClose: () => void; onCreate:
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-white dark:bg-gray-900 rounded-xl max-w-md w-full p-6 border border-gray-200 dark:border-gray-800">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">Create New Goal</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Goal Title
-            </label>
-            <input
-              type="text"
-              value={formData.title}
-              onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="e.g., Improve sleep quality"
-              required
-            />
-          </div>
+    <ModalShell
+      title="Create New Goal"
+      onClose={onClose}
+      panelClassName="max-w-md"
+    >
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Goal Title
+          </label>
+          <input
+            type="text"
+            value={formData.title}
+            onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="e.g., Improve sleep quality"
+            required
+          />
+        </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Description (optional)
-            </label>
-            <textarea
-              value={formData.description}
-              onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              rows={3}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-              placeholder="Describe your goal..."
-            />
-          </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Description (optional)
+          </label>
+          <textarea
+            value={formData.description}
+            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            rows={3}
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+            placeholder="Describe your goal..."
+          />
+        </div>
 
-          <div>
-            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
-              Priority
-            </label>
-            <select
-              value={formData.priority}
-              onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
-              className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
-            >
-              <option value="low">Low</option>
-              <option value="medium">Medium</option>
-              <option value="high">High</option>
-            </select>
-          </div>
+        <div>
+          <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+            Priority
+          </label>
+          <select
+            value={formData.priority}
+            onChange={(e) => setFormData({ ...formData, priority: e.target.value })}
+            className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+          >
+            <option value="low">Low</option>
+            <option value="medium">Medium</option>
+            <option value="high">High</option>
+          </select>
+        </div>
 
-          <div className="flex gap-3 pt-4">
-            <button
-              type="submit"
-              className="flex-1 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
-            >
-              Create Goal
-            </button>
-            <button
-              type="button"
-              onClick={onClose}
-              className="px-6 py-2 bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
-            >
-              Cancel
-            </button>
-          </div>
-        </form>
-      </div>
-    </div>
+        <div className="flex gap-3 pt-4">
+          <button
+            type="submit"
+            className="flex-1 px-6 py-2 bg-blue-600 hover:bg-blue-700 text-white rounded-lg font-semibold transition-colors"
+          >
+            Create Goal
+          </button>
+          <button
+            type="button"
+            onClick={onClose}
+            className="px-6 py-2 bg-gray-200 dark:bg-gray-800 text-gray-900 dark:text-white rounded-lg hover:bg-gray-300 dark:hover:bg-gray-700 transition-colors"
+          >
+            Cancel
+          </button>
+        </div>
+      </form>
+    </ModalShell>
   );
 }

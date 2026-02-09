@@ -1,5 +1,6 @@
 import { Facebook, Twitter, Linkedin, Share2, Youtube, Instagram, MessageCircle } from 'lucide-react';
 import { trackEvent } from '../lib/analytics';
+import { notifyUserInfo } from '../lib/adminNotify';
 
 interface SocialShareProps {
   url: string;
@@ -42,8 +43,10 @@ export default function SocialShare({
     });
   };
 
+  const canShare = typeof navigator !== 'undefined' && typeof navigator.share === 'function';
+
   const handleNativeShare = async () => {
-    if (navigator.share) {
+    if (canShare) {
       try {
         await navigator.share({
           title,
@@ -57,7 +60,8 @@ export default function SocialShare({
           title
         });
       } catch (error) {
-        console.log('Share cancelled or failed:', error);
+        if (error instanceof Error && error.name === 'AbortError') return;
+        notifyUserInfo('Share failed. Please try again.');
       }
     }
   };
@@ -118,7 +122,7 @@ export default function SocialShare({
         <MessageCircle className={iconSizes[size]} />
       </button>
 
-      {navigator.share && (
+      {canShare && (
         <button
           onClick={handleNativeShare}
           className={`${buttonClass} bg-gray-600 hover:bg-gray-700 text-white`}

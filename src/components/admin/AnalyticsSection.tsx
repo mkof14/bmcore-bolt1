@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { BarChart3, TrendingUp, Users, FileText, Activity, Calendar } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { notifyError } from '../../lib/adminNotify';
+import StateCard from '../ui/StateCard';
 
 export default function AnalyticsSection() {
   const [stats, setStats] = useState({
@@ -37,7 +39,7 @@ export default function AnalyticsSection() {
         emailsSent: emailsResult.count || 0,
       });
     } catch (error) {
-      console.error('Error loading analytics:', error);
+      notifyError('Analytics load failed');
     } finally {
       setLoading(false);
     }
@@ -109,7 +111,7 @@ export default function AnalyticsSection() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-3xl font-bold text-white flex items-center gap-3">
+        <h1 className="text-3xl font-semibold text-gray-900 flex items-center gap-3">
           <BarChart3 className="h-8 w-8 text-orange-500" />
           Analytics Dashboard
         </h1>
@@ -119,7 +121,7 @@ export default function AnalyticsSection() {
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
               timeRange === '24h'
                 ? 'bg-orange-600 text-white'
-                : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/50'
+                : 'bg-slate-100 text-gray-600 hover:bg-slate-200'
             }`}
           >
             24 Hours
@@ -129,7 +131,7 @@ export default function AnalyticsSection() {
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
               timeRange === '7d'
                 ? 'bg-orange-600 text-white'
-                : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/50'
+                : 'bg-slate-100 text-gray-600 hover:bg-slate-200'
             }`}
           >
             7 Days
@@ -139,7 +141,7 @@ export default function AnalyticsSection() {
             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
               timeRange === '30d'
                 ? 'bg-orange-600 text-white'
-                : 'bg-gray-800/50 text-gray-400 hover:bg-gray-700/50'
+                : 'bg-slate-100 text-gray-600 hover:bg-slate-200'
             }`}
           >
             30 Days
@@ -148,7 +150,7 @@ export default function AnalyticsSection() {
       </div>
 
       {loading ? (
-        <div className="text-center py-12 text-gray-400">Loading analytics...</div>
+        <StateCard title="Loading analytics..." description="Crunching the latest metrics." />
       ) : (
         <>
           <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
@@ -158,7 +160,7 @@ export default function AnalyticsSection() {
               return (
                 <div
                   key={stat.label}
-                  className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl p-6"
+                  className="bg-white/90 border border-slate-200 rounded-2xl p-6 shadow-lg"
                 >
                   <div className="flex items-start justify-between mb-4">
                     <div className={`p-3 ${colors.bg} border ${colors.border} rounded-lg`}>
@@ -174,16 +176,16 @@ export default function AnalyticsSection() {
                       {stat.change}
                     </span>
                   </div>
-                  <h3 className="text-sm font-medium text-gray-400 mb-1">{stat.label}</h3>
-                  <p className="text-3xl font-bold text-white">{stat.value.toLocaleString()}</p>
+                  <h3 className="text-sm font-medium text-gray-600 mb-1">{stat.label}</h3>
+                  <p className="text-3xl font-semibold text-gray-900">{stat.value.toLocaleString()}</p>
                 </div>
               );
             })}
           </div>
 
           <div className="grid lg:grid-cols-2 gap-6 mb-8">
-            <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <div className="bg-white/90 border border-slate-200 rounded-2xl p-6 shadow-lg">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                 <TrendingUp className="h-5 w-5 text-orange-500" />
                 User Growth
               </h3>
@@ -202,18 +204,18 @@ export default function AnalyticsSection() {
               </div>
             </div>
 
-            <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl p-6">
-              <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+            <div className="bg-white/90 border border-slate-200 rounded-2xl p-6 shadow-lg">
+              <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
                 <Activity className="h-5 w-5 text-green-500" />
                 Content Activity
               </h3>
               <div className="space-y-4">
                 <div>
                   <div className="flex items-center justify-between text-sm mb-2">
-                    <span className="text-gray-400">Blog Posts</span>
-                    <span className="text-white font-medium">{stats.totalPosts}</span>
+                    <span className="text-gray-600">Blog Posts</span>
+                    <span className="text-gray-900 font-medium">{stats.totalPosts}</span>
                   </div>
-                  <div className="w-full bg-gray-700/30 rounded-full h-2">
+                  <div className="w-full bg-slate-200 rounded-full h-2">
                     <div
                       className="bg-gradient-to-r from-orange-600 to-orange-400 h-2 rounded-full"
                       style={{ width: `${Math.min((stats.totalPosts / 50) * 100, 100)}%` }}
@@ -222,10 +224,10 @@ export default function AnalyticsSection() {
                 </div>
                 <div>
                   <div className="flex items-center justify-between text-sm mb-2">
-                    <span className="text-gray-400">News Items</span>
-                    <span className="text-white font-medium">{stats.totalNews}</span>
+                    <span className="text-gray-600">News Items</span>
+                    <span className="text-gray-900 font-medium">{stats.totalNews}</span>
                   </div>
-                  <div className="w-full bg-gray-700/30 rounded-full h-2">
+                  <div className="w-full bg-slate-200 rounded-full h-2">
                     <div
                       className="bg-gradient-to-r from-purple-600 to-purple-400 h-2 rounded-full"
                       style={{ width: `${Math.min((stats.totalNews / 50) * 100, 100)}%` }}
@@ -234,10 +236,10 @@ export default function AnalyticsSection() {
                 </div>
                 <div>
                   <div className="flex items-center justify-between text-sm mb-2">
-                    <span className="text-gray-400">Job Postings</span>
-                    <span className="text-white font-medium">{stats.totalJobs}</span>
+                    <span className="text-gray-600">Job Postings</span>
+                    <span className="text-gray-900 font-medium">{stats.totalJobs}</span>
                   </div>
-                  <div className="w-full bg-gray-700/30 rounded-full h-2">
+                  <div className="w-full bg-slate-200 rounded-full h-2">
                     <div
                       className="bg-gradient-to-r from-blue-600 to-blue-400 h-2 rounded-full"
                       style={{ width: `${Math.min((stats.totalJobs / 20) * 100, 100)}%` }}
@@ -246,10 +248,10 @@ export default function AnalyticsSection() {
                 </div>
                 <div>
                   <div className="flex items-center justify-between text-sm mb-2">
-                    <span className="text-gray-400">Emails Sent</span>
-                    <span className="text-white font-medium">{stats.emailsSent}</span>
+                    <span className="text-gray-600">Emails Sent</span>
+                    <span className="text-gray-900 font-medium">{stats.emailsSent}</span>
                   </div>
-                  <div className="w-full bg-gray-700/30 rounded-full h-2">
+                  <div className="w-full bg-slate-200 rounded-full h-2">
                     <div
                       className="bg-gradient-to-r from-green-600 to-green-400 h-2 rounded-full"
                       style={{ width: `${Math.min((stats.emailsSent / 100) * 100, 100)}%` }}
@@ -260,37 +262,37 @@ export default function AnalyticsSection() {
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-white mb-4 flex items-center gap-2">
+          <div className="bg-white/90 border border-slate-200 rounded-2xl p-6 shadow-lg">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center gap-2">
               <Calendar className="h-5 w-5 text-blue-500" />
               Recent Activity
             </h3>
             <div className="space-y-3">
-              <div className="flex items-center justify-between p-3 bg-gray-800/50 border border-gray-700/30 rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-lg">
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                  <span className="text-sm text-white">New user registration</span>
+                  <span className="text-sm text-gray-700">New user registration</span>
                 </div>
                 <span className="text-xs text-gray-500">2 minutes ago</span>
               </div>
-              <div className="flex items-center justify-between p-3 bg-gray-800/50 border border-gray-700/30 rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-lg">
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-                  <span className="text-sm text-white">Blog post published</span>
+                  <span className="text-sm text-gray-700">Blog post published</span>
                 </div>
                 <span className="text-xs text-gray-500">15 minutes ago</span>
               </div>
-              <div className="flex items-center justify-between p-3 bg-gray-800/50 border border-gray-700/30 rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-lg">
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-orange-400 rounded-full"></div>
-                  <span className="text-sm text-white">Email template updated</span>
+                  <span className="text-sm text-gray-700">Email template updated</span>
                 </div>
                 <span className="text-xs text-gray-500">1 hour ago</span>
               </div>
-              <div className="flex items-center justify-between p-3 bg-gray-800/50 border border-gray-700/30 rounded-lg">
+              <div className="flex items-center justify-between p-3 bg-slate-50 border border-slate-200 rounded-lg">
                 <div className="flex items-center gap-3">
                   <div className="w-2 h-2 bg-purple-400 rounded-full"></div>
-                  <span className="text-sm text-white">System settings changed</span>
+                  <span className="text-sm text-gray-700">System settings changed</span>
                 </div>
                 <span className="text-xs text-gray-500">3 hours ago</span>
               </div>

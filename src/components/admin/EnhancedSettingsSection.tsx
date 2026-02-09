@@ -1,6 +1,10 @@
 import { useState, useEffect } from 'react';
-import { Settings, Save, RefreshCw, Database, Mail, Lock, Globe, Bell, Palette, Zap, Shield, CheckCircle, AlertCircle } from 'lucide-react';
+import { Settings, Save, RefreshCw, Database, Mail, Lock, Zap, Shield, AlertCircle } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { adminDb } from '../../lib/adminApi';
+import { notifyError, notifyInfo, notifySuccess } from '../../lib/adminNotify';
+import ErrorBanner from '../ui/ErrorBanner';
+import SuccessBanner from '../ui/SuccessBanner';
 
 interface SystemSettings {
   site_name: string;
@@ -62,7 +66,7 @@ export default function EnhancedSettingsSection() {
         setSettings(prev => ({ ...prev, ...data.settings }));
       }
     } catch (error) {
-      console.error('Error loading settings:', error);
+      notifyError('Settings load failed');
     }
   };
 
@@ -75,7 +79,7 @@ export default function EnhancedSettingsSection() {
 
       setDbStats(prev => ({ ...prev, tables: tables?.length || 0 }));
     } catch (error) {
-      console.error('Error loading db stats:', error);
+      notifyError('Database stats load failed');
     }
   };
 
@@ -95,25 +99,31 @@ export default function EnhancedSettingsSection() {
       };
 
       if (existing) {
-        const { error } = await supabase
-          .from('system_settings')
-          .update(settingsData)
-          .eq('id', existing.id);
+        const result = await adminDb({
+          table: 'system_settings',
+          action: 'update',
+          data: settingsData,
+          match: { id: existing.id },
+        });
 
-        if (error) throw error;
+      if (!result.ok) throw new Error(result.error || 'Settings update failed');
       } else {
-        const { error } = await supabase
-          .from('system_settings')
-          .insert([settingsData]);
+        const result = await adminDb({
+          table: 'system_settings',
+          action: 'insert',
+          data: [settingsData],
+        });
 
-        if (error) throw error;
+      if (!result.ok) throw new Error(result.error || 'Settings create failed');
       }
 
-      setMessage({ type: 'success', text: 'Settings saved successfully!' });
+      setMessage({ type: 'success', text: 'Settings saved' });
+      notifySuccess('Settings saved');
       setTimeout(() => setMessage(null), 5000);
     } catch (error: any) {
-      console.error('Error saving settings:', error);
-      setMessage({ type: 'error', text: error.message || 'Failed to save settings' });
+      const message = error.message || 'Settings save failed';
+      setMessage({ type: 'error', text: message });
+      notifyError(message);
     } finally {
       setSaving(false);
     }
@@ -125,14 +135,14 @@ export default function EnhancedSettingsSection() {
   };
 
   const testEmailConnection = async () => {
-    alert('Email test would be sent (feature coming soon)');
+    notifyInfo('Email test would be sent (feature coming soon)');
   };
 
   const clearCache = async () => {
     if (confirm('Clear all application cache?')) {
       localStorage.clear();
       sessionStorage.clear();
-      alert('Cache cleared! Page will reload.');
+    notifySuccess('Cache cleared. Reloading...');
       window.location.reload();
     }
   };
@@ -148,14 +158,14 @@ export default function EnhancedSettingsSection() {
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+        <h2 className="text-2xl font-semibold text-gray-900 flex items-center gap-3">
           <Settings className="h-7 w-7 text-purple-400" />
           System Settings
         </h2>
         <div className="flex gap-2">
           <button
             onClick={handleReset}
-            className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-slate-100 text-slate-700 border border-slate-200 rounded-lg hover:bg-gray-600 transition-colors flex items-center gap-2"
           >
             <RefreshCw className="h-4 w-4" />
             Reset
@@ -180,24 +190,10 @@ export default function EnhancedSettingsSection() {
         </div>
       </div>
 
-      {message && (
-        <div
-          className={`p-4 rounded-lg flex items-center gap-3 ${
-            message.type === 'success'
-              ? 'bg-green-500/10 border border-green-500/20 text-green-400'
-              : 'bg-red-500/10 border border-red-500/20 text-red-400'
-          }`}
-        >
-          {message.type === 'success' ? (
-            <CheckCircle className="h-5 w-5" />
-          ) : (
-            <AlertCircle className="h-5 w-5" />
-          )}
-          <span>{message.text}</span>
-        </div>
-      )}
+      {message?.type === 'success' && <SuccessBanner message={message.text} />}
+      {message?.type === 'error' && <ErrorBanner message={message.text} />}
 
-      <div className="flex gap-2 overflow-x-auto border-b border-gray-700/50">
+      <div className="flex gap-2 overflow-x-auto border-b border-slate-200">
         {tabs.map(tab => {
           const Icon = tab.icon;
           return (
@@ -207,7 +203,7 @@ export default function EnhancedSettingsSection() {
               className={`px-6 py-3 font-medium transition-all whitespace-nowrap flex items-center gap-2 ${
                 activeTab === tab.id
                   ? 'text-purple-400 border-b-2 border-purple-400'
-                  : 'text-gray-400 hover:text-white'
+                  : 'text-gray-600 hover:text-gray-900'
               }`}
             >
               <Icon className="h-4 w-4" />
@@ -217,36 +213,36 @@ export default function EnhancedSettingsSection() {
         })}
       </div>
 
-      <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl p-6">
+      <div className="bg-white/90 border border-slate-200 rounded-2xl p-6 shadow-lg">
         {activeTab === 'general' && (
           <div className="space-y-6">
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Site Name</label>
+              <label className="block text-sm font-medium text-gray-600 mb-2">Site Name</label>
               <input
                 type="text"
                 value={settings.site_name}
                 onChange={(e) => setSettings({ ...settings, site_name: e.target.value })}
-                className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Site Description</label>
+              <label className="block text-sm font-medium text-gray-600 mb-2">Site Description</label>
               <textarea
                 value={settings.site_description}
                 onChange={(e) => setSettings({ ...settings, site_description: e.target.value })}
                 rows={3}
-                className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
               />
             </div>
 
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">Default Locale</label>
+                <label className="block text-sm font-medium text-gray-600 mb-2">Default Locale</label>
                 <select
                   value={settings.default_locale}
                   onChange={(e) => setSettings({ ...settings, default_locale: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 >
                   <option value="en-US">English (US)</option>
                   <option value="en-GB">English (UK)</option>
@@ -257,11 +253,11 @@ export default function EnhancedSettingsSection() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">Default Timezone</label>
+                <label className="block text-sm font-medium text-gray-600 mb-2">Default Timezone</label>
                 <select
                   value={settings.default_timezone}
                   onChange={(e) => setSettings({ ...settings, default_timezone: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 >
                   <option value="UTC">UTC</option>
                   <option value="America/New_York">Eastern Time</option>
@@ -275,7 +271,7 @@ export default function EnhancedSettingsSection() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Theme Mode</label>
+              <label className="block text-sm font-medium text-gray-600 mb-2">Theme Mode</label>
               <div className="flex gap-4">
                 {['light', 'dark', 'auto'].map(mode => (
                   <label key={mode} className="flex items-center gap-2 cursor-pointer">
@@ -286,7 +282,7 @@ export default function EnhancedSettingsSection() {
                       onChange={(e) => setSettings({ ...settings, theme_mode: e.target.value as any })}
                       className="h-4 w-4 text-purple-500 focus:ring-purple-500"
                     />
-                    <span className="text-white capitalize">{mode}</span>
+                    <span className="text-gray-900 capitalize">{mode}</span>
                   </label>
                 ))}
               </div>
@@ -296,10 +292,10 @@ export default function EnhancedSettingsSection() {
 
         {activeTab === 'security' && (
           <div className="space-y-6">
-            <div className="flex items-center justify-between p-4 bg-gray-800/30 border border-gray-700/30 rounded-lg">
+            <div className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-lg">
               <div className="flex-1">
-                <h4 className="font-medium text-white mb-1">Enable User Registrations</h4>
-                <p className="text-sm text-gray-400">Allow new users to create accounts</p>
+                <h4 className="font-medium text-gray-900 mb-1">Enable User Registrations</h4>
+                <p className="text-sm text-gray-600">Allow new users to create accounts</p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
@@ -308,14 +304,14 @@ export default function EnhancedSettingsSection() {
                   onChange={(e) => setSettings({ ...settings, enable_registrations: e.target.checked })}
                   className="sr-only peer"
                 />
-                <div className="w-11 h-6 bg-gray-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                <div className="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
               </label>
             </div>
 
-            <div className="flex items-center justify-between p-4 bg-gray-800/30 border border-gray-700/30 rounded-lg">
+            <div className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-lg">
               <div className="flex-1">
-                <h4 className="font-medium text-white mb-1">Require Email Verification</h4>
-                <p className="text-sm text-gray-400">Users must verify their email to access the platform</p>
+                <h4 className="font-medium text-gray-900 mb-1">Require Email Verification</h4>
+                <p className="text-sm text-gray-600">Users must verify their email to access the platform</p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
@@ -324,14 +320,14 @@ export default function EnhancedSettingsSection() {
                   onChange={(e) => setSettings({ ...settings, require_email_verification: e.target.checked })}
                   className="sr-only peer"
                 />
-                <div className="w-11 h-6 bg-gray-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                <div className="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
               </label>
             </div>
 
-            <div className="flex items-center justify-between p-4 bg-gray-800/30 border border-gray-700/30 rounded-lg">
+            <div className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-lg">
               <div className="flex-1">
-                <h4 className="font-medium text-white mb-1">Enable Social Login</h4>
-                <p className="text-sm text-gray-400">Allow login with Google, Facebook, etc.</p>
+                <h4 className="font-medium text-gray-900 mb-1">Enable Social Login</h4>
+                <p className="text-sm text-gray-600">Allow login with Google, Facebook, etc.</p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
@@ -340,17 +336,17 @@ export default function EnhancedSettingsSection() {
                   onChange={(e) => setSettings({ ...settings, enable_social_login: e.target.checked })}
                   className="sr-only peer"
                 />
-                <div className="w-11 h-6 bg-gray-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                <div className="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
               </label>
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Session Timeout (minutes)</label>
+              <label className="block text-sm font-medium text-gray-600 mb-2">Session Timeout (minutes)</label>
               <input
                 type="number"
                 value={settings.session_timeout_minutes}
                 onChange={(e) => setSettings({ ...settings, session_timeout_minutes: parseInt(e.target.value) })}
-                className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 min="15"
                 max="1440"
               />
@@ -358,12 +354,12 @@ export default function EnhancedSettingsSection() {
             </div>
 
             <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Max Upload Size (MB)</label>
+              <label className="block text-sm font-medium text-gray-600 mb-2">Max Upload Size (MB)</label>
               <input
                 type="number"
                 value={settings.max_upload_size_mb}
                 onChange={(e) => setSettings({ ...settings, max_upload_size_mb: parseInt(e.target.value) })}
-                className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 min="1"
                 max="100"
               />
@@ -375,30 +371,30 @@ export default function EnhancedSettingsSection() {
           <div className="space-y-6">
             <div className="grid md:grid-cols-2 gap-6">
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">Admin Email</label>
+                <label className="block text-sm font-medium text-gray-600 mb-2">Admin Email</label>
                 <input
                   type="email"
                   value={settings.admin_email}
                   onChange={(e) => setSettings({ ...settings, admin_email: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">Support Email</label>
+                <label className="block text-sm font-medium text-gray-600 mb-2">Support Email</label>
                 <input
                   type="email"
                   value={settings.support_email}
                   onChange={(e) => setSettings({ ...settings, support_email: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 />
               </div>
             </div>
 
-            <div className="flex items-center justify-between p-4 bg-gray-800/30 border border-gray-700/30 rounded-lg">
+            <div className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-lg">
               <div className="flex-1">
-                <h4 className="font-medium text-white mb-1">Enable Email Notifications</h4>
-                <p className="text-sm text-gray-400">Send system notifications via email</p>
+                <h4 className="font-medium text-gray-900 mb-1">Enable Email Notifications</h4>
+                <p className="text-sm text-gray-600">Send system notifications via email</p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
@@ -407,7 +403,7 @@ export default function EnhancedSettingsSection() {
                   onChange={(e) => setSettings({ ...settings, enable_notifications: e.target.checked })}
                   className="sr-only peer"
                 />
-                <div className="w-11 h-6 bg-gray-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                <div className="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
               </label>
             </div>
 
@@ -425,10 +421,10 @@ export default function EnhancedSettingsSection() {
 
         {activeTab === 'features' && (
           <div className="space-y-6">
-            <div className="flex items-center justify-between p-4 bg-gray-800/30 border border-gray-700/30 rounded-lg">
+            <div className="flex items-center justify-between p-4 bg-slate-50 border border-slate-200 rounded-lg">
               <div className="flex-1">
-                <h4 className="font-medium text-white mb-1">Enable Analytics</h4>
-                <p className="text-sm text-gray-400">Track user behavior and system usage</p>
+                <h4 className="font-medium text-gray-900 mb-1">Enable Analytics</h4>
+                <p className="text-sm text-gray-600">Track user behavior and system usage</p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
@@ -437,17 +433,17 @@ export default function EnhancedSettingsSection() {
                   onChange={(e) => setSettings({ ...settings, enable_analytics: e.target.checked })}
                   className="sr-only peer"
                 />
-                <div className="w-11 h-6 bg-gray-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
+                <div className="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-purple-600"></div>
               </label>
             </div>
 
             <div className="flex items-center justify-between p-4 bg-yellow-900/20 border border-yellow-600/30 rounded-lg">
               <div className="flex-1">
-                <h4 className="font-medium text-white mb-1 flex items-center gap-2">
+                <h4 className="font-medium text-gray-900 mb-1 flex items-center gap-2">
                   <AlertCircle className="h-5 w-5 text-yellow-400" />
                   Maintenance Mode
                 </h4>
-                <p className="text-sm text-gray-400">Disable public access for maintenance</p>
+                <p className="text-sm text-gray-600">Disable public access for maintenance</p>
               </div>
               <label className="relative inline-flex items-center cursor-pointer">
                 <input
@@ -456,7 +452,7 @@ export default function EnhancedSettingsSection() {
                   onChange={(e) => setSettings({ ...settings, maintenance_mode: e.target.checked })}
                   className="sr-only peer"
                 />
-                <div className="w-11 h-6 bg-gray-700 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"></div>
+                <div className="w-11 h-6 bg-slate-200 rounded-full peer peer-checked:after:translate-x-full after:content-[''] after:absolute after:top-0.5 after:left-[2px] after:bg-white after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-yellow-600"></div>
               </label>
             </div>
           </div>
@@ -465,32 +461,32 @@ export default function EnhancedSettingsSection() {
         {activeTab === 'advanced' && (
           <div className="space-y-6">
             <div className="bg-blue-900/20 border border-blue-600/30 rounded-lg p-4">
-              <h4 className="font-medium text-white mb-3 flex items-center gap-2">
+              <h4 className="font-medium text-gray-900 mb-3 flex items-center gap-2">
                 <Database className="h-5 w-5 text-blue-400" />
                 Database Statistics
               </h4>
               <div className="grid grid-cols-3 gap-4 text-sm">
                 <div>
-                  <p className="text-gray-400">Tables</p>
-                  <p className="text-2xl font-bold text-white">{dbStats.tables}</p>
+                  <p className="text-gray-600">Tables</p>
+                  <p className="text-2xl font-semibold text-gray-900">{dbStats.tables}</p>
                 </div>
                 <div>
-                  <p className="text-gray-400">Size</p>
-                  <p className="text-2xl font-bold text-white">{dbStats.size}</p>
+                  <p className="text-gray-600">Size</p>
+                  <p className="text-2xl font-semibold text-gray-900">{dbStats.size}</p>
                 </div>
                 <div>
-                  <p className="text-gray-400">Connections</p>
-                  <p className="text-2xl font-bold text-white">{dbStats.connections}</p>
+                  <p className="text-gray-600">Connections</p>
+                  <p className="text-2xl font-semibold text-gray-900">{dbStats.connections}</p>
                 </div>
               </div>
             </div>
 
             <div className="space-y-3">
-              <h4 className="font-medium text-white mb-3">System Actions</h4>
+              <h4 className="font-medium text-gray-900 mb-3">System Actions</h4>
 
               <button
                 onClick={clearCache}
-                className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white hover:bg-gray-800 transition-colors flex items-center justify-between"
+                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg text-gray-900 hover:bg-slate-200 transition-colors flex items-center justify-between"
               >
                 <span className="flex items-center gap-2">
                   <RefreshCw className="h-4 w-4" />
@@ -500,8 +496,8 @@ export default function EnhancedSettingsSection() {
               </button>
 
               <button
-                onClick={() => alert('Database backup feature coming soon')}
-                className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white hover:bg-gray-800 transition-colors flex items-center justify-between"
+                onClick={() => notifyInfo('Database backup feature coming soon')}
+                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg text-gray-900 hover:bg-slate-200 transition-colors flex items-center justify-between"
               >
                 <span className="flex items-center gap-2">
                   <Database className="h-4 w-4" />
@@ -511,8 +507,8 @@ export default function EnhancedSettingsSection() {
               </button>
 
               <button
-                onClick={() => alert('System logs viewer coming soon')}
-                className="w-full px-4 py-3 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white hover:bg-gray-800 transition-colors flex items-center justify-between"
+                onClick={() => notifyInfo('System logs viewer coming soon')}
+                className="w-full px-4 py-3 bg-white border border-slate-200 rounded-lg text-gray-900 hover:bg-slate-200 transition-colors flex items-center justify-between"
               >
                 <span className="flex items-center gap-2">
                   <Shield className="h-4 w-4" />

@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Scale, Send, FileText, AlertCircle, CheckCircle, Clock } from 'lucide-react';
+import ReportBrandHeader from '../../components/report/ReportBrandHeader';
 
 export default function SecondOpinionSection() {
   const [request, setRequest] = useState({ question: '', context: '' });
@@ -13,51 +14,62 @@ export default function SecondOpinionSection() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+        <h1 className="text-3xl font-semibold text-gray-900 mb-2 flex items-center gap-3">
           <Scale className="h-8 w-8 text-orange-500" />
           AI Health Second Opinion
         </h1>
-        <p className="text-gray-400">Get dual AI expert opinions on your health questions</p>
+        <p className="text-gray-600">Get dual AI expert opinions on your health questions</p>
       </div>
+
+      <ReportBrandHeader
+        title="BioMath Core"
+        subtitle="Second Opinion Engine"
+        variant="strip"
+        className="mb-6"
+      />
 
       <div className="mb-6 grid md:grid-cols-3 gap-4">
-        <div className="bg-gradient-to-br from-blue-900/30 via-blue-800/20 to-gray-900 border border-blue-600/30 rounded-xl p-4">
-          <FileText className="h-6 w-6 text-blue-400 mb-2" />
-          <p className="text-2xl font-bold text-white">2</p>
-          <p className="text-xs text-gray-400">AI Models</p>
+        <div className="bg-blue-50 border border-blue-200 rounded-2xl p-4">
+          <ReportBrandHeader variant="strip" subtitle="AI Models" className="mb-3" />
+          <FileText className="h-6 w-6 text-blue-600 mb-2" />
+          <p className="text-2xl font-semibold text-gray-900">2</p>
+          <p className="text-xs text-gray-600">AI Models</p>
         </div>
-        <div className="bg-gradient-to-br from-green-900/30 via-green-800/20 to-gray-900 border border-green-600/30 rounded-xl p-4">
-          <CheckCircle className="h-6 w-6 text-green-400 mb-2" />
-          <p className="text-2xl font-bold text-white">Evidence-Based</p>
-          <p className="text-xs text-gray-400">Research Backed</p>
+        <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-4">
+          <ReportBrandHeader variant="strip" subtitle="Evidence-Based" className="mb-3" />
+          <CheckCircle className="h-6 w-6 text-emerald-600 mb-2" />
+          <p className="text-2xl font-semibold text-gray-900">Evidence-Based</p>
+          <p className="text-xs text-gray-600">Research Backed</p>
         </div>
-        <div className="bg-gradient-to-br from-orange-900/30 via-orange-800/20 to-gray-900 border border-orange-600/30 rounded-xl p-4">
-          <Clock className="h-6 w-6 text-orange-400 mb-2" />
-          <p className="text-2xl font-bold text-white">~2 min</p>
-          <p className="text-xs text-gray-400">Analysis Time</p>
+        <div className="bg-orange-50 border border-orange-200 rounded-2xl p-4">
+          <ReportBrandHeader variant="strip" subtitle="Analysis Time" className="mb-3" />
+          <Clock className="h-6 w-6 text-orange-500 mb-2" />
+          <p className="text-2xl font-semibold text-gray-900">~2 min</p>
+          <p className="text-xs text-gray-600">Analysis Time</p>
         </div>
       </div>
 
-      <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl p-6 mb-6">
-        <h3 className="text-lg font-semibold text-white mb-4">Submit Your Question</h3>
+      <div className="bg-white/90 border border-slate-200 rounded-2xl p-6 shadow-lg mb-6">
+        <ReportBrandHeader variant="strip" subtitle="Submit Question" className="mb-4" />
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">Submit Your Question</h3>
         <div className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-400 mb-2">Health Question</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Health Question</label>
             <textarea
               value={request.question}
               onChange={(e) => setRequest({ ...request, question: e.target.value })}
               rows={3}
-              className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
               placeholder="What health question do you need a second opinion on?"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-400 mb-2">Medical Context (Optional)</label>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Medical Context (Optional)</label>
             <textarea
               value={request.context}
               onChange={(e) => setRequest({ ...request, context: e.target.value })}
               rows={3}
-              className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
               placeholder="Provide any relevant medical history, test results, or current medications..."
             />
           </div>
@@ -73,17 +85,18 @@ export default function SecondOpinionSection() {
       </div>
 
       {status === 'processing' && (
-        <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-orange-600/30 rounded-xl p-6">
+        <div className="bg-white/90 border border-orange-200 rounded-2xl p-6 shadow-lg">
+          <ReportBrandHeader variant="strip" subtitle="Processing" className="mb-4" />
           <div className="flex items-center gap-3 mb-4">
             <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-orange-500"></div>
-            <p className="text-white font-semibold">Analyzing with dual AI models...</p>
+            <p className="text-gray-900 font-semibold">Analyzing with dual AI models...</p>
           </div>
           <div className="space-y-2">
-            <div className="flex items-center gap-2 text-sm text-gray-400">
+            <div className="flex items-center gap-2 text-sm text-gray-600">
               <CheckCircle className="h-4 w-4 text-green-500" />
               <span>Model 1: Evidence-based analysis</span>
             </div>
-            <div className="flex items-center gap-2 text-sm text-gray-400">
+            <div className="flex items-center gap-2 text-sm text-gray-600">
               <Clock className="h-4 w-4 text-orange-500 animate-pulse" />
               <span>Model 2: Contextual analysis</span>
             </div>
@@ -93,12 +106,13 @@ export default function SecondOpinionSection() {
 
       {status === 'ready' && (
         <div className="grid md:grid-cols-2 gap-6">
-          <div className="bg-gradient-to-br from-blue-900/20 via-blue-800/10 to-gray-900 border border-blue-600/30 rounded-xl p-6">
-            <h4 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-              <FileText className="h-5 w-5 text-blue-400" />
+          <div className="bg-blue-50 border border-blue-200 rounded-2xl p-6">
+            <ReportBrandHeader variant="strip" subtitle="Opinion #1" className="mb-4" />
+            <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+              <FileText className="h-5 w-5 text-blue-600" />
               Opinion #1: Evidence-Based
             </h4>
-            <p className="text-sm text-gray-300 mb-4">
+            <p className="text-sm text-gray-700 mb-4">
               Based on current medical research and clinical guidelines, this is a simulated response. In production, this would connect to an actual AI model to provide evidence-based health guidance.
             </p>
             <div className="space-y-2">
@@ -107,12 +121,13 @@ export default function SecondOpinionSection() {
             </div>
           </div>
 
-          <div className="bg-gradient-to-br from-green-900/20 via-green-800/10 to-gray-900 border border-green-600/30 rounded-xl p-6">
-            <h4 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
-              <FileText className="h-5 w-5 text-green-400" />
+          <div className="bg-emerald-50 border border-emerald-200 rounded-2xl p-6">
+            <ReportBrandHeader variant="strip" subtitle="Opinion #2" className="mb-4" />
+            <h4 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
+              <FileText className="h-5 w-5 text-emerald-600" />
               Opinion #2: Contextual
             </h4>
-            <p className="text-sm text-gray-300 mb-4">
+            <p className="text-sm text-gray-700 mb-4">
               Considering your specific context and medical history, this is a simulated contextual response. Production version would analyze your complete health profile for personalized guidance.
             </p>
             <div className="space-y-2">
@@ -123,12 +138,13 @@ export default function SecondOpinionSection() {
         </div>
       )}
 
-      <div className="mt-6 p-4 bg-yellow-900/20 border border-yellow-600/30 rounded-xl">
+      <div className="mt-6 p-4 bg-yellow-50 border border-yellow-200 rounded-2xl">
+        <ReportBrandHeader variant="strip" subtitle="Medical Disclaimer" className="mb-3" />
         <div className="flex items-start gap-3">
-          <AlertCircle className="h-5 w-5 text-yellow-500 flex-shrink-0 mt-0.5" />
+          <AlertCircle className="h-5 w-5 text-yellow-600 flex-shrink-0 mt-0.5" />
           <div>
-            <p className="text-sm text-yellow-200 font-medium mb-1">Medical Disclaimer</p>
-            <p className="text-xs text-yellow-300/80">
+            <p className="text-sm text-yellow-700 font-medium mb-1">Medical Disclaimer</p>
+            <p className="text-xs text-yellow-700/80">
               AI opinions are for informational purposes only. Always consult with qualified healthcare professionals
               for medical advice, diagnosis, or treatment. Do not use AI opinions as a substitute for professional medical care.
             </p>

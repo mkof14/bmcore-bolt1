@@ -77,9 +77,10 @@ export function usePushNotifications() {
 
       const vapidPublicKey = import.meta.env.VITE_VAPID_PUBLIC_KEY || '';
 
+      const applicationServerKey = urlBase64ToUint8Array(vapidPublicKey) as unknown as BufferSource;
       const subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey: urlBase64ToUint8Array(vapidPublicKey),
+        applicationServerKey,
       });
 
       const { data: { user } } = await supabase.auth.getUser();
@@ -148,13 +149,14 @@ export function usePushNotifications() {
 
     try {
       const registration = await navigator.serviceWorker.ready;
-      await registration.showNotification('BioMath Core', {
+      const options: NotificationOptions & { vibrate?: number[] } = {
         body: 'Push notifications are working!',
         icon: '/biomathcore_emblem_1024.png',
         badge: '/biomathcore_emblem_1024.png',
         tag: 'test-notification',
         vibrate: [200, 100, 200],
-      });
+      };
+      await registration.showNotification('BioMath Core', options);
       return true;
     } catch (error) {
       const errorMessage = error instanceof Error ? error.message : String(error);

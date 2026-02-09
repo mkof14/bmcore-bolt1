@@ -10,10 +10,7 @@ const PRODUCTION_ENV: EnvConfig = {
   ],
   optional: [
     'VITE_GA_MEASUREMENT_ID',
-    'VITE_FACEBOOK_PIXEL_ID',
-    'VITE_EMAIL_PROVIDER',
-    'VITE_RESEND_API_KEY',
-    'VITE_SENDGRID_API_KEY'
+    'VITE_FACEBOOK_PIXEL_ID'
   ]
 };
 
@@ -33,6 +30,9 @@ export class EnvValidationError extends Error {
 }
 
 export function validateEnv(): void {
+  if (import.meta.env.VITE_MOCK_MODE === '1') {
+    return;
+  }
   const isProduction = import.meta.env.PROD;
   const config = isProduction ? PRODUCTION_ENV : DEVELOPMENT_ENV;
 

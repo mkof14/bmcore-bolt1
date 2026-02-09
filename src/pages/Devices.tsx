@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Watch, Activity, Droplet, Heart, Scale, Gauge, CheckCircle, AlertCircle, RefreshCw, Trash2, Info, Shield, TrendingUp, Zap, Clock, BookOpen } from 'lucide-react';
+import { Watch, Activity, Droplet, Heart, Scale, Gauge, CheckCircle, RefreshCw, Trash2, Info, Shield, TrendingUp, Zap, Clock, BookOpen } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import type { DeviceBrand, UserDevice } from '../types/database';
 import DeviceEducation from '../components/DeviceEducation';
@@ -155,9 +155,9 @@ export default function Devices({ onNavigate }: DevicesProps) {
 
   if (step === 'explain' && selectedBrand) {
     return (
-      <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors pt-16">
+      <div className="min-h-screen bg-gradient-to-b from-white via-orange-50/40 to-white dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors pt-16">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border-2 border-gray-200 dark:border-gray-700 p-8">
+          <div className="rounded-3xl border border-slate-200 bg-white/90 p-8 shadow-xl dark:border-gray-800 dark:bg-gray-900/60">
             <div className="text-center mb-8">
               <div className="inline-flex items-center justify-center w-20 h-20 bg-blue-100 dark:bg-blue-900/30 rounded-full mb-4">
                 {getCategoryIcon(selectedBrand.category)}
@@ -170,7 +170,7 @@ export default function Devices({ onNavigate }: DevicesProps) {
               </p>
             </div>
 
-            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6 mb-6 border-2 border-blue-200 dark:border-blue-800">
+            <div className="bg-blue-50/80 dark:bg-blue-900/20 rounded-2xl p-6 mb-6 border border-blue-200 dark:border-blue-800">
               <div className="flex items-start space-x-3 mb-4">
                 <Shield className="h-6 w-6 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-1" />
                 <div>
@@ -206,7 +206,7 @@ export default function Devices({ onNavigate }: DevicesProps) {
               </div>
             </div>
 
-            <div className="bg-gray-50 dark:bg-gray-900 rounded-lg p-4 mb-6">
+            <div className="bg-slate-50/80 dark:bg-gray-900/40 rounded-2xl border border-slate-200 dark:border-gray-800 p-4 mb-6">
               <p className="text-sm text-gray-600 dark:text-gray-400">
                 <strong className="text-gray-900 dark:text-white">Privacy:</strong> You have full control over the connection.
                 We don't know your device password and cannot control it. We only receive the health data
@@ -239,9 +239,9 @@ export default function Devices({ onNavigate }: DevicesProps) {
 
   if (step === 'authorize' && selectedBrand) {
     return (
-      <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors pt-16">
+      <div className="min-h-screen bg-gradient-to-b from-white via-orange-50/40 to-white dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors pt-16">
         <div className="max-w-2xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-xl border-2 border-gray-200 dark:border-gray-700 p-8">
+          <div className="rounded-3xl border border-slate-200 bg-white/90 p-8 shadow-xl dark:border-gray-800 dark:bg-gray-900/60">
             <div className="text-center mb-8">
               <div className="inline-flex items-center justify-center w-20 h-20 bg-green-100 dark:bg-green-900/30 rounded-full mb-4">
                 <CheckCircle className="h-12 w-12 text-green-600 dark:text-green-400" />
@@ -259,7 +259,7 @@ export default function Devices({ onNavigate }: DevicesProps) {
                 Click "Grant Access" to allow the device to automatically transmit metrics.
               </p>
 
-              <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 mb-6">
+              <div className="bg-blue-50/80 dark:bg-blue-900/20 rounded-2xl p-4 mb-6 border border-blue-200 dark:border-blue-800">
                 <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Sync Frequency Settings</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
                   Default: daily in the morning. You can change in settings:
@@ -307,28 +307,30 @@ export default function Devices({ onNavigate }: DevicesProps) {
 
   if (step === 'success') {
     return (
-      <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors pt-16 flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-b from-white via-orange-50/40 to-white dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors pt-16 flex items-center justify-center">
         <div className="max-w-md mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="text-center mb-6">
-            <div className="inline-flex items-center justify-center w-24 h-24 bg-green-100 dark:bg-green-900/30 rounded-full mb-6">
-              <CheckCircle className="h-16 w-16 text-green-600 dark:text-green-400" />
-            </div>
-            <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-              Device Connected!
-            </h2>
-            <p className="text-lg text-gray-600 dark:text-gray-400 mb-6">
-              From now on, BioMath Core will update metrics and use them in recommendations and reports.
-            </p>
-          </div>
-
-          <div className="space-y-4">
-            <SuccessConnectionHint />
-            <div className="bg-blue-50 dark:bg-blue-900/20 rounded-lg p-4 border border-blue-200 dark:border-blue-800">
-              <TrendingUp className="h-8 w-8 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
-              <p className="text-sm text-gray-700 dark:text-gray-300 text-center">
-                <strong>Tip:</strong> If you use the device regularly, the platform will be able to track not just what
-                happened today, but your direction — whether your condition is improving, declining, or stable.
+          <div className="rounded-3xl border border-slate-200 bg-white/90 p-8 shadow-xl dark:border-gray-800 dark:bg-gray-900/60">
+            <div className="text-center mb-6">
+              <div className="inline-flex items-center justify-center w-24 h-24 bg-green-100 dark:bg-green-900/30 rounded-full mb-6">
+                <CheckCircle className="h-16 w-16 text-green-600 dark:text-green-400" />
+              </div>
+              <h2 className="text-3xl font-semibold text-gray-900 dark:text-white mb-4">
+                Device Connected!
+              </h2>
+              <p className="text-lg text-gray-600 dark:text-gray-400 mb-6">
+                From now on, BioMath Core will update metrics and use them in recommendations and reports.
               </p>
+            </div>
+
+            <div className="space-y-4">
+              <SuccessConnectionHint />
+              <div className="bg-blue-50/80 dark:bg-blue-900/20 rounded-2xl p-4 border border-blue-200 dark:border-blue-800">
+                <TrendingUp className="h-8 w-8 text-blue-600 dark:text-blue-400 mx-auto mb-2" />
+                <p className="text-sm text-gray-700 dark:text-gray-300 text-center">
+                  <strong>Tip:</strong> If you use the device regularly, the platform will be able to track not just what
+                  happened today, but your direction — whether your condition is improving, declining, or stable.
+                </p>
+              </div>
             </div>
           </div>
         </div>
@@ -337,13 +339,16 @@ export default function Devices({ onNavigate }: DevicesProps) {
   }
 
   return (
-    <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors pt-16">
+    <div className="min-h-screen bg-gradient-to-b from-white via-orange-50/40 to-white dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors pt-16">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+          <span className="inline-flex items-center rounded-full border border-orange-200 bg-white/80 px-4 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-orange-700 dark:border-white/15 dark:bg-gray-900/60 dark:text-orange-300">
+            Device Network
+          </span>
+          <h1 className="mt-5 text-4xl md:text-5xl font-semibold text-gray-900 dark:text-white mb-4">
             My Devices
           </h1>
-          <p className="text-xl text-gray-600 dark:text-gray-400 mb-6">
+          <p className="text-lg text-gray-600 dark:text-gray-400 mb-6">
             Connect a device so BioMath Core can track your metrics and explain their meaning.
           </p>
 
@@ -361,7 +366,7 @@ export default function Devices({ onNavigate }: DevicesProps) {
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {userDevices.map((device: any) => (
-                <div key={device.id} className="bg-white dark:bg-gray-800 rounded-xl p-6 border-2 border-gray-200 dark:border-gray-700">
+                <div key={device.id} className="bg-white/90 dark:bg-gray-900/60 rounded-2xl p-6 border border-slate-200 dark:border-gray-800 shadow-lg">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-center space-x-3">
                       <div className="w-12 h-12 bg-blue-100 dark:bg-blue-900/30 rounded-lg flex items-center justify-center">
@@ -435,7 +440,7 @@ export default function Devices({ onNavigate }: DevicesProps) {
                     )}
                     <button
                       onClick={() => handleDisconnect(device.id)}
-                      className="px-3 py-2 bg-red-100 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 rounded-lg transition-colors"
+                      className="px-3 py-2 bg-red-100/80 dark:bg-red-900/30 hover:bg-red-200 dark:hover:bg-red-900/50 text-red-600 dark:text-red-400 rounded-lg transition-colors"
                       title="Disconnect"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -449,13 +454,13 @@ export default function Devices({ onNavigate }: DevicesProps) {
 
         <div className="mb-8">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white">
               Connect Device
             </h2>
             <div className="flex items-center space-x-3">
               <button
                 onClick={() => setShowEducation(!showEducation)}
-                className="flex items-center space-x-2 px-4 py-2 bg-blue-100 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-900/50 rounded-lg transition-colors text-sm font-medium"
+                className="flex items-center space-x-2 px-4 py-2 bg-blue-100/80 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 hover:bg-blue-200 dark:hover:bg-blue-900/50 rounded-lg transition-colors text-sm font-medium"
               >
                 <BookOpen className="h-4 w-4" />
                 <span>{showEducation ? 'Hide Guide' : 'Learn More'}</span>
@@ -475,35 +480,35 @@ export default function Devices({ onNavigate }: DevicesProps) {
         </div>
 
         {showRecommendations && (
-          <div className="mb-8 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-xl p-6 border-2 border-blue-200 dark:border-blue-800">
-            <h3 className="text-xl font-bold text-gray-900 dark:text-white mb-4">
+          <div className="mb-8 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-3xl p-6 border border-blue-200 dark:border-blue-800 shadow-lg">
+            <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-4">
               Device Selection Recommendations
             </h3>
             <p className="text-gray-700 dark:text-gray-300 mb-4">
               If you don't have a device yet, BioMath Core can help you choose:
             </p>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-4">
+              <div className="bg-white/90 dark:bg-gray-900/60 rounded-2xl p-4 border border-slate-200 dark:border-gray-800">
                 <h4 className="font-semibold text-gray-900 dark:text-white mb-2">For Sleep</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400">{getDeviceRecommendation('sleep')}</p>
               </div>
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-4">
+              <div className="bg-white/90 dark:bg-gray-900/60 rounded-2xl p-4 border border-slate-200 dark:border-gray-800">
                 <h4 className="font-semibold text-gray-900 dark:text-white mb-2">For Activity & Exercise</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400">{getDeviceRecommendation('activity')}</p>
               </div>
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-4">
+              <div className="bg-white/90 dark:bg-gray-900/60 rounded-2xl p-4 border border-slate-200 dark:border-gray-800">
                 <h4 className="font-semibold text-gray-900 dark:text-white mb-2">For Glucose</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400">{getDeviceRecommendation('glucose')}</p>
               </div>
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-4">
+              <div className="bg-white/90 dark:bg-gray-900/60 rounded-2xl p-4 border border-slate-200 dark:border-gray-800">
                 <h4 className="font-semibold text-gray-900 dark:text-white mb-2">For Blood Pressure</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400">{getDeviceRecommendation('blood_pressure')}</p>
               </div>
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-4">
+              <div className="bg-white/90 dark:bg-gray-900/60 rounded-2xl p-4 border border-slate-200 dark:border-gray-800">
                 <h4 className="font-semibold text-gray-900 dark:text-white mb-2">For Long-term Trends</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400">{getDeviceRecommendation('long_term')}</p>
               </div>
-              <div className="bg-white dark:bg-gray-800 rounded-lg p-4">
+              <div className="bg-white/90 dark:bg-gray-900/60 rounded-2xl p-4 border border-slate-200 dark:border-gray-800">
                 <h4 className="font-semibold text-gray-900 dark:text-white mb-2">Maximum Versatility</h4>
                 <p className="text-sm text-gray-600 dark:text-gray-400">{getDeviceRecommendation('universal')}</p>
               </div>
@@ -522,7 +527,7 @@ export default function Devices({ onNavigate }: DevicesProps) {
             <button
               key={brand.id}
               onClick={() => handleSelectBrand(brand)}
-              className="bg-white dark:bg-gray-800 rounded-xl p-6 border-2 border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-500 transition-colors text-left group"
+              className="bg-white/90 dark:bg-gray-900/60 rounded-2xl p-6 border border-slate-200 dark:border-gray-800 hover:border-blue-500 dark:hover:border-blue-500 transition-colors text-left group shadow-sm"
             >
               <div className="flex items-center space-x-3 mb-4">
                 <div className="w-12 h-12 bg-gray-100 dark:bg-gray-700 rounded-lg flex items-center justify-center group-hover:bg-blue-100 dark:group-hover:bg-blue-900/30 transition-colors">
@@ -555,7 +560,7 @@ export default function Devices({ onNavigate }: DevicesProps) {
           ))}
         </div>
 
-        <div className="mt-12 bg-blue-50 dark:bg-blue-900/20 rounded-xl p-6 border border-blue-200 dark:border-blue-800">
+        <div className="mt-12 bg-blue-50/80 dark:bg-blue-900/20 rounded-3xl p-6 border border-blue-200 dark:border-blue-800 shadow-lg">
           <div className="flex items-start space-x-4">
             <Info className="h-6 w-6 text-blue-600 dark:text-blue-400 flex-shrink-0 mt-1" />
             <div>

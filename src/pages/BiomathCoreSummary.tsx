@@ -11,8 +11,8 @@ export default function BiomathCoreSummary({ onNavigate }: BiomathCoreSummaryPro
   const isDark = theme === 'dark';
 
   return (
-    <div className={`min-h-screen transition-colors ${isDark ? 'bg-gray-950' : 'bg-gray-50'}`}>
-      <section className={`py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden ${isDark ? 'bg-gradient-to-br from-gray-900 via-gray-950 to-black' : 'bg-gradient-to-br from-gray-100 via-white to-gray-50'}`}>
+    <div className={`min-h-screen transition-colors ${isDark ? 'bg-gray-950' : 'bg-white'}`}>
+      <section className={`py-20 px-4 sm:px-6 lg:px-8 relative overflow-hidden ${isDark ? 'bg-gradient-to-br from-gray-900 via-gray-950 to-black' : 'bg-[radial-gradient(circle_at_top,_#fff6ed,_transparent_55%),linear-gradient(135deg,#f8fafc,white)]'}`}>
         <div className={`absolute inset-0 ${isDark ? 'opacity-20' : 'opacity-10'}`}>
           <div className="absolute top-0 left-0 w-1/2 h-full bg-gradient-to-r from-blue-500/30 to-transparent"></div>
           <div className="absolute bottom-0 right-0 w-1/2 h-full bg-gradient-to-l from-orange-500/20 to-transparent"></div>
@@ -27,7 +27,7 @@ export default function BiomathCoreSummary({ onNavigate }: BiomathCoreSummaryPro
                 <source srcSet="/logo-header.webp?v=2" type="image/webp" />
                 <img src="/logo-header.png?v=2" alt="BioMath Core" className="h-24 w-24 mx-auto mb-6" width="96" height="96" />
               </picture>
-              <h1 className="text-7xl md:text-8xl lg:text-9xl font-bold mb-6 tracking-tight">
+              <h1 className="text-7xl md:text-8xl lg:text-9xl font-semibold mb-6 tracking-tight">
                 <span className="text-blue-500">BIOMATH</span>
                 <span className={isDark ? 'text-white' : 'text-gray-900'}> CORE</span>
               </h1>
@@ -43,14 +43,14 @@ export default function BiomathCoreSummary({ onNavigate }: BiomathCoreSummaryPro
         </div>
       </section>
 
-      <section className={`py-20 px-4 sm:px-6 lg:px-8 ${isDark ? 'bg-gray-900/50' : 'bg-gray-100/50'}`}>
+      <section className={`py-20 px-4 sm:px-6 lg:px-8 ${isDark ? 'bg-gray-900/50' : 'bg-slate-50'}`}>
         <div className="max-w-6xl mx-auto">
-          <div className={`rounded-3xl p-12 border-2 shadow-2xl ${isDark ? 'bg-gradient-to-br from-gray-900 to-gray-950 border-blue-500/30' : 'bg-gradient-to-br from-white to-gray-50 border-blue-500/20'}`}>
+          <div className={`rounded-3xl p-12 border shadow-2xl ${isDark ? 'bg-gradient-to-br from-gray-900 to-gray-950 border-blue-500/30' : 'bg-white border-gray-200'}`}>
             <div className="flex items-center space-x-4 mb-8">
               <div className="bg-blue-500/20 p-4 rounded-xl">
                 <Brain className="h-10 w-10 text-blue-400" />
               </div>
-              <h2 className={`text-4xl md:text-5xl font-bold ${isDark ? 'text-white' : 'text-gray-900'}`}>
+              <h2 className={`text-4xl md:text-5xl font-semibold ${isDark ? 'text-white' : 'text-gray-900'}`}>
                 The Core Principle
               </h2>
             </div>
@@ -64,10 +64,10 @@ export default function BiomathCoreSummary({ onNavigate }: BiomathCoreSummaryPro
         </div>
       </section>
 
-      <section className={`py-20 px-4 sm:px-6 lg:px-8 ${isDark ? 'bg-gradient-to-br from-gray-950 to-gray-900' : 'bg-gradient-to-br from-gray-50 to-white'}`}>
+      <section className={`py-20 px-4 sm:px-6 lg:px-8 ${isDark ? 'bg-gradient-to-br from-gray-950 to-gray-900' : 'bg-white'}`}>
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className={`text-5xl md:text-6xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            <h2 className={`text-5xl md:text-6xl font-semibold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
               THE AI HEALTH ADVISOR
             </h2>
             <div className="h-1 w-32 bg-orange-500 mx-auto mb-8"></div>
@@ -120,10 +120,10 @@ export default function BiomathCoreSummary({ onNavigate }: BiomathCoreSummaryPro
         </div>
       </section>
 
-      <section className={`py-20 px-4 sm:px-6 lg:px-8 ${isDark ? 'bg-gray-900/50' : 'bg-gray-100/50'}`}>
+      <section className={`py-20 px-4 sm:px-6 lg:px-8 ${isDark ? 'bg-gray-900/50' : 'bg-slate-50'}`}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className={`text-5xl md:text-6xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            <h2 className={`text-5xl md:text-6xl font-semibold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
               THREE-PHASE SERVICE FLOW
             </h2>
             <div className="h-1 w-32 bg-blue-500 mx-auto mb-8"></div>
@@ -175,10 +175,10 @@ export default function BiomathCoreSummary({ onNavigate }: BiomathCoreSummaryPro
         </div>
       </section>
 
-      <section className={`py-20 px-4 sm:px-6 lg:px-8 ${isDark ? 'bg-gradient-to-br from-gray-950 to-gray-900' : 'bg-gradient-to-br from-gray-50 to-white'}`}>
+      <section className={`py-20 px-4 sm:px-6 lg:px-8 ${isDark ? 'bg-gradient-to-br from-gray-950 to-gray-900' : 'bg-white'}`}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className={`text-5xl md:text-6xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            <h2 className={`text-5xl md:text-6xl font-semibold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
               HYBRID MONETIZATION MODEL
             </h2>
             <div className="h-1 w-32 bg-orange-500 mx-auto mb-8"></div>
@@ -221,10 +221,10 @@ export default function BiomathCoreSummary({ onNavigate }: BiomathCoreSummaryPro
         </div>
       </section>
 
-      <section className={`py-20 px-4 sm:px-6 lg:px-8 ${isDark ? 'bg-gray-900/50' : 'bg-gray-100/50'}`}>
+      <section className={`py-20 px-4 sm:px-6 lg:px-8 ${isDark ? 'bg-gray-900/50' : 'bg-slate-50'}`}>
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-16">
-            <h2 className={`text-5xl md:text-6xl font-bold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+            <h2 className={`text-5xl md:text-6xl font-semibold mb-6 ${isDark ? 'text-white' : 'text-gray-900'}`}>
               DATA PHILOSOPHY
             </h2>
             <div className="h-1 w-32 bg-blue-500 mx-auto mb-8"></div>

@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { User, Camera, Save, Plus, Trash2 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { notifyUserError, notifyUserInfo, notifyUserSuccess } from '../../lib/adminNotify';
+import ReportBrandHeader from '../../components/report/ReportBrandHeader';
 
 interface Profile {
   id: string;
@@ -58,7 +60,6 @@ export default function PersonalInfoSection() {
         setProfile(newProfile);
       }
     } catch (error) {
-      console.error('Error loading profile:', error);
       const { data: user } = await supabase.auth.getUser();
       if (user.user) {
         setProfile({
@@ -101,10 +102,9 @@ export default function PersonalInfoSection() {
         });
 
       if (error) throw error;
-      alert('Profile updated successfully!');
+      notifyUserSuccess('Profile updated');
     } catch (error) {
-      console.error('Error saving profile:', error);
-      alert('Failed to save profile');
+      notifyUserError('Profile save failed');
     } finally {
       setSaving(false);
     }
@@ -126,29 +126,27 @@ export default function PersonalInfoSection() {
     if (!file) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      alert('File size must be less than 5MB');
+      notifyUserInfo('File size must be less than 5MB');
       return;
     }
 
     if (!file.type.startsWith('image/')) {
-      alert('Please upload an image file');
+      notifyUserInfo('Please upload an image file');
       return;
     }
 
     try {
       const { data: user } = await supabase.auth.getUser();
       if (!user.user) {
-        alert('Please sign in to upload photos');
+        notifyUserInfo('Please sign in to upload photos');
         return;
       }
 
-      console.log('Starting upload for user:', user.user.id);
 
       const fileExt = file.name.split('.').pop();
       const fileName = `${user.user.id}-${Date.now()}.${fileExt}`;
       const filePath = `avatars/${fileName}`;
 
-      console.log('Uploading to:', filePath);
 
       const { data, error: uploadError } = await supabase.storage
         .from('profiles')
@@ -158,26 +156,20 @@ export default function PersonalInfoSection() {
         });
 
       if (uploadError) {
-        console.error('Upload error details:', uploadError);
-        console.error('Error message:', uploadError.message);
-        console.error('Error status:', uploadError.statusCode);
 
-        alert('Storage upload is not available right now. Please paste an image URL in the field below instead.');
+      notifyUserInfo('Storage upload not available. Use an image URL instead.');
         return;
       }
 
-      console.log('Upload successful:', data);
 
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
       const publicUrl = `${supabaseUrl}/storage/v1/object/public/profiles/${filePath}`;
 
-      console.log('Generated public URL:', publicUrl);
 
-      setProfile({ ...profile, avatar_url: publicUrl });
-      alert('Photo uploaded successfully!');
+      setProfile((prev) => (prev ? { ...prev, avatar_url: publicUrl } : prev));
+      notifyUserSuccess('Photo uploaded');
     } catch (error) {
-      console.error('Unexpected error during upload:', error);
-      alert('Upload failed. Please paste an image URL in the field below instead.');
+      notifyUserError('Upload failed. Use an image URL instead.');
     }
   };
 
@@ -188,19 +180,27 @@ export default function PersonalInfoSection() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+        <h1 className="text-3xl font-semibold text-gray-900 mb-2 flex items-center gap-3">
           <User className="h-8 w-8 text-orange-500" />
           Personal Information
         </h1>
-        <p className="text-gray-400">
+        <p className="text-gray-600">
           Manage your profile photo and custom information fields
         </p>
       </div>
 
+      <ReportBrandHeader
+        title="BioMath Core"
+        subtitle="Personal Information"
+        variant="strip"
+        className="mb-6"
+      />
+
       <div className="grid md:grid-cols-3 gap-6">
         <div className="md:col-span-1">
-          <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">Profile Photo</h3>
+          <div className="bg-white/90 border border-slate-200 rounded-2xl p-6 shadow-lg">
+            <ReportBrandHeader variant="strip" subtitle="Profile Photo" className="mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Profile Photo</h3>
             <div className="flex flex-col items-center">
               <div className="relative mb-4">
                 {profile.avatar_url ? (
@@ -237,10 +237,10 @@ export default function PersonalInfoSection() {
                 value={profile.avatar_url || ''}
                 onChange={(e) => setProfile({ ...profile, avatar_url: e.target.value })}
                 placeholder="Enter image URL"
-                className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
               />
-              <div className="text-xs text-gray-400 mt-2 text-center space-y-1">
-                <p className="font-medium text-gray-300">Two ways to add photo:</p>
+              <div className="text-xs text-gray-500 mt-2 text-center space-y-1">
+                <p className="font-medium text-gray-700">Two ways to add photo:</p>
                 <p>1. Click camera icon to upload file (max 5MB)</p>
                 <p>2. Paste image URL in the field above</p>
               </div>
@@ -249,38 +249,39 @@ export default function PersonalInfoSection() {
         </div>
 
         <div className="md:col-span-2">
-          <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">Basic Information</h3>
+          <div className="bg-white/90 border border-slate-200 rounded-2xl p-6 shadow-lg">
+            <ReportBrandHeader variant="strip" subtitle="Basic Information" className="mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Basic Information</h3>
             <div className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">Full Name</label>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                 <input
                   type="text"
                   value={profile.name || ''}
                   onChange={(e) => setProfile({ ...profile, name: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
                   placeholder="John Doe"
                 />
               </div>
 
               <div className="grid md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-2">Country</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Country</label>
                   <input
                     type="text"
                     value={profile.country || ''}
                     onChange={(e) => setProfile({ ...profile, country: e.target.value })}
-                    className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
                     placeholder="United States"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-400 mb-2">Timezone</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Timezone</label>
                   <select
                     value={profile.timezone || 'UTC'}
                     onChange={(e) => setProfile({ ...profile, timezone: e.target.value })}
-                    className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
                   >
                     <option value="UTC">UTC</option>
                     <option value="America/New_York">Eastern Time</option>
@@ -300,9 +301,9 @@ export default function PersonalInfoSection() {
                     type="checkbox"
                     checked={profile.marketing_optin}
                     onChange={(e) => setProfile({ ...profile, marketing_optin: e.target.checked })}
-                    className="w-4 h-4 rounded border-gray-600 text-orange-500 focus:ring-orange-500"
+                    className="w-4 h-4 rounded border-gray-300 text-orange-500 focus:ring-orange-500"
                   />
-                  <span className="text-sm text-gray-300">
+                  <span className="text-sm text-gray-600">
                     I want to receive health tips and product updates
                   </span>
                 </label>
@@ -310,9 +311,10 @@ export default function PersonalInfoSection() {
             </div>
           </div>
 
-          <div className="mt-6 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl p-6">
-            <h3 className="text-lg font-semibold text-white mb-4">Custom Information Fields</h3>
-            <p className="text-sm text-gray-400 mb-4">
+          <div className="mt-6 bg-white/90 border border-slate-200 rounded-2xl p-6 shadow-lg">
+            <ReportBrandHeader variant="strip" subtitle="Custom Fields" className="mb-4" />
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">Custom Information Fields</h3>
+            <p className="text-sm text-gray-600 mb-4">
               Add any additional information you consider important for your health profile
             </p>
 
@@ -327,7 +329,7 @@ export default function PersonalInfoSection() {
                       newFields[index].key = e.target.value;
                       setCustomFields(newFields);
                     }}
-                    className="flex-1 px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="flex-1 px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
                     placeholder="Field name (e.g., Blood Type)"
                   />
                   <input
@@ -338,12 +340,12 @@ export default function PersonalInfoSection() {
                       newFields[index].value = e.target.value;
                       setCustomFields(newFields);
                     }}
-                    className="flex-1 px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                    className="flex-1 px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
                     placeholder="Value (e.g., O+)"
                   />
                   <button
                     onClick={() => removeCustomField(index)}
-                    className="p-2 bg-red-900/30 border border-red-600/30 text-red-400 rounded-lg hover:bg-red-900/50 transition-colors"
+                    className="p-2 bg-red-50 border border-red-200 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
                   >
                     <Trash2 className="h-5 w-5" />
                   </button>
@@ -356,19 +358,19 @@ export default function PersonalInfoSection() {
                 type="text"
                 value={newField.key}
                 onChange={(e) => setNewField({ ...newField, key: e.target.value })}
-                className="flex-1 px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="flex-1 px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
                 placeholder="New field name"
               />
               <input
                 type="text"
                 value={newField.value}
                 onChange={(e) => setNewField({ ...newField, value: e.target.value })}
-                className="flex-1 px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+                className="flex-1 px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
                 placeholder="Value"
               />
               <button
                 onClick={addCustomField}
-                className="px-4 py-2 bg-blue-900/30 border border-blue-600/30 text-blue-400 rounded-lg hover:bg-blue-900/50 transition-colors flex items-center gap-2"
+                className="px-4 py-2 bg-blue-50 border border-blue-200 text-blue-700 rounded-lg hover:bg-blue-100 transition-colors flex items-center gap-2"
               >
                 <Plus className="h-5 w-5" />
                 Add

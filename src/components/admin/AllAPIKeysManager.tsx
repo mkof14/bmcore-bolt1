@@ -1,6 +1,8 @@
 import { useEffect, useMemo, useState } from "react";
-import { KEY_SPECS, CATEGORIES, KeyCategory } from "@/config/secretKeys";
+import { KEY_SPECS, CATEGORIES, KeyCategory, type KeySpec } from "@/config/secretKeys";
+import { supabase } from "@/lib/supabase";
 import { Key, CheckCircle, AlertCircle, Loader } from "lucide-react";
+import { notifyError } from "@/lib/adminNotify";
 
 type StatusRow = {
   key: string;
@@ -27,7 +29,7 @@ export default function AllAPIKeysManager() {
   async function load() {
     setLoading(true);
     try {
-      const data = KEY_SPECS.map(spec => {
+      const data = KEY_SPECS.map((spec: KeySpec) => {
         const val = import.meta.env[spec.key];
         const present = Boolean(val);
         return {
@@ -49,7 +51,7 @@ export default function AllAPIKeysManager() {
       });
       setRows(data);
     } catch (error) {
-      console.error("Failed to load status:", error);
+      notifyError("API key status load failed.");
     } finally {
       setLoading(false);
     }
@@ -62,22 +64,22 @@ export default function AllAPIKeysManager() {
   const filtered = useMemo(() => {
     let filtered = rows;
     if (activeCategory !== "all") {
-      filtered = filtered.filter(r => r.category === activeCategory);
+      filtered = filtered.filter((r) => r.category === activeCategory);
     }
     const s = q.trim().toLowerCase();
     if (s) {
-      filtered = filtered.filter(r => (r.key + r.label + r.company).toLowerCase().includes(s));
+      filtered = filtered.filter((r) => (r.key + r.label + r.company).toLowerCase().includes(s));
     }
     return filtered;
   }, [rows, q, activeCategory]);
 
   const stats = useMemo(() => {
-    const byCategory = CATEGORIES.map(cat => {
-      const catRows = rows.filter(r => r.category === cat.id);
+    const byCategory = CATEGORIES.map((cat) => {
+      const catRows = rows.filter((r) => r.category === cat.id);
       const total = catRows.length;
-      const applied = catRows.filter(r => r.status.ok).length;
-      const required = catRows.filter(r => r.required).length;
-      const requiredApplied = catRows.filter(r => r.required && r.status.ok).length;
+      const applied = catRows.filter((r) => r.status.ok).length;
+      const required = catRows.filter((r) => r.required).length;
+      const requiredApplied = catRows.filter((r) => r.required && r.status.ok).length;
       return { category: cat.id, total, applied, required, requiredApplied };
     });
     return byCategory;
@@ -87,24 +89,42 @@ export default function AllAPIKeysManager() {
     setBusy(key);
     setSuccessMsg(null);
     try {
-      const response = await fetch("/api/admin/secrets-apply", {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      if (!token) {
+        notifyError("Not authenticated");
+        return;
+      }
+
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const response = await fetch(`${supabaseUrl}/functions/v1/admin-secrets-apply`, {
         method: "POST",
-        headers: { "content-type": "application/json" },
+        headers: {
+          "content-type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
         body: JSON.stringify({ key, value, env: envTarget })
       });
 
-      if (response.ok) {
+      const payload = await response.json().catch(() => null);
+      if (response.ok && payload?.ok !== false) {
         const inputEl = document.getElementById(`inp-${key}`) as HTMLInputElement;
         if (inputEl) inputEl.value = "";
-        setSuccessMsg(`${key} applied successfully`);
+        setSuccessMsg(`${key} applied`);
         setTimeout(() => setSuccessMsg(null), 3000);
         await load();
       } else {
-        const errorText = await response.text();
-        alert(`Failed to apply ${key}: ${errorText}`);
+        const code = payload?.code;
+        const errorText =
+          code === "UNAUTHORIZED"
+            ? "Authentication required"
+            : code === "FORBIDDEN"
+            ? "Permission denied. Admin access required."
+            : payload?.error || `HTTP ${response.status}`;
+        notifyError(`Key apply failed: ${key}. ${errorText}`);
       }
     } catch (error) {
-      alert(`Error applying ${key}: ${error}`);
+      notifyError(`Key apply failed: ${key}. ${error}`);
     } finally {
       setBusy(null);
     }
@@ -121,19 +141,19 @@ export default function AllAPIKeysManager() {
   return (
     <div className="flex gap-6">
       <aside className="w-80 flex-shrink-0 space-y-2">
-        <div className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 rounded-2xl p-4">
-          <h3 className="text-sm font-semibold text-gray-400 mb-3">CATEGORIES</h3>
+        <div className="bg-white/90 border border-slate-200 rounded-2xl p-4 shadow-lg">
+          <h3 className="text-sm font-semibold text-gray-500 mb-3">CATEGORIES</h3>
           <button
             onClick={() => setActiveCategory("all")}
             className={`w-full text-left px-4 py-3 rounded-xl transition-all mb-2 ${
               activeCategory === "all"
                 ? "bg-blue-600 text-white"
-                : "bg-gray-800/50 text-gray-300 hover:bg-gray-800"
+                : "bg-slate-50 text-gray-700 hover:bg-slate-100"
             }`}
           >
             <div className="flex items-center justify-between">
               <span className="font-medium">All Services</span>
-              <span className="text-xs px-2 py-0.5 rounded-full bg-gray-700">
+              <span className="text-xs px-2 py-0.5 rounded-full bg-slate-200 text-gray-700">
                 {rows.length}
               </span>
             </div>
@@ -148,21 +168,21 @@ export default function AllAPIKeysManager() {
                 className={`w-full text-left px-4 py-3 rounded-xl transition-all mb-2 ${
                   isActive
                     ? "bg-blue-600 text-white"
-                    : "bg-gray-800/50 text-gray-300 hover:bg-gray-800"
+                    : "bg-slate-50 text-gray-700 hover:bg-slate-100"
                 }`}
               >
                 <div className="flex items-center gap-3 mb-1">
                   <span className="text-lg">{cat.icon}</span>
                   <span className="font-medium flex-1">{cat.label}</span>
                 </div>
-                <div className="text-xs opacity-75 ml-8">{cat.description}</div>
+                <div className="text-xs text-gray-500 ml-8">{cat.description}</div>
                 {catStat && (
                   <div className="flex items-center gap-2 mt-2 ml-8">
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400">
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200">
                       {catStat.applied}/{catStat.total} applied
                     </span>
                     {catStat.required > 0 && (
-                      <span className="text-xs px-2 py-0.5 rounded-full bg-amber-500/20 text-amber-400">
+                      <span className="text-xs px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
                         {catStat.requiredApplied}/{catStat.required} required
                       </span>
                     )}
@@ -177,19 +197,19 @@ export default function AllAPIKeysManager() {
       <main className="flex-1 space-y-6">
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+            <h2 className="text-2xl font-semibold text-gray-900 flex items-center gap-3">
               <Key className="w-7 h-7" />
               API Keys Management (Secrets Bridge)
             </h2>
-            <p className="text-sm text-gray-400 mt-1">
+            <p className="text-sm text-gray-600 mt-1">
               Never stores secrets in DB. Forward-only to environment. Status fetched live.
             </p>
           </div>
           <div className="text-sm flex items-center gap-2">
-            <span className="text-gray-400">Lock:</span>
+            <span className="text-gray-500">Lock:</span>
             <span
               className={`px-3 py-1 rounded-full text-xs font-medium ${
-                lock ? "bg-amber-500/20 text-amber-400" : "bg-emerald-500/20 text-emerald-400"
+                lock ? "bg-amber-50 text-amber-700 border border-amber-200" : "bg-emerald-50 text-emerald-700 border border-emerald-200"
               }`}
             >
               {lock ? "ON (read-only)" : "OFF (editable)"}
@@ -198,9 +218,9 @@ export default function AllAPIKeysManager() {
         </div>
 
         {successMsg && (
-          <div className="bg-emerald-500/20 border border-emerald-500/30 rounded-xl p-4 flex items-center gap-3">
-            <CheckCircle className="w-5 h-5 text-emerald-400" />
-            <span className="text-emerald-400">{successMsg}</span>
+          <div className="bg-emerald-50 border border-emerald-200 rounded-xl p-4 flex items-center gap-3">
+            <CheckCircle className="w-5 h-5 text-emerald-600" />
+            <span className="text-emerald-700">{successMsg}</span>
           </div>
         )}
 
@@ -209,7 +229,7 @@ export default function AllAPIKeysManager() {
             value={q}
             onChange={e => setQ(e.target.value)}
             placeholder="Search keys, companies..."
-            className="w-full bg-gray-800/50 border border-gray-700 rounded-xl px-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            className="w-full bg-white border border-slate-200 rounded-xl px-4 py-3 text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
           />
         </div>
 
@@ -222,25 +242,25 @@ export default function AllAPIKeysManager() {
             return (
               <div
                 key={r.key}
-                className="bg-gradient-to-br from-gray-800/50 to-gray-900/50 border border-gray-700/50 rounded-2xl p-5"
+                className="bg-white/90 border border-slate-200 rounded-2xl p-5 shadow-lg"
               >
                 <div className="flex items-start justify-between mb-3">
                   <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <div className="font-semibold text-white text-lg">{r.label}</div>
+                      <div className="font-semibold text-gray-900 text-lg">{r.label}</div>
                     </div>
-                    <div className="text-xs text-blue-400 font-medium mb-1">{r.company}</div>
+                    <div className="text-xs text-blue-600 font-medium mb-1">{r.company}</div>
                     <div className="text-xs text-gray-500 font-mono">{r.key}</div>
-                    {r.description && <div className="text-xs text-gray-400 mt-2">{r.description}</div>}
-                    {r.example && <div className="text-xs text-gray-400 mt-1">Example: {r.example}</div>}
+                    {r.description && <div className="text-xs text-gray-600 mt-2">{r.description}</div>}
+                    {r.example && <div className="text-xs text-gray-600 mt-1">Example: {r.example}</div>}
                   </div>
                   <span
                     className={`text-xs px-3 py-1 rounded-full font-medium whitespace-nowrap ${
                       ok
-                        ? "bg-emerald-500/20 text-emerald-400 border border-emerald-500/30"
+                        ? "bg-emerald-50 text-emerald-700 border border-emerald-200"
                         : r.required
-                        ? "bg-red-500/20 text-red-400 border border-red-500/30"
-                        : "bg-yellow-500/20 text-yellow-400 border border-yellow-500/30"
+                        ? "bg-red-50 text-red-600 border border-red-200"
+                        : "bg-amber-50 text-amber-700 border border-amber-200"
                     }`}
                   >
                     {ok ? (
@@ -260,24 +280,24 @@ export default function AllAPIKeysManager() {
                 </div>
 
                 <div className="flex flex-wrap gap-2 mb-4">
-                  <span className="px-2 py-0.5 rounded-full bg-gray-700/50 text-gray-300 text-xs">
+                  <span className="px-2 py-0.5 rounded-full bg-slate-100 text-gray-600 text-xs">
                     Scope: {r.scope}
                   </span>
-                  <span className="px-2 py-0.5 rounded-full bg-gray-700/50 text-gray-300 text-xs">
+                  <span className="px-2 py-0.5 rounded-full bg-slate-100 text-gray-600 text-xs">
                     Env: {r.envTarget}
                   </span>
                   {r.status.vercel.production && (
-                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-xs">
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs">
                       Vercel: prod
                     </span>
                   )}
                   {r.status.vercel.preview && (
-                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-xs">
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs">
                       Vercel: preview
                     </span>
                   )}
                   {r.status.local && (
-                    <span className="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-xs">
+                    <span className="px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-700 border border-emerald-200 text-xs">
                       Local
                     </span>
                   )}
@@ -289,10 +309,10 @@ export default function AllAPIKeysManager() {
                       type="password"
                       placeholder={lock ? "Unlock to apply" : "Enter secret"}
                       disabled={!canEdit || busy === r.key}
-                      className={`w-full bg-gray-900/50 border rounded-lg px-3 py-2 text-white placeholder-gray-500 ${
+                      className={`w-full bg-white border rounded-lg px-3 py-2 text-gray-900 placeholder-gray-400 ${
                         canEdit && busy !== r.key
-                          ? "border-gray-600 focus:border-blue-500 focus:outline-none"
-                          : "border-gray-700 cursor-not-allowed opacity-50"
+                          ? "border-slate-300 focus:border-blue-500 focus:outline-none"
+                          : "border-slate-200 cursor-not-allowed opacity-50"
                       }`}
                       id={`inp-${r.key}`}
                     />
@@ -301,10 +321,10 @@ export default function AllAPIKeysManager() {
                         id={`env-${r.key}`}
                         defaultValue={r.envTarget}
                         disabled={!canEdit || busy === r.key}
-                        className={`bg-gray-900/50 border rounded-lg px-3 py-2 text-white text-sm ${
+                        className={`bg-white border rounded-lg px-3 py-2 text-gray-900 text-sm ${
                           canEdit && busy !== r.key
-                            ? "border-gray-600"
-                            : "border-gray-700 cursor-not-allowed opacity-50"
+                            ? "border-slate-300"
+                            : "border-slate-200 cursor-not-allowed opacity-50"
                         }`}
                       >
                         <option value="production">production</option>
@@ -319,17 +339,17 @@ export default function AllAPIKeysManager() {
                           const value = inputEl.value;
                           const env = selectEl.value as "production" | "preview" | "both";
                           if (!value) {
-                            alert("Enter value");
+                            notifyError("Enter value");
                             return;
                           }
                           applySecret(r.key, value, env);
                         }}
                         className={`flex-1 px-4 py-2 rounded-xl text-white font-medium transition-colors ${
                           busy === r.key
-                            ? "bg-gray-600 cursor-not-allowed"
+                            ? "bg-gray-400 cursor-not-allowed"
                             : canEdit
                             ? "bg-blue-600 hover:bg-blue-700"
-                            : "bg-gray-600 cursor-not-allowed opacity-50"
+                            : "bg-gray-400 cursor-not-allowed opacity-50"
                         }`}
                       >
                         {busy === r.key ? (

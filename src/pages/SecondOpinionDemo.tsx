@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Brain, Sparkles, ArrowRight, CheckCircle } from 'lucide-react';
 import SecondOpinionComparison from '../components/SecondOpinionComparison';
 import { analyzeOpinions, generateComparisonSummary } from '../lib/opinionAnalyzer';
+import { notifyUserSuccess } from '../lib/adminNotify';
 import type { Report, SecondOpinion, AIModel, OpinionComparison } from '../types/database';
 
 interface SecondOpinionDemoProps {
@@ -177,12 +178,10 @@ export default function SecondOpinionDemo({ onNavigate }: SecondOpinionDemoProps
   }, [showComparison]);
 
   const handlePreferenceSelect = (preference: 'original' | 'second' | 'both' | 'neither') => {
-    console.log('User preference:', preference);
   };
 
   const handleRatingSubmit = (rating: number, notes?: string) => {
-    console.log('Rating submitted:', rating, notes);
-    alert('Thank you for your feedback!');
+    notifyUserSuccess('Thank you for your feedback!');
   };
 
   if (showComparison && comparison) {

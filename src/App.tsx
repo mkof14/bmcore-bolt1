@@ -12,6 +12,7 @@ import { LoadingPage } from './components/LoadingSpinner';
 import { analytics, identifyUser } from './lib/analytics';
 import { useServiceWorker } from './hooks/useServiceWorker';
 import AdminGate from './components/AdminGate';
+import AdminToast from './components/AdminToast';
 import Home from './pages/Home';
 
 const About = lazy(() => import('./pages/About'));
@@ -54,7 +55,7 @@ const WhyTwoModels = lazy(() => import('./pages/WhyTwoModels'));
 const PrivacyTrust = lazy(() => import('./pages/PrivacyTrust'));
 const ConfigSystem = lazy(() => import('./pages/admin/ConfigSystem'));
 
-type Page = 'home' | 'about' | 'services' | 'pricing' | 'investors' | 'science' | 'api' | 'contact' | 'signin' | 'signup' | 'member' | 'member-zone' | 'services-catalog' | 'service-detail' | 'devices' | 'reports' | 'faq' | 'referral' | 'ambassador' | 'learning' | 'learning-center' | 'biomath-core-summary' | 'summary-text' | 'blog' | 'news' | 'careers' | 'command-center' | 'admin-panel' | 'config-system' | 'privacy-policy' | 'terms-of-service' | 'disclaimer' | 'hipaa-notice' | 'security' | 'gdpr' | 'data-privacy' | 'trust-safety' | 'partnership' | 'how-it-works' | 'why-two-models' | 'privacy-trust';
+type Page = 'home' | 'about' | 'services' | 'pricing' | 'investors' | 'science' | 'api' | 'contact' | 'signin' | 'signup' | 'member' | 'member-zone' | 'services-catalog' | 'service-detail' | 'devices' | 'reports' | 'faq' | 'referral' | 'ambassador' | 'learning' | 'learning-center' | 'biomath-core-summary' | 'summary-text' | 'blog' | 'news' | 'careers' | 'command-center' | 'admin-panel' | 'config-system' | 'privacy-policy' | 'terms-of-service' | 'disclaimer' | 'hipaa-notice' | 'security' | 'gdpr' | 'data-privacy' | 'trust-safety' | 'partnership' | 'how-it-works' | 'why-two-models' | 'privacy-trust' | 'redeem-invitation';
 
 function App() {
   // VERSION: 2025-10-20-01:48 - Force HMR refresh
@@ -173,7 +174,7 @@ function App() {
       case 'home':
         return <Home onNavigate={handleNavigate} />;
       case 'about':
-        return <About />;
+        return <About onNavigate={handleNavigate} />;
       case 'services':
         return <Services onNavigate={handleNavigate} />;
       case 'pricing':
@@ -189,7 +190,7 @@ function App() {
       case 'api':
         return <API onNavigate={handleNavigate} />;
       case 'contact':
-        return <Contact />;
+        return <Contact onNavigate={handleNavigate} />;
       case 'faq':
         return <FAQ onNavigate={handleNavigate} />;
       case 'signin':
@@ -273,6 +274,7 @@ function App() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors">
+      <AdminToast />
       {showHeaderFooter && <Header onNavigate={handleNavigate} currentPage={currentPage} />}
       <main>
         <Suspense fallback={<LoadingPage text="Loading..." />}>

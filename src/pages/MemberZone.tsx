@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { LogOut, ArrowLeft, CheckCircle, X } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { notifyUserError } from '../lib/adminNotify';
 import MemberSidebar from '../components/MemberSidebar';
 import DashboardSection from './member/DashboardSection';
 import PlaceholderSection from './member/PlaceholderSection';
@@ -18,6 +19,8 @@ import SystemSection from './member/SystemSection';
 import ReferralSection from './member/ReferralSection';
 import MyReportsSection from './member/MyReportsSection';
 import CatalogSection from './member/CatalogSection';
+import SignalHubSection from './member/SignalHubSection';
+import RemindersSection from './member/RemindersSection';
 import {
   Sparkles,
   Watch,
@@ -76,7 +79,7 @@ export default function MemberZone({ onNavigate, onSignOut }: MemberZoneProps) {
 
       setHasActiveSubscription(!!subscription);
     } catch (error) {
-      console.error('Error checking subscription:', error);
+      notifyUserError('Subscription status load failed');
     }
   };
 
@@ -90,7 +93,7 @@ export default function MemberZone({ onNavigate, onSignOut }: MemberZoneProps) {
         .from('user_subscriptions')
         .select('plan_id, billing_period')
         .eq('user_id', user.id)
-        .in('status', ['active', 'trial'])
+        .in('status', ['active', 'trialing'])
         .order('created_at', { ascending: false })
         .limit(1)
         .maybeSingle();
@@ -118,7 +121,7 @@ export default function MemberZone({ onNavigate, onSignOut }: MemberZoneProps) {
         });
       }
     } catch (error) {
-      console.error('Error sending welcome email:', error);
+      notifyUserError('Welcome email failed to send');
     }
   };
 
@@ -150,12 +153,12 @@ export default function MemberZone({ onNavigate, onSignOut }: MemberZoneProps) {
         if (!hasActiveSubscription) {
           return (
             <div className="flex flex-col items-center justify-center min-h-[60vh] text-center px-4">
-              <div className="bg-gradient-to-br from-orange-500/10 to-blue-500/10 border border-orange-500/30 rounded-2xl p-12 max-w-2xl">
+              <div className="bg-white/90 border border-orange-200 rounded-3xl p-12 max-w-2xl shadow-xl">
                 <CreditCard className="w-16 h-16 text-orange-500 mx-auto mb-6" />
-                <h2 className="text-3xl font-bold text-white mb-4">
+                <h2 className="text-3xl font-semibold text-gray-900 mb-4">
                   Subscribe to Access Catalog
                 </h2>
-                <p className="text-xl text-gray-300 mb-8">
+                <p className="text-lg text-gray-600 mb-8">
                   Choose a subscription plan to unlock access to our comprehensive health services catalog with 20+ categories.
                 </p>
                 <button
@@ -175,6 +178,12 @@ export default function MemberZone({ onNavigate, onSignOut }: MemberZoneProps) {
 
       case 'reports':
         return <MyReportsSection />;
+
+      case 'signal-hub':
+        return <SignalHubSection />;
+
+      case 'reminders':
+        return <RemindersSection />;
 
       case 'second-opinion':
         return <SecondOpinionSection />;
@@ -203,7 +212,7 @@ export default function MemberZone({ onNavigate, onSignOut }: MemberZoneProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 via-white to-gray-50 dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors pt-16">
+    <div className="min-h-screen bg-gradient-to-b from-white via-orange-50/30 to-white dark:from-gray-950 dark:via-gray-900 dark:to-gray-950 transition-colors pt-16">
       <MemberSidebar
         currentSection={currentSection}
         onSectionChange={setCurrentSection}
@@ -215,14 +224,14 @@ export default function MemberZone({ onNavigate, onSignOut }: MemberZoneProps) {
           <div className="flex justify-between items-center mb-6">
             <button
               onClick={() => onNavigate('home')}
-              className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 border border-gray-300 dark:border-gray-700/50 hover:border-orange-600/50 text-gray-700 dark:text-gray-300 rounded-lg transition-all duration-300"
+              className="flex items-center space-x-2 px-4 py-2 bg-white/90 dark:from-gray-800 dark:to-gray-900 border border-slate-200 dark:border-gray-700/50 hover:border-orange-300 text-gray-700 dark:text-gray-300 rounded-lg transition-all duration-300 shadow-sm"
             >
               <ArrowLeft className="h-5 w-5" />
               <span>Back to Home</span>
             </button>
             <button
               onClick={handleSignOut}
-              className="flex items-center space-x-2 px-4 py-2 bg-gradient-to-br from-gray-100 to-gray-200 dark:from-gray-800 dark:to-gray-900 border border-gray-300 dark:border-gray-700/50 hover:border-orange-600/50 text-gray-700 dark:text-gray-300 rounded-lg transition-all duration-300"
+              className="flex items-center space-x-2 px-4 py-2 bg-white/90 dark:from-gray-800 dark:to-gray-900 border border-slate-200 dark:border-gray-700/50 hover:border-orange-300 text-gray-700 dark:text-gray-300 rounded-lg transition-all duration-300 shadow-sm"
             >
               <LogOut className="h-5 w-5" />
               <span>Sign Out</span>

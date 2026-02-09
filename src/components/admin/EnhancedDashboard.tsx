@@ -31,11 +31,13 @@ interface DashboardMetrics {
 export default function EnhancedDashboard() {
   const [metrics, setMetrics] = useState<DashboardMetrics | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [timeRange, setTimeRange] = useState<'24h' | '7d' | '30d' | '90d'>('7d');
 
   const fetchDashboardMetrics = useCallback(async () => {
     setLoading(true);
     try {
+      setError(null);
       const now = new Date();
       const ranges = {
         '24h': new Date(now.getTime() - 24 * 60 * 60 * 1000),
@@ -121,7 +123,7 @@ export default function EnhancedDashboard() {
         criticalErrors: criticalErrors || 0,
       });
     } catch (error) {
-      console.error('Error fetching dashboard metrics:', error as unknown);
+      setError('Dashboard metrics load failed');
     } finally {
       setLoading(false);
     }
@@ -136,9 +138,9 @@ export default function EnhancedDashboard() {
       <div className="p-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-6">
           {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <div key={i} className="bg-white dark:bg-gray-800 rounded-lg p-6 animate-pulse">
-              <div className="h-8 bg-gray-200 dark:bg-gray-700 rounded mb-4"></div>
-              <div className="h-4 bg-gray-200 dark:bg-gray-700 rounded w-2/3"></div>
+            <div key={i} className="bg-white/90 border border-slate-200 rounded-xl p-6 shadow-sm">
+              <div className="h-8 bg-slate-100 rounded mb-4"></div>
+              <div className="h-4 bg-slate-100 rounded w-2/3"></div>
             </div>
           ))}
         </div>
@@ -148,8 +150,8 @@ export default function EnhancedDashboard() {
 
   if (!metrics) {
     return (
-      <div className="p-6 text-center text-gray-500 dark:text-gray-400">
-        Failed to load dashboard metrics
+      <div className="p-6 text-center text-gray-500">
+        {error || 'Dashboard metrics load failed'}
       </div>
     );
   }
@@ -222,20 +224,20 @@ export default function EnhancedDashboard() {
   ];
 
   const colorClasses: Record<string, string> = {
-    blue: 'bg-blue-100 dark:bg-blue-900/20 text-blue-600 dark:text-blue-400',
-    green: 'bg-green-100 dark:bg-green-900/20 text-green-600 dark:text-green-400',
-    purple: 'bg-purple-100 dark:bg-purple-900/20 text-purple-600 dark:text-purple-400',
-    orange: 'bg-orange-100 dark:bg-orange-900/20 text-orange-600 dark:text-orange-400',
-    teal: 'bg-teal-100 dark:bg-teal-900/20 text-teal-600 dark:text-teal-400',
-    indigo: 'bg-indigo-100 dark:bg-indigo-900/20 text-indigo-600 dark:text-indigo-400',
-    pink: 'bg-pink-100 dark:bg-pink-900/20 text-pink-600 dark:text-pink-400',
-    red: 'bg-red-100 dark:bg-red-900/20 text-red-600 dark:text-red-400',
+    blue: 'bg-blue-100 text-blue-600',
+    green: 'bg-green-100 text-green-600',
+    purple: 'bg-purple-100 text-purple-600',
+    orange: 'bg-orange-100 text-orange-600',
+    teal: 'bg-teal-100 text-teal-600',
+    indigo: 'bg-indigo-100 text-indigo-600',
+    pink: 'bg-pink-100 text-pink-600',
+    red: 'bg-red-100 text-red-600',
   };
 
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
+        <h2 className="text-2xl font-bold text-gray-900">
           Dashboard Overview
         </h2>
         <div className="flex gap-2">
@@ -246,7 +248,7 @@ export default function EnhancedDashboard() {
               className={`px-4 py-2 rounded-lg text-sm font-medium transition-colors ${
                 timeRange === range
                   ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
               }`}
             >
               {range}
@@ -259,7 +261,7 @@ export default function EnhancedDashboard() {
         {metricCards.map((card, index) => (
           <div
             key={index}
-            className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm hover:shadow-md transition-shadow"
+            className="bg-white/90 border border-slate-200 rounded-2xl p-6 shadow-sm hover:shadow-md transition-shadow"
           >
             <div className="flex items-start justify-between mb-4">
               <div
@@ -270,20 +272,20 @@ export default function EnhancedDashboard() {
               <span
                 className={`text-sm font-semibold ${
                   card.trend.startsWith('+')
-                    ? 'text-green-600 dark:text-green-400'
-                    : 'text-red-600 dark:text-red-400'
+                    ? 'text-green-600'
+                    : 'text-red-600'
                 }`}
               >
                 {card.trend}
               </span>
             </div>
-            <h3 className="text-sm font-medium text-gray-600 dark:text-gray-400 mb-1">
+            <h3 className="text-sm font-medium text-gray-600">
               {card.title}
             </h3>
-            <p className="text-2xl font-bold text-gray-900 dark:text-white mb-1">
+            <p className="text-2xl font-bold text-gray-900">
               {card.value}
             </p>
-            <p className="text-sm text-gray-500 dark:text-gray-500">{card.subtitle}</p>
+            <p className="text-sm text-gray-500">{card.subtitle}</p>
           </div>
         ))}
       </div>

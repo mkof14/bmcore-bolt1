@@ -1,6 +1,11 @@
 import { useState, useEffect } from 'react';
-import { Mail, Gift, UserPlus, Calendar, Clock, CheckCircle, XCircle, Copy, Send, Trash2, Eye, Filter, Download, RefreshCw, AlertCircle } from 'lucide-react';
+import { Mail, Gift, UserPlus, Calendar, Clock, CheckCircle, XCircle, Copy, Send, Trash2, Filter, RefreshCw, AlertCircle } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { adminDb } from '../../lib/adminApi';
+import { sendEmail, htmlToPlainText } from '../../lib/emailProvider';
+import { notifyError, notifySuccess } from '../../lib/adminNotify';
+import StateCard from '../ui/StateCard';
+import SuccessBanner from '../ui/SuccessBanner';
 
 interface Invitation {
   id: string;
@@ -42,6 +47,7 @@ export default function InvitationManager() {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [creating, setCreating] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
   const [copiedCode, setCopiedCode] = useState<string | null>(null);
 
   const [newInvitation, setNewInvitation] = useState({
@@ -58,6 +64,12 @@ export default function InvitationManager() {
   useEffect(() => {
     loadInvitations();
   }, []);
+
+  useEffect(() => {
+    if (!success) return;
+    const t = setTimeout(() => setSuccess(''), 3000);
+    return () => clearTimeout(t);
+  }, [success]);
 
   const loadInvitations = async () => {
     try {
@@ -82,7 +94,8 @@ export default function InvitationManager() {
 
       setStats(calculatedStats);
     } catch (error) {
-      console.error('Error loading invitations:', error);
+      setError('Invitations load failed');
+      notifyError('Invitations load failed');
     } finally {
       setLoading(false);
     }
@@ -112,9 +125,10 @@ export default function InvitationManager() {
         ? new Date(Date.now() + newInvitation.expires_in_days * 24 * 60 * 60 * 1000).toISOString()
         : null;
 
-      const { data, error } = await supabase
-        .from('invitations')
-        .insert({
+      const result = await adminDb({
+        table: 'invitations',
+        action: 'insert',
+        data: {
           email: newInvitation.email,
           first_name: newInvitation.first_name || null,
           last_name: newInvitation.last_name || null,
@@ -125,14 +139,23 @@ export default function InvitationManager() {
           expires_at: expiresAt,
           notes: newInvitation.notes || null,
           status: 'pending',
-        })
-        .select()
-        .single();
+        },
+      });
 
-      if (error) throw error;
+      if (!result.ok) throw new Error(result.error || 'Invitation create failed');
 
+      const data = Array.isArray(result.data) ? result.data[0] : result.data;
+
+      let emailFailed = false;
       if (newInvitation.send_email) {
-        await sendInvitationEmail(data);
+        try {
+          await sendInvitationEmail(data);
+        } catch (err: any) {
+          emailFailed = true;
+          const message = err.message || 'Invitation email failed';
+          setError(message);
+          notifyError(message);
+        }
       }
 
       setNewInvitation({
@@ -147,17 +170,74 @@ export default function InvitationManager() {
       });
       setShowCreateModal(false);
       loadInvitations();
-      alert(`Invitation created successfully! Code: ${code}`);
+      const successMessage = emailFailed
+        ? 'Invitation created. Email failed to send.'
+        : `Invitation created. Code: ${code}`;
+      setSuccess(successMessage);
+      notifySuccess(successMessage);
     } catch (err: any) {
-      setError(err.message || 'Failed to create invitation');
+      const message = err.message || 'Invitation create failed';
+      setError(message);
+      notifyError(message);
     } finally {
       setCreating(false);
     }
   };
 
   const sendInvitationEmail = async (invitation: Invitation) => {
-    console.log('Sending invitation email to:', invitation.email);
-    console.log('Invitation code:', invitation.code);
+    const planMap: Record<string, string> = {
+      core: 'Core Plan',
+      daily: 'Daily Plan',
+      max: 'Max Plan',
+    };
+    const planName = planMap[invitation.plan_type] || invitation.plan_type;
+    const inviteLink = `${window.location.origin}/#/redeem-invitation?code=${invitation.code}`;
+    const recipientName = invitation.first_name || invitation.email;
+    const subject = `You’re invited to BioMath Core (${planName})`;
+    const html = `
+      <div style="font-family: Arial, sans-serif; line-height: 1.6; color: #111827;">
+        <h2 style="margin-bottom: 8px;">You’re invited to BioMath Core</h2>
+        <p>Hi ${recipientName},</p>
+        <p>You’ve been invited to join BioMath Core with the <strong>${planName}</strong>.</p>
+        <p>Use this invitation code:</p>
+        <p style="font-size: 20px; font-weight: bold; color: #F97316;">${invitation.code}</p>
+        <p>Click the link below to redeem your invite:</p>
+        <p><a href="${inviteLink}" style="color: #2563EB;">${inviteLink}</a></p>
+        <p>If you have any questions, reply to this email and we’ll help.</p>
+        <p>— BioMath Core Team</p>
+      </div>
+    `;
+    const text = htmlToPlainText(html);
+
+    const result = await sendEmail({
+      to: invitation.email,
+      subject,
+      html,
+      text,
+    });
+
+    await adminDb({
+      table: 'email_sends',
+      action: 'insert',
+      data: {
+        template_id: null,
+        recipient_email: invitation.email,
+        subject,
+        body_html: html,
+        body_text: text,
+        variables_used: { code: invitation.code, plan: planName },
+        send_type: 'invitation',
+        status: result.success ? 'sent' : 'failed',
+        provider: result.provider || 'edge',
+        provider_message_id: result.messageId,
+        sent_at: result.success ? new Date().toISOString() : null,
+        error_message: result.error || null,
+      },
+    });
+
+    if (!result.success) {
+      throw new Error(result.error || 'Invitation email failed');
+    }
   };
 
   const handleCopyCode = (code: string) => {
@@ -177,28 +257,32 @@ export default function InvitationManager() {
     if (!confirm(`Revoke invitation for ${email}?`)) return;
 
     try {
-      const { error } = await supabase
-        .from('invitations')
-        .update({ status: 'revoked', updated_at: new Date().toISOString() })
-        .eq('id', id);
+      const result = await adminDb({
+        table: 'invitations',
+        action: 'update',
+        data: { status: 'revoked', updated_at: new Date().toISOString() },
+        match: { id },
+      });
 
-      if (error) throw error;
+      if (!result.ok) throw new Error(result.error || 'Invitation revoke failed');
 
       loadInvitations();
-      alert('Invitation revoked successfully');
+      setSuccess('Invitation revoked');
+      notifySuccess('Invitation revoked');
     } catch (error) {
-      console.error('Error revoking invitation:', error);
-      alert('Failed to revoke invitation');
+      setError('Invitation revoke failed');
+      notifyError('Invitation revoke failed');
     }
   };
 
   const handleResendEmail = async (invitation: Invitation) => {
     try {
       await sendInvitationEmail(invitation);
-      alert('Invitation email sent successfully!');
+      setSuccess('Invitation email sent');
+      notifySuccess('Invitation email sent');
     } catch (error) {
-      console.error('Error sending email:', error);
-      alert('Failed to send email');
+      setError('Email send failed');
+      notifyError('Email send failed');
     }
   };
 
@@ -206,18 +290,20 @@ export default function InvitationManager() {
     if (!confirm(`Delete invitation for ${email}? This cannot be undone.`)) return;
 
     try {
-      const { error } = await supabase
-        .from('invitations')
-        .delete()
-        .eq('id', id);
+      const result = await adminDb({
+        table: 'invitations',
+        action: 'delete',
+        match: { id },
+      });
 
-      if (error) throw error;
+      if (!result.ok) throw new Error(result.error || 'Invitation delete failed');
 
       loadInvitations();
-      alert('Invitation deleted successfully');
+      setSuccess('Invitation deleted');
+      notifySuccess('Invitation deleted');
     } catch (error) {
-      console.error('Error deleting invitation:', error);
-      alert('Failed to delete invitation');
+      setError('Invitation delete failed');
+      notifyError('Invitation delete failed');
     }
   };
 
@@ -244,10 +330,10 @@ export default function InvitationManager() {
 
   const getStatusColor = (status: string) => {
     const colors: Record<string, string> = {
-      pending: 'bg-yellow-900/30 border-yellow-600/30 text-yellow-400',
-      accepted: 'bg-green-900/30 border-green-600/30 text-green-400',
-      expired: 'bg-gray-700/30 border-gray-600/30 text-gray-400',
-      revoked: 'bg-red-900/30 border-red-600/30 text-red-400',
+      pending: 'bg-yellow-50 border-yellow-200 text-yellow-700',
+      accepted: 'bg-green-50 border-green-200 text-green-700',
+      expired: 'bg-slate-100 border-slate-200 text-slate-600',
+      revoked: 'bg-red-50 border-red-200 text-red-700',
     };
     return colors[status] || colors.pending;
   };
@@ -265,22 +351,23 @@ export default function InvitationManager() {
 
   return (
     <div className="space-y-6">
+      {success && <SuccessBanner message={success} />}
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-white flex items-center gap-3">
-          <Gift className="h-7 w-7 text-purple-400" />
+        <h2 className="text-2xl font-semibold text-gray-900 flex items-center gap-3">
+          <Gift className="h-7 w-7 text-purple-500" />
           Invitation Manager
         </h2>
         <div className="flex gap-3">
           <button
             onClick={loadInvitations}
-            className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors flex items-center gap-2 border border-slate-200"
           >
             <RefreshCw className="h-5 w-5" />
             Refresh
           </button>
           <button
             onClick={() => setShowCreateModal(true)}
-            className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-purple-600 hover:bg-purple-700 text-white rounded-lg transition-colors flex items-center gap-2 shadow-sm"
           >
             <UserPlus className="h-5 w-5" />
             Create Invitation
@@ -289,55 +376,55 @@ export default function InvitationManager() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
-        <div className="bg-gradient-to-br from-blue-900/30 to-blue-800/20 border border-blue-600/30 rounded-xl p-4">
+        <div className="bg-blue-50 border border-blue-200 rounded-xl p-4">
           <div className="flex items-center justify-between mb-2">
-            <Gift className="h-5 w-5 text-blue-400" />
+            <Gift className="h-5 w-5 text-blue-600" />
           </div>
-          <p className="text-2xl font-bold text-white">{stats.total}</p>
-          <p className="text-sm text-gray-400">Total Invitations</p>
+          <p className="text-2xl font-semibold text-gray-900">{stats.total}</p>
+          <p className="text-sm text-gray-600">Total Invitations</p>
         </div>
 
-        <div className="bg-gradient-to-br from-yellow-900/30 to-yellow-800/20 border border-yellow-600/30 rounded-xl p-4">
+        <div className="bg-yellow-50 border border-yellow-200 rounded-xl p-4">
           <div className="flex items-center justify-between mb-2">
-            <Clock className="h-5 w-5 text-yellow-400" />
+            <Clock className="h-5 w-5 text-yellow-600" />
           </div>
-          <p className="text-2xl font-bold text-white">{stats.pending}</p>
-          <p className="text-sm text-gray-400">Pending</p>
+          <p className="text-2xl font-semibold text-gray-900">{stats.pending}</p>
+          <p className="text-sm text-gray-600">Pending</p>
         </div>
 
-        <div className="bg-gradient-to-br from-green-900/30 to-green-800/20 border border-green-600/30 rounded-xl p-4">
+        <div className="bg-green-50 border border-green-200 rounded-xl p-4">
           <div className="flex items-center justify-between mb-2">
-            <CheckCircle className="h-5 w-5 text-green-400" />
+            <CheckCircle className="h-5 w-5 text-green-600" />
           </div>
-          <p className="text-2xl font-bold text-white">{stats.accepted}</p>
-          <p className="text-sm text-gray-400">Accepted</p>
+          <p className="text-2xl font-semibold text-gray-900">{stats.accepted}</p>
+          <p className="text-sm text-gray-600">Accepted</p>
         </div>
 
-        <div className="bg-gradient-to-br from-gray-700/30 to-gray-600/20 border border-gray-500/30 rounded-xl p-4">
+        <div className="bg-slate-100 border border-slate-200 rounded-xl p-4">
           <div className="flex items-center justify-between mb-2">
-            <Clock className="h-5 w-5 text-gray-400" />
+            <Clock className="h-5 w-5 text-slate-500" />
           </div>
-          <p className="text-2xl font-bold text-white">{stats.expired}</p>
-          <p className="text-sm text-gray-400">Expired</p>
+          <p className="text-2xl font-semibold text-gray-900">{stats.expired}</p>
+          <p className="text-sm text-gray-600">Expired</p>
         </div>
 
-        <div className="bg-gradient-to-br from-red-900/30 to-red-800/20 border border-red-600/30 rounded-xl p-4">
+        <div className="bg-red-50 border border-red-200 rounded-xl p-4">
           <div className="flex items-center justify-between mb-2">
-            <XCircle className="h-5 w-5 text-red-400" />
+            <XCircle className="h-5 w-5 text-red-600" />
           </div>
-          <p className="text-2xl font-bold text-white">{stats.revoked}</p>
-          <p className="text-sm text-gray-400">Revoked</p>
+          <p className="text-2xl font-semibold text-gray-900">{stats.revoked}</p>
+          <p className="text-sm text-gray-600">Revoked</p>
         </div>
       </div>
 
-      <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl p-6">
+      <div className="bg-white/90 border border-slate-200 rounded-2xl p-6 shadow-lg">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-3">
-            <Filter className="h-5 w-5 text-gray-400" />
+            <Filter className="h-5 w-5 text-gray-500" />
             <select
               value={filter}
               onChange={(e) => setFilter(e.target.value as any)}
-              className="px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+              className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
             >
               <option value="all">All ({stats.total})</option>
               <option value="pending">Pending ({stats.pending})</option>
@@ -349,30 +436,30 @@ export default function InvitationManager() {
         </div>
 
         {loading ? (
-          <div className="text-center py-12 text-gray-400">Loading invitations...</div>
+          <StateCard title="Loading invitations..." description="Fetching active and historical invites." />
         ) : filteredInvitations.length === 0 ? (
-          <div className="text-center py-12 text-gray-400">
-            <Gift className="h-16 w-16 mx-auto mb-4 opacity-30" />
-            <p className="text-xl mb-2">No invitations found</p>
-            <p className="text-sm">Create your first invitation to get started</p>
-          </div>
+          <StateCard
+            title="No invitations found"
+            description="Create your first invitation to get started."
+            icon={<Gift className="h-10 w-10" />}
+          />
         ) : (
           <div className="space-y-3">
             {filteredInvitations.map((invitation) => (
               <div
                 key={invitation.id}
-                className="p-4 rounded-lg border bg-gray-800/30 border-gray-700/30 hover:border-gray-600/50 transition-all"
+                className="p-4 rounded-lg border bg-slate-50 border-slate-200 hover:border-gray-600/50 transition-all"
               >
                 <div className="flex items-start justify-between gap-4">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-3 mb-2">
-                      <h3 className="text-base font-semibold text-white">
+                      <h3 className="text-base font-semibold text-gray-900">
                         {invitation.first_name || invitation.last_name
                           ? `${invitation.first_name || ''} ${invitation.last_name || ''}`.trim()
                           : invitation.email}
                       </h3>
                       {(invitation.first_name || invitation.last_name) && (
-                        <span className="text-sm text-gray-400">({invitation.email})</span>
+                        <span className="text-sm text-gray-500">({invitation.email})</span>
                       )}
                       <span className={`px-2 py-0.5 border text-xs rounded-full flex items-center gap-1 ${getStatusColor(invitation.status)}`}>
                         {getStatusIcon(invitation.status)}
@@ -384,14 +471,14 @@ export default function InvitationManager() {
                       <div>
                         <p className="text-gray-500">Invitation Code</p>
                         <div className="flex items-center gap-2">
-                          <p className="text-purple-400 font-mono font-bold">{invitation.code}</p>
+                          <p className="text-purple-600 font-mono font-bold">{invitation.code}</p>
                           <button
                             onClick={() => handleCopyCode(invitation.code)}
-                            className="text-gray-400 hover:text-purple-400 transition-colors"
+                            className="text-gray-500 hover:text-purple-600 transition-colors"
                             title="Copy Code"
                           >
                             {copiedCode === invitation.code ? (
-                              <CheckCircle className="h-4 w-4 text-green-400" />
+                              <CheckCircle className="h-4 w-4 text-green-600" />
                             ) : (
                               <Copy className="h-4 w-4" />
                             )}
@@ -400,17 +487,17 @@ export default function InvitationManager() {
                       </div>
                       <div>
                         <p className="text-gray-500">Plan & Duration</p>
-                        <p className="text-gray-300">
+                        <p className="text-gray-700">
                           {getPlanName(invitation.plan_type)} - {getDurationText(invitation.duration_months)}
                         </p>
                       </div>
                       <div>
                         <p className="text-gray-500">Created</p>
-                        <p className="text-gray-300">{new Date(invitation.created_at).toLocaleDateString()}</p>
+                        <p className="text-gray-700">{new Date(invitation.created_at).toLocaleDateString()}</p>
                       </div>
                       <div>
                         <p className="text-gray-500">Expires</p>
-                        <p className="text-gray-300">
+                        <p className="text-gray-700">
                           {invitation.expires_at ? new Date(invitation.expires_at).toLocaleDateString() : 'Never'}
                         </p>
                       </div>
@@ -419,12 +506,12 @@ export default function InvitationManager() {
                     {invitation.notes && (
                       <div className="mb-3">
                         <p className="text-gray-500 text-sm">Notes</p>
-                        <p className="text-gray-300 text-sm">{invitation.notes}</p>
+                        <p className="text-gray-700 text-sm">{invitation.notes}</p>
                       </div>
                     )}
 
                     {invitation.status === 'accepted' && invitation.accepted_at && (
-                      <div className="flex items-center gap-2 text-sm text-green-400">
+                      <div className="flex items-center gap-2 text-sm text-green-600">
                         <CheckCircle className="h-4 w-4" />
                         Accepted on {new Date(invitation.accepted_at).toLocaleDateString()}
                       </div>
@@ -436,21 +523,21 @@ export default function InvitationManager() {
                       <>
                         <button
                           onClick={() => handleCopyLink(invitation.code)}
-                          className="p-2 bg-purple-600/20 border border-purple-600/30 text-purple-400 rounded-lg hover:bg-purple-600/30 transition-colors"
+                          className="p-2 bg-purple-50 border border-purple-200 text-purple-600 rounded-lg hover:bg-purple-100 transition-colors"
                           title="Copy Invitation Link"
                         >
                           <Copy className="h-4 w-4" />
                         </button>
                         <button
                           onClick={() => handleResendEmail(invitation)}
-                          className="p-2 bg-blue-600/20 border border-blue-600/30 text-blue-400 rounded-lg hover:bg-blue-600/30 transition-colors"
+                          className="p-2 bg-blue-50 border border-blue-200 text-blue-600 rounded-lg hover:bg-blue-100 transition-colors"
                           title="Resend Email"
                         >
                           <Send className="h-4 w-4" />
                         </button>
                         <button
                           onClick={() => handleRevokeInvitation(invitation.id, invitation.email)}
-                          className="p-2 bg-red-600/20 border border-red-600/30 text-red-400 rounded-lg hover:bg-red-600/30 transition-colors"
+                          className="p-2 bg-red-50 border border-red-200 text-red-600 rounded-lg hover:bg-red-100 transition-colors"
                           title="Revoke Invitation"
                         >
                           <XCircle className="h-4 w-4" />
@@ -459,7 +546,7 @@ export default function InvitationManager() {
                     )}
                     <button
                       onClick={() => handleDeleteInvitation(invitation.id, invitation.email)}
-                      className="p-2 bg-gray-700/50 border border-gray-600/30 text-gray-400 rounded-lg hover:bg-gray-600/50 transition-colors"
+                      className="p-2 bg-slate-100 border border-slate-200 text-slate-600 rounded-lg hover:bg-slate-200 transition-colors"
                       title="Delete Invitation"
                     >
                       <Trash2 className="h-4 w-4" />
@@ -473,15 +560,15 @@ export default function InvitationManager() {
       </div>
 
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-          <div className="bg-gray-900 border border-gray-700 rounded-xl p-6 max-w-md w-full max-h-[90vh] overflow-y-auto">
-            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-              <Gift className="h-6 w-6 text-purple-400" />
-              Create New Invitation
-            </h3>
+        <ModalShell
+          title="Create New Invitation"
+          icon={<Gift className="h-6 w-6 text-purple-400" />}
+          onClose={() => setShowCreateModal(false)}
+          panelClassName="max-w-md"
+        >
 
             {error && (
-              <div className="mb-4 p-3 bg-red-900/20 border border-red-600/30 rounded-lg text-red-400 text-sm flex items-start gap-2">
+              <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm flex items-start gap-2">
                 <AlertCircle className="h-5 w-5 flex-shrink-0 mt-0.5" />
                 {error}
               </div>
@@ -490,33 +577,33 @@ export default function InvitationManager() {
             <form onSubmit={handleCreateInvitation} className="space-y-4">
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     First Name
                   </label>
                   <input
                     type="text"
                     value={newInvitation.first_name}
                     onChange={(e) => setNewInvitation({ ...newInvitation, first_name: e.target.value })}
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
                     placeholder="John"
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Last Name
                   </label>
                   <input
                     type="text"
                     value={newInvitation.last_name}
                     onChange={(e) => setNewInvitation({ ...newInvitation, last_name: e.target.value })}
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                    className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
                     placeholder="Doe"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   <Mail className="h-4 w-4 inline mr-1" />
                   Email Address *
                 </label>
@@ -525,20 +612,20 @@ export default function InvitationManager() {
                   value={newInvitation.email}
                   onChange={(e) => setNewInvitation({ ...newInvitation, email: e.target.value })}
                   required
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   placeholder="user@example.com"
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   <Gift className="h-4 w-4 inline mr-1" />
                   Plan Type *
                 </label>
                 <select
                   value={newInvitation.plan_type}
                   onChange={(e) => setNewInvitation({ ...newInvitation, plan_type: e.target.value as any })}
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 >
                   <option value="core">Core Plan ($19/mo)</option>
                   <option value="daily">Daily Plan ($39/mo)</option>
@@ -547,14 +634,14 @@ export default function InvitationManager() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   <Calendar className="h-4 w-4 inline mr-1" />
                   Free Duration
                 </label>
                 <select
                   value={newInvitation.duration_months}
                   onChange={(e) => setNewInvitation({ ...newInvitation, duration_months: parseInt(e.target.value) })}
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 >
                   <option value="1">1 Month</option>
                   <option value="3">3 Months</option>
@@ -565,14 +652,14 @@ export default function InvitationManager() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   <Clock className="h-4 w-4 inline mr-1" />
                   Invitation Expires In
                 </label>
                 <select
                   value={newInvitation.expires_in_days}
                   onChange={(e) => setNewInvitation({ ...newInvitation, expires_in_days: parseInt(e.target.value) })}
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
                 >
                   <option value="7">7 Days</option>
                   <option value="14">14 Days</option>
@@ -584,14 +671,14 @@ export default function InvitationManager() {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-gray-300 mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Notes (Optional)
                 </label>
                 <textarea
                   value={newInvitation.notes}
                   onChange={(e) => setNewInvitation({ ...newInvitation, notes: e.target.value })}
                   rows={3}
-                  className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-purple-500"
+                  className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-purple-500"
                   placeholder="Internal notes about this invitation..."
                 />
               </div>
@@ -602,10 +689,10 @@ export default function InvitationManager() {
                   id="send_email"
                   checked={newInvitation.send_email}
                   onChange={(e) => setNewInvitation({ ...newInvitation, send_email: e.target.checked })}
-                  className="h-4 w-4 rounded border-gray-600 text-purple-500 focus:ring-purple-500"
+                  className="h-4 w-4 rounded border-gray-300 text-purple-500 focus:ring-purple-500"
                 />
-                <label htmlFor="send_email" className="text-sm text-gray-300 flex items-center gap-1">
-                  <Send className="h-4 w-4 text-purple-400" />
+                <label htmlFor="send_email" className="text-sm text-gray-700 flex items-center gap-1">
+                  <Send className="h-4 w-4 text-purple-500" />
                   Send invitation email automatically
                 </label>
               </div>
@@ -627,7 +714,7 @@ export default function InvitationManager() {
                       send_email: true,
                     });
                   }}
-                  className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                  className="flex-1 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 rounded-lg transition-colors border border-slate-200"
                 >
                   Cancel
                 </button>
@@ -640,8 +727,7 @@ export default function InvitationManager() {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
+        </ModalShell>
       )}
     </div>
   );

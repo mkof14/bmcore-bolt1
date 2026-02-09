@@ -24,9 +24,9 @@ export const KEY_SPECS: KeySpec[] = [
   { key: "VERCEL_PROJECT_ID", label: "Vercel Project ID", scope: "server_private", envTarget: "production", category: "admin", company: "Vercel", description: "Project identifier" },
   { key: "VERCEL_TEAM_ID", label: "Vercel Team ID", scope: "server_private", envTarget: "production", category: "admin", company: "Vercel", description: "Team identifier (optional)" },
 
-  { key: "VITE_GEMINI_API_KEY", label: "Google AI (Gemini) Key", scope: "client_public", envTarget: "both", category: "ai", company: "Google AI", description: "Gemini 1.5/2.0 for Health Advisor", example: "AIza..." },
-  { key: "VITE_ANTHROPIC_API_KEY", label: "Anthropic (Claude) Key", scope: "client_public", envTarget: "both", category: "ai", company: "Anthropic", description: "Claude for report analysis", example: "sk-ant-..." },
-  { key: "VITE_OPENAI_API_KEY", label: "OpenAI (GPT) Key", scope: "client_public", envTarget: "both", category: "ai", company: "OpenAI", description: "GPT-4/5 for Q&A", example: "sk-..." },
+  { key: "GEMINI_API_KEY", label: "Google AI (Gemini) Key", scope: "server_private", envTarget: "production", category: "ai", company: "Google AI", description: "Gemini 1.5/2.0 for Health Advisor", example: "AIza..." },
+  { key: "ANTHROPIC_API_KEY", label: "Anthropic (Claude) Key", scope: "server_private", envTarget: "production", category: "ai", company: "Anthropic", description: "Claude for report analysis", example: "sk-ant-..." },
+  { key: "OPENAI_API_KEY", label: "OpenAI (GPT) Key", scope: "server_private", envTarget: "production", category: "ai", company: "OpenAI", description: "GPT-4/5 for Q&A", example: "sk-..." },
 
   { key: "RESEND_API_KEY", label: "Resend API Key", scope: "server_private", envTarget: "production", category: "email", company: "Resend", description: "Email delivery service", example: "re_..." },
   { key: "SENDGRID_API_KEY", label: "SendGrid API Key", scope: "server_private", envTarget: "production", category: "email", company: "SendGrid", description: "Alternative email service", example: "SG..." },
@@ -34,9 +34,11 @@ export const KEY_SPECS: KeySpec[] = [
   { key: "SES_SECRET_ACCESS_KEY", label: "AWS SES Secret Key", scope: "server_private", envTarget: "production", category: "email", company: "AWS SES", description: "AWS email service secret" },
   { key: "SES_REGION", label: "AWS SES Region", scope: "server_private", envTarget: "production", category: "email", company: "AWS SES", description: "AWS region", example: "us-east-1" },
 
+  { key: "STRIPE_SECRET_KEY", label: "Stripe Secret Key", scope: "server_private", envTarget: "production", category: "core", company: "Stripe", description: "Stripe secret key for checkout sessions", example: "sk_live_..." },
+
   { key: "VITE_GA_MEASUREMENT_ID", label: "Google Analytics ID", scope: "client_public", envTarget: "both", category: "analytics", company: "Google Analytics", description: "GA4 measurement ID", example: "G-XXXXXXXXXX" },
   { key: "VITE_SENTRY_DSN", label: "Sentry DSN", scope: "client_public", envTarget: "both", category: "analytics", company: "Sentry", description: "Error tracking and monitoring" },
-  { key: "FACEBOOK_PIXEL_ID", label: "Meta Pixel ID", scope: "client_public", envTarget: "both", category: "analytics", company: "Meta", description: "Facebook conversion tracking" },
+  { key: "VITE_FACEBOOK_PIXEL_ID", label: "Meta Pixel ID", scope: "client_public", envTarget: "both", category: "analytics", company: "Meta", description: "Facebook conversion tracking" },
 
   { key: "WITHINGS_CLIENT_ID", label: "Withings Client ID", scope: "client_public", envTarget: "both", category: "devices", company: "Withings", description: "Fitness device integration" },
   { key: "WITHINGS_CLIENT_SECRET", label: "Withings Client Secret", scope: "server_private", envTarget: "production", category: "devices", company: "Withings", description: "Withings OAuth secret" },
@@ -68,7 +70,7 @@ export const CATEGORIES = [
 export function isAllowedServerKey(k: string): boolean {
   const whitelist = (process.env.ALLOWED_SERVER_KEYS || "")
     .split(/[,\s]+/)
-    .map(s => s.trim())
+    .map((s: string) => s.trim())
     .filter(Boolean);
   return whitelist.includes(k);
 }

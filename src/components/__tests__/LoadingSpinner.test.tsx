@@ -10,15 +10,15 @@ describe('LoadingSpinner', () => {
   });
 
   it('should render spinner with custom size', () => {
-    const { container } = render(<LoadingSpinner size={48} />);
+    const { container } = render(<LoadingSpinner size="lg" />);
     const spinner = container.querySelector('.animate-spin');
     expect(spinner).toBeInTheDocument();
   });
 
-  it('should render with custom color', () => {
-    const { container } = render(<LoadingSpinner color="text-red-600" />);
-    const spinner = container.querySelector('.text-red-600');
-    expect(spinner).toBeInTheDocument();
+  it('should render with custom className', () => {
+    const { container } = render(<LoadingSpinner className="text-red-600" />);
+    const wrapper = container.querySelector('.text-red-600');
+    expect(wrapper).toBeInTheDocument();
   });
 });
 

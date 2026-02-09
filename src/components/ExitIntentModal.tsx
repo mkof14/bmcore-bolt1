@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { X, Gift, ArrowRight } from 'lucide-react';
 import { trackEvent } from '../lib/analytics';
 import { supabase } from '../lib/supabase';
+import { notifyUserError } from '../lib/adminNotify';
 
 interface ExitIntentModalProps {
   onClose: () => void;
@@ -28,7 +29,7 @@ export default function ExitIntentModal({ onClose, variant = 'discount' }: ExitI
       trackEvent('exit_intent_email_captured', { variant });
       setSubmitted(true);
     } catch (error) {
-      console.error('Failed to submit:', error as unknown);
+      notifyUserError('Unable to submit email. Please try again.');
     } finally {
       setIsSubmitting(false);
     }
@@ -48,7 +49,7 @@ export default function ExitIntentModal({ onClose, variant = 'discount' }: ExitI
       trackEvent('exit_intent_feedback_submitted', { variant });
       setSubmitted(true);
     } catch (error) {
-      console.error('Failed to submit:', error as unknown);
+      notifyUserError('Feedback submission failed. Please try again.');
     } finally {
       setIsSubmitting(false);
     }

@@ -13,7 +13,7 @@ export type ConfigKey = {
 };
 
 export type ConfigSection = {
-  group: "Supabase" | "Flags" | "AI" | "Email" | "Analytics" | "Storage" | "Devices";
+  group: "Supabase" | "Flags" | "AI" | "Email" | "Analytics" | "Storage" | "Devices" | "Payments";
   title: string;
   subtitle?: string;
   keys: ConfigKey[];
@@ -60,9 +60,9 @@ export const CONFIG_SECTIONS: ConfigSection[] = [
     title: "AI providers",
     subtitle: "Optional AI keys.",
     keys: [
-      { key: "VITE_GEMINI_API_KEY", label: "Gemini", required: false, scope: "client_public", envTarget: "both" },
-      { key: "VITE_ANTHROPIC_API_KEY", label: "Anthropic", required: false, scope: "client_public", envTarget: "both" },
-      { key: "VITE_OPENAI_API_KEY", label: "OpenAI", required: false, scope: "client_public", envTarget: "both" }
+      { key: "GEMINI_API_KEY", label: "Gemini", required: false, scope: "server_private", envTarget: "production" },
+      { key: "ANTHROPIC_API_KEY", label: "Anthropic", required: false, scope: "server_private", envTarget: "production" },
+      { key: "OPENAI_API_KEY", label: "OpenAI", required: false, scope: "server_private", envTarget: "production" }
     ]
   },
   {
@@ -70,8 +70,16 @@ export const CONFIG_SECTIONS: ConfigSection[] = [
     title: "Email providers",
     subtitle: "Optional",
     keys: [
-      { key: "VITE_RESEND_API_KEY", label: "Resend", required: false, scope: "client_public", envTarget: "both" },
-      { key: "VITE_SENDGRID_API_KEY", label: "SendGrid", required: false, scope: "client_public", envTarget: "both" }
+      { key: "RESEND_API_KEY", label: "Resend", required: false, scope: "server_private", envTarget: "production" },
+      { key: "SENDGRID_API_KEY", label: "SendGrid", required: false, scope: "server_private", envTarget: "production" }
+    ]
+  },
+  {
+    group: "Payments",
+    title: "Payments",
+    subtitle: "Stripe credentials",
+    keys: [
+      { key: "STRIPE_SECRET_KEY", label: "Stripe Secret Key", required: false, scope: "server_private", envTarget: "production", example: "sk_live_..." }
     ]
   },
   {
@@ -80,7 +88,8 @@ export const CONFIG_SECTIONS: ConfigSection[] = [
     subtitle: "Optional GA/Sentry.",
     keys: [
       { key: "VITE_GA_MEASUREMENT_ID", label: "GA4 ID", required: false, scope: "client_public", envTarget: "both" },
-      { key: "VITE_SENTRY_DSN", label: "Sentry DSN", required: false, scope: "client_public", envTarget: "both" }
+      { key: "VITE_SENTRY_DSN", label: "Sentry DSN", required: false, scope: "client_public", envTarget: "both" },
+      { key: "VITE_FACEBOOK_PIXEL_ID", label: "Meta Pixel ID", required: false, scope: "client_public", envTarget: "both" }
     ]
   },
   {

@@ -1,6 +1,11 @@
-import { useState, useEffect } from 'react';
-import { Users, TrendingUp, Activity, CheckCircle, Calendar, Filter, Download, Shield, UserPlus, Edit, Trash2, Mail, Lock, Eye, EyeOff, Key, Award, Ban, Check, X, RefreshCw, Search } from 'lucide-react';
+import { useMemo, useState, useEffect } from 'react';
+import { Users, TrendingUp, Activity, CheckCircle, Calendar, Filter, Download, Shield, UserPlus, Edit, Trash2, Mail, Lock, Eye, EyeOff, Key, Ban, X, RefreshCw, Search } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { adminDb } from '../../lib/adminApi';
+import StateCard from '../ui/StateCard';
+import ErrorBanner from '../ui/ErrorBanner';
+import SuccessBanner from '../ui/SuccessBanner';
+import ModalShell from '../ui/ModalShell';
 
 interface UserStats {
   totalUsers: number;
@@ -70,6 +75,25 @@ export default function EnhancedUserManagement() {
     loadData();
   }, []);
 
+  useEffect(() => {
+    if (!error) return;
+    const t = setTimeout(() => setError(''), 4000);
+    return () => clearTimeout(t);
+  }, [error]);
+
+  useEffect(() => {
+    if (!success) return;
+    const t = setTimeout(() => setSuccess(''), 3000);
+    return () => clearTimeout(t);
+  }, [success]);
+
+  const mapEdgeError = (data: any, fallback: string) => {
+    const code = data?.code;
+    if (code === 'UNAUTHORIZED') return 'Authentication required';
+    if (code === 'FORBIDDEN') return 'Permission denied. Admin access required.';
+    return data?.error || fallback;
+  };
+
   const loadData = async () => {
     try {
       setLoading(true);
@@ -99,14 +123,13 @@ export default function EnhancedUserManagement() {
 
       setStats(calculatedStats);
     } catch (error) {
-      console.error('Error loading data:', error);
-      setError('Failed to load user data');
+      setError('User data load failed');
     } finally {
       setLoading(false);
     }
   };
 
-  const getFilteredUsers = () => {
+  const filteredUsers = useMemo(() => {
     let filtered = users;
 
     if (filter === 'admins') {
@@ -126,7 +149,7 @@ export default function EnhancedUserManagement() {
     }
 
     return filtered;
-  };
+  }, [users, filter, searchQuery]);
 
   const handleCreateUser = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -143,49 +166,37 @@ export default function EnhancedUserManagement() {
         throw new Error('Password must be at least 6 characters');
       }
 
-      const { data: authData, error: authError } = await supabase.auth.signUp({
-        email: newUser.email,
-        password: newUser.password,
-        options: {
-          data: {
-            full_name: newUser.full_name,
-            first_name: newUser.first_name,
-            last_name: newUser.last_name,
-            phone: newUser.phone,
-            role: newUser.role,
-          },
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      if (!token) throw new Error('Authentication required');
+
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const res = await fetch(`${supabaseUrl}/functions/v1/admin-user-create`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
-      });
-
-      if (authError) throw authError;
-      if (!authData.user) throw new Error('Failed to create user');
-
-      const isAdminRole = newUser.role === 'admin' || newUser.role === 'super_admin';
-
-      await new Promise(resolve => setTimeout(resolve, 1000));
-
-      const { error: updateError } = await supabase
-        .from('profiles')
-        .update({
-          is_admin: isAdminRole,
+        body: JSON.stringify({
+          email: newUser.email,
+          password: newUser.password,
           full_name: newUser.full_name,
           first_name: newUser.first_name,
           last_name: newUser.last_name,
           phone: newUser.phone,
           role: newUser.role,
-        })
-        .eq('id', authData.user.id);
+        }),
+      });
 
-      if (updateError) {
-        console.error('Update error:', updateError);
-        throw new Error(`Failed to update profile: ${updateError.message}`);
+      const data = await res.json().catch(() => null);
+      if (!res.ok || data?.ok === false) {
+        throw new Error(mapEdgeError(data, 'User create failed'));
       }
 
-      setSuccess(`✓ User ${newUser.email} created successfully! Refreshing user list...`);
-
       await loadData();
+      setSelectedUsers(new Set());
 
-      setSuccess(`✓ User ${newUser.email} created successfully! The user now appears in the list below.`);
+      setSuccess(`User created: ${newUser.email}`);
 
       setNewUser({
         email: '',
@@ -197,7 +208,7 @@ export default function EnhancedUserManagement() {
         role: 'user',
       });
     } catch (err: any) {
-      setError(err.message || 'Failed to create user');
+      setError(err.message || 'User create failed');
     } finally {
       setCreating(false);
     }
@@ -209,23 +220,35 @@ export default function EnhancedUserManagement() {
     }
 
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({
-          is_admin: !currentAdminStatus,
-          updated_at: new Date().toISOString(),
-        })
-        .eq('id', userId);
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      if (!token) throw new Error('Authentication required');
 
-      if (error) throw error;
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const res = await fetch(`${supabaseUrl}/functions/v1/admin-user-toggle-admin`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ userId, is_admin: !currentAdminStatus }),
+      });
 
-      setSuccess(`Admin rights ${!currentAdminStatus ? 'granted to' : 'removed from'} ${userEmail}`);
-      setTimeout(() => setSuccess(''), 3000);
+      const data = await res.json().catch(() => null);
+      if (!res.ok || data?.ok === false) {
+        throw new Error(mapEdgeError(data, 'Admin access update failed'));
+      }
+
+      setSelectedUsers((prev) => {
+        const next = new Set(prev);
+        next.delete(userId);
+        return next;
+      });
+      setSuccess(`Admin access ${!currentAdminStatus ? 'granted' : 'removed'}: ${userEmail}`);
+      setError('');
       loadData();
     } catch (error) {
-      console.error('Error toggling admin:', error);
-      setError('Failed to update admin status');
-      setTimeout(() => setError(''), 3000);
+      setError('Admin access update failed');
     }
   };
 
@@ -237,21 +260,23 @@ export default function EnhancedUserManagement() {
     setSuccess('');
 
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .update({
+      const result = await adminDb({
+        table: 'profiles',
+        action: 'update',
+        data: {
           full_name: editingUser.full_name,
           first_name: editingUser.first_name,
           last_name: editingUser.last_name,
           phone: editingUser.phone,
           bio: editingUser.bio,
           updated_at: new Date().toISOString(),
-        })
-        .eq('id', editingUser.id);
+        },
+        match: { id: editingUser.id },
+      });
 
-      if (error) throw error;
+      if (!result.ok) throw new Error(result.error || 'User update failed');
 
-      setSuccess('User updated successfully!');
+      setSuccess('User updated');
       setTimeout(() => {
         setShowEditModal(false);
         setEditingUser(null);
@@ -259,8 +284,7 @@ export default function EnhancedUserManagement() {
         loadData();
       }, 2000);
     } catch (error) {
-      console.error('Error updating user:', error);
-      setError('Failed to update user');
+      setError('User update failed');
     }
   };
 
@@ -274,11 +298,10 @@ export default function EnhancedUserManagement() {
 
       if (error) throw error;
 
-      setSuccess(`Password reset email sent to ${userEmail}`);
+      setSuccess(`Password reset email sent: ${userEmail}`);
       setTimeout(() => setSuccess(''), 3000);
     } catch (error) {
-      console.error('Error sending password reset:', error);
-      setError('Failed to send password reset email');
+      setError('Password reset email failed');
       setTimeout(() => setError(''), 3000);
     }
   };
@@ -289,27 +312,41 @@ export default function EnhancedUserManagement() {
     }
 
     try {
-      const { error } = await supabase
-        .from('profiles')
-        .delete()
-        .eq('id', userId);
+      const { data: sessionData } = await supabase.auth.getSession();
+      const token = sessionData?.session?.access_token;
+      if (!token) throw new Error('Authentication required');
 
-      if (error) throw error;
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      const res = await fetch(`${supabaseUrl}/functions/v1/admin-user-delete`, {
+        method: 'POST',
+        headers: {
+          'content-type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ userId }),
+      });
 
-      setSuccess(`User ${userEmail} deleted successfully`);
-      setTimeout(() => setSuccess(''), 3000);
+      const data = await res.json().catch(() => null);
+      if (!res.ok || data?.ok === false) {
+        throw new Error(mapEdgeError(data, 'User delete failed'));
+      }
+
+      setSelectedUsers((prev) => {
+        const next = new Set(prev);
+        next.delete(userId);
+        return next;
+      });
+      setSuccess(`User deleted: ${userEmail}`);
+      setError('');
       loadData();
     } catch (error) {
-      console.error('Error deleting user:', error);
-      setError('Failed to delete user. You may need Supabase admin privileges.');
-      setTimeout(() => setError(''), 5000);
+      setError('User delete failed');
     }
   };
 
   const handleBulkExport = () => {
     if (selectedUsers.size === 0) {
       setError('Please select users first');
-      setTimeout(() => setError(''), 3000);
       return;
     }
 
@@ -336,21 +373,21 @@ export default function EnhancedUserManagement() {
     URL.revokeObjectURL(url);
 
     setSuccess(`Exported ${selectedUsers.size} users`);
-    setTimeout(() => setSuccess(''), 3000);
   };
 
   const toggleUserSelection = (userId: string) => {
-    const newSelection = new Set(selectedUsers);
-    if (newSelection.has(userId)) {
-      newSelection.delete(userId);
-    } else {
-      newSelection.add(userId);
-    }
-    setSelectedUsers(newSelection);
+    setSelectedUsers((prev) => {
+      const next = new Set(prev);
+      if (next.has(userId)) {
+        next.delete(userId);
+      } else {
+        next.add(userId);
+      }
+      return next;
+    });
   };
 
   const selectAll = () => {
-    const filteredUsers = getFilteredUsers();
     setSelectedUsers(new Set(filteredUsers.map(u => u.id)));
   };
 
@@ -358,19 +395,19 @@ export default function EnhancedUserManagement() {
     setSelectedUsers(new Set());
   };
 
-  const filteredUsers = getFilteredUsers();
+  const selectedCount = selectedUsers.size;
 
   return (
     <div className="space-y-6">
       <div className="flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-white flex items-center gap-3">
+        <h2 className="text-2xl font-semibold text-gray-900 flex items-center gap-3">
           <Users className="h-7 w-7 text-blue-400" />
           User Management
         </h2>
         <div className="flex gap-3">
           <button
             onClick={loadData}
-            className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors flex items-center gap-2"
+            className="px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-lg transition-colors flex items-center gap-2"
           >
             <RefreshCw className="h-5 w-5" />
             Refresh
@@ -385,11 +422,8 @@ export default function EnhancedUserManagement() {
         </div>
       </div>
 
-      {(error || success) && (
-        <div className={`p-4 rounded-lg border ${error ? 'bg-red-900/20 border-red-600/30 text-red-400' : 'bg-green-900/20 border-green-600/30 text-green-400'}`}>
-          {error || success}
-        </div>
-      )}
+      {error && <ErrorBanner message={error} className="mb-4" />}
+      {success && <SuccessBanner message={success} className="mb-4" />}
 
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="bg-gradient-to-br from-blue-900/30 to-blue-800/20 border border-blue-600/30 rounded-xl p-4">
@@ -397,8 +431,8 @@ export default function EnhancedUserManagement() {
             <Users className="h-5 w-5 text-blue-400" />
             <TrendingUp className="h-4 w-4 text-blue-400" />
           </div>
-          <p className="text-2xl font-bold text-white">{stats.totalUsers}</p>
-          <p className="text-sm text-gray-400">Total Users</p>
+          <p className="text-2xl font-semibold text-gray-900">{stats.totalUsers}</p>
+          <p className="text-sm text-gray-600">Total Users</p>
         </div>
 
         <div className="bg-gradient-to-br from-purple-900/30 to-purple-800/20 border border-purple-600/30 rounded-xl p-4">
@@ -406,8 +440,8 @@ export default function EnhancedUserManagement() {
             <Calendar className="h-5 w-5 text-purple-400" />
             <TrendingUp className="h-4 w-4 text-purple-400" />
           </div>
-          <p className="text-2xl font-bold text-white">{stats.newThisMonth}</p>
-          <p className="text-sm text-gray-400">New This Month</p>
+          <p className="text-2xl font-semibold text-gray-900">{stats.newThisMonth}</p>
+          <p className="text-sm text-gray-600">New This Month</p>
         </div>
 
         <div className="bg-gradient-to-br from-cyan-900/30 to-cyan-800/20 border border-cyan-600/30 rounded-xl p-4">
@@ -415,8 +449,8 @@ export default function EnhancedUserManagement() {
             <Shield className="h-5 w-5 text-cyan-400" />
             <CheckCircle className="h-4 w-4 text-cyan-400" />
           </div>
-          <p className="text-2xl font-bold text-white">{stats.admins}</p>
-          <p className="text-sm text-gray-400">Administrators</p>
+          <p className="text-2xl font-semibold text-gray-900">{stats.admins}</p>
+          <p className="text-sm text-gray-600">Administrators</p>
         </div>
 
         <div className="bg-gradient-to-br from-green-900/30 to-green-800/20 border border-green-600/30 rounded-xl p-4">
@@ -424,20 +458,20 @@ export default function EnhancedUserManagement() {
             <Activity className="h-5 w-5 text-green-400" />
             <CheckCircle className="h-4 w-4 text-green-400" />
           </div>
-          <p className="text-2xl font-bold text-white">{stats.regularUsers}</p>
-          <p className="text-sm text-gray-400">Regular Users</p>
+          <p className="text-2xl font-semibold text-gray-900">{stats.regularUsers}</p>
+          <p className="text-sm text-gray-600">Regular Users</p>
         </div>
       </div>
 
-      <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl p-6">
+      <div className="bg-white/90 border border-slate-200 rounded-2xl p-6 shadow-lg">
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 mb-6">
           <div className="flex flex-col md:flex-row items-start md:items-center gap-3">
             <div className="flex items-center gap-3">
-              <Filter className="h-5 w-5 text-gray-400" />
+              <Filter className="h-5 w-5 text-gray-600" />
               <select
                 value={filter}
                 onChange={(e) => setFilter(e.target.value as any)}
-                className="px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
               >
                 <option value="all">All Users ({stats.totalUsers})</option>
                 <option value="admins">Administrators ({stats.admins})</option>
@@ -446,18 +480,18 @@ export default function EnhancedUserManagement() {
             </div>
 
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-400" />
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-gray-600" />
               <input
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 placeholder="Search users..."
-                className="pl-10 pr-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="pl-10 pr-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
               />
               {searchQuery && (
                 <button
                   onClick={() => setSearchQuery('')}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-900"
                 >
                   <X className="h-4 w-4" />
                 </button>
@@ -466,9 +500,9 @@ export default function EnhancedUserManagement() {
           </div>
 
           <div className="flex items-center gap-3">
-            {selectedUsers.size > 0 && (
+            {selectedCount > 0 && (
               <>
-                <span className="text-sm text-gray-400">{selectedUsers.size} selected</span>
+                <span className="text-sm text-gray-600">{selectedCount} selected</span>
                 <button
                   onClick={handleBulkExport}
                   className="px-4 py-2 bg-blue-600/20 border border-blue-600/30 text-blue-400 rounded-lg hover:bg-blue-600/30 transition-colors flex items-center gap-2"
@@ -478,16 +512,16 @@ export default function EnhancedUserManagement() {
                 </button>
                 <button
                   onClick={deselectAll}
-                  className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
+                  className="px-4 py-2 bg-slate-100 text-slate-700 border border-slate-200 rounded-lg hover:bg-gray-600 transition-colors"
                 >
                   Clear
                 </button>
               </>
             )}
-            {selectedUsers.size === 0 && filteredUsers.length > 0 && (
+            {selectedCount === 0 && filteredUsers.length > 0 && (
               <button
                 onClick={selectAll}
-                className="px-4 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
+                className="px-4 py-2 bg-slate-100 text-slate-700 border border-slate-200 rounded-lg hover:bg-gray-600 transition-colors"
               >
                 Select All
               </button>
@@ -496,13 +530,13 @@ export default function EnhancedUserManagement() {
         </div>
 
         {loading ? (
-          <div className="text-center py-12 text-gray-400">Loading users...</div>
+          <StateCard title="Loading users..." description="Fetching accounts and roles." />
         ) : filteredUsers.length === 0 ? (
-          <div className="text-center py-12 text-gray-400">
-            <Users className="h-16 w-16 mx-auto mb-4 opacity-30" />
-            <p className="text-xl mb-2">No users found</p>
-            {searchQuery && <p className="text-sm">Try a different search term</p>}
-          </div>
+          <StateCard
+            title="No users found"
+            description={searchQuery ? 'Try a different search term.' : 'No users are registered yet.'}
+            icon={<Users className="h-10 w-10" />}
+          />
         ) : (
           <div className="space-y-3">
             {filteredUsers.map(user => (
@@ -511,7 +545,7 @@ export default function EnhancedUserManagement() {
                 className={`p-4 rounded-lg border transition-all ${
                   selectedUsers.has(user.id)
                     ? 'bg-blue-900/20 border-blue-600/50'
-                    : 'bg-gray-800/30 border-gray-700/30 hover:border-gray-600/50'
+                    : 'bg-slate-50 border-slate-200 hover:border-gray-600/50'
                 }`}
               >
                 <div className="flex items-start gap-4">
@@ -525,7 +559,7 @@ export default function EnhancedUserManagement() {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center justify-between gap-3 mb-2">
                       <div className="flex items-center gap-3">
-                        <h3 className="text-base font-semibold text-white">{user.email}</h3>
+                        <h3 className="text-base font-semibold text-gray-900">{user.email}</h3>
                         {user.is_admin && (
                           <span className="px-2 py-0.5 bg-cyan-900/30 border border-cyan-600/30 text-cyan-400 text-xs rounded-full flex items-center gap-1">
                             <Shield className="h-3 w-3" />
@@ -576,19 +610,19 @@ export default function EnhancedUserManagement() {
                     <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
                       <div>
                         <p className="text-gray-500">Full Name</p>
-                        <p className="text-gray-300">{user.full_name || 'Not set'}</p>
+                        <p className="text-gray-700">{user.full_name || 'Not set'}</p>
                       </div>
                       <div>
                         <p className="text-gray-500">Phone</p>
-                        <p className="text-gray-300">{user.phone || 'Not set'}</p>
+                        <p className="text-gray-700">{user.phone || 'Not set'}</p>
                       </div>
                       <div>
                         <p className="text-gray-500">Created</p>
-                        <p className="text-gray-300">{new Date(user.created_at).toLocaleDateString()}</p>
+                        <p className="text-gray-700">{new Date(user.created_at).toLocaleDateString()}</p>
                       </div>
                       <div>
                         <p className="text-gray-500">User ID</p>
-                        <p className="text-gray-300 font-mono text-xs truncate">{user.id}</p>
+                        <p className="text-gray-700 font-mono text-xs truncate">{user.id}</p>
                       </div>
                     </div>
                   </div>
@@ -600,31 +634,20 @@ export default function EnhancedUserManagement() {
       </div>
 
       {showCreateModal && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
-          <div className="bg-gray-900 border border-gray-700 rounded-xl p-6 max-w-2xl w-full my-8">
-            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-              <UserPlus className="h-6 w-6 text-blue-400" />
-              Create New User
-            </h3>
+        <ModalShell
+          title="Create New User"
+          icon={<UserPlus className="h-6 w-6 text-blue-400" />}
+          onClose={() => setShowCreateModal(false)}
+          panelClassName="max-w-2xl"
+        >
 
-            {error && (
-              <div className="mb-4 p-3 bg-red-900/20 border border-red-600/30 rounded-lg text-red-400 text-sm flex items-center gap-2">
-                <X className="h-5 w-5 flex-shrink-0" />
-                {error}
-              </div>
-            )}
-
-            {success && (
-              <div className="mb-4 p-3 bg-green-900/20 border border-green-600/30 rounded-lg text-green-400 text-sm flex items-center gap-2">
-                <CheckCircle className="h-5 w-5 flex-shrink-0" />
-                {success}
-              </div>
-            )}
+            {error && <ErrorBanner message={error} className="mb-4" />}
+            {success && <SuccessBanner message={success} className="mb-4" />}
 
             <form onSubmit={handleCreateUser} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     <Mail className="h-4 w-4 inline mr-1" />
                     Email *
                   </label>
@@ -633,13 +656,13 @@ export default function EnhancedUserManagement() {
                     value={newUser.email}
                     onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
                     required
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="user@example.com"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">First Name</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
                   <input
                     type="text"
                     value={newUser.first_name}
@@ -651,13 +674,13 @@ export default function EnhancedUserManagement() {
                         full_name: `${firstName} ${newUser.last_name}`.trim()
                       });
                     }}
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="John"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Last Name</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
                   <input
                     type="text"
                     value={newUser.last_name}
@@ -669,36 +692,36 @@ export default function EnhancedUserManagement() {
                         full_name: `${newUser.first_name} ${lastName}`.trim()
                       });
                     }}
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="Doe"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Full Name (auto-filled)</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Full Name (auto-filled)</label>
                   <input
                     type="text"
                     value={newUser.full_name}
                     onChange={(e) => setNewUser({ ...newUser, full_name: e.target.value })}
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="John Doe"
                   />
                   <p className="text-xs text-gray-500 mt-1">Auto-fills from First + Last Name</p>
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Phone</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
                   <input
                     type="tel"
                     value={newUser.phone}
                     onChange={(e) => setNewUser({ ...newUser, phone: e.target.value })}
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                     placeholder="+1 (555) 123-4567"
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     <Lock className="h-4 w-4 inline mr-1" />
                     Password *
                   </label>
@@ -709,13 +732,13 @@ export default function EnhancedUserManagement() {
                       onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
                       required
                       minLength={6}
-                      className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                      className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                       placeholder="Min 6 characters"
                     />
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-300"
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-600 hover:text-gray-700"
                     >
                       {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                     </button>
@@ -723,8 +746,8 @@ export default function EnhancedUserManagement() {
                 </div>
               </div>
 
-              <div className="p-4 bg-gray-800/50 border border-gray-700 rounded-lg">
-                <label className="block text-sm font-medium text-gray-300 mb-3 flex items-center gap-2">
+              <div className="p-4 bg-white/90 border border-slate-200 rounded-lg shadow-sm">
+                <label className="block text-sm font-medium text-gray-700 mb-3 flex items-center gap-2">
                   <Shield className="h-5 w-5 text-cyan-400" />
                   User Role & Privileges
                 </label>
@@ -741,7 +764,7 @@ export default function EnhancedUserManagement() {
                       className={`relative flex items-start gap-3 p-3 rounded-lg border-2 cursor-pointer transition-all ${
                         newUser.role === roleOption.value
                           ? `bg-${roleOption.color}-900/30 border-${roleOption.color}-600 ring-2 ring-${roleOption.color}-500/50`
-                          : 'bg-gray-800/30 border-gray-700 hover:border-gray-600'
+                          : 'bg-slate-50 border-slate-200 hover:border-gray-600'
                       }`}
                     >
                       <input
@@ -753,8 +776,8 @@ export default function EnhancedUserManagement() {
                         className="mt-1 h-4 w-4 text-blue-500 focus:ring-blue-500"
                       />
                       <div className="flex-1">
-                        <p className="font-medium text-white text-sm">{roleOption.label}</p>
-                        <p className="text-xs text-gray-400">{roleOption.desc}</p>
+                        <p className="font-medium text-gray-900 text-sm">{roleOption.label}</p>
+                        <p className="text-xs text-gray-600">{roleOption.desc}</p>
                       </div>
                     </label>
                   ))}
@@ -778,7 +801,7 @@ export default function EnhancedUserManagement() {
                       role: 'user',
                     });
                   }}
-                  className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                  className="flex-1 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-lg transition-colors"
                 >
                   Cancel
                 </button>
@@ -798,67 +821,65 @@ export default function EnhancedUserManagement() {
                 </button>
               </div>
             </form>
-          </div>
-        </div>
+        </ModalShell>
       )}
 
       {showEditModal && editingUser && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 overflow-y-auto">
-          <div className="bg-gray-900 border border-gray-700 rounded-xl p-6 max-w-2xl w-full my-8">
-            <h3 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
-              <Edit className="h-6 w-6 text-blue-400" />
-              Edit User: {editingUser.email}
-            </h3>
-
-            <form onSubmit={handleUpdateUser} className="space-y-4">
+        <ModalShell
+          title={`Edit User: ${editingUser.email}`}
+          icon={<Edit className="h-6 w-6 text-blue-400" />}
+          onClose={() => setShowEditModal(false)}
+          panelClassName="max-w-2xl"
+        >
+          <form onSubmit={handleUpdateUser} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">First Name</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">First Name</label>
                   <input
                     type="text"
                     value={editingUser.first_name || ''}
                     onChange={(e) => setEditingUser({ ...editingUser, first_name: e.target.value })}
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Last Name</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
                   <input
                     type="text"
                     value={editingUser.last_name || ''}
                     onChange={(e) => setEditingUser({ ...editingUser, last_name: e.target.value })}
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Full Name</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Full Name</label>
                   <input
                     type="text"
                     value={editingUser.full_name || ''}
                     onChange={(e) => setEditingUser({ ...editingUser, full_name: e.target.value })}
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Phone</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Phone</label>
                   <input
                     type="tel"
                     value={editingUser.phone || ''}
                     onChange={(e) => setEditingUser({ ...editingUser, phone: e.target.value })}
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
 
                 <div className="md:col-span-2">
-                  <label className="block text-sm font-medium text-gray-300 mb-2">Bio</label>
+                  <label className="block text-sm font-medium text-gray-700 mb-2">Bio</label>
                   <textarea
                     value={editingUser.bio || ''}
                     onChange={(e) => setEditingUser({ ...editingUser, bio: e.target.value })}
                     rows={3}
-                    className="w-full px-4 py-2 bg-gray-800 border border-gray-700 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-blue-500"
                   />
                 </div>
               </div>
@@ -870,7 +891,7 @@ export default function EnhancedUserManagement() {
                     setShowEditModal(false);
                     setEditingUser(null);
                   }}
-                  className="flex-1 px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg transition-colors"
+                  className="flex-1 px-4 py-2 bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 rounded-lg transition-colors"
                 >
                   Cancel
                 </button>
@@ -881,9 +902,8 @@ export default function EnhancedUserManagement() {
                   Save Changes
                 </button>
               </div>
-            </form>
-          </div>
-        </div>
+          </form>
+        </ModalShell>
       )}
     </div>
   );

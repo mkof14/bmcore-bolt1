@@ -1,8 +1,10 @@
-import { useState, useEffect, useRef } from 'react';
-import { MessageSquare, Send, Users, Clock, CheckCircle, Loader, Zap, Search, Filter } from 'lucide-react';
+import { useState, useEffect, useMemo, useRef } from 'react';
+import { MessageSquare, Send, Users, Clock, Loader, Zap, Search, Filter } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { adminDb } from '../../lib/adminApi';
 import { useSession } from '../../hooks/useSession';
 import TypingIndicator from '../../components/TypingIndicator';
+import { notifyError } from '../../lib/adminNotify';
 
 const QUICK_REPLIES = [
   { id: 1, text: "Thank you for reaching out! How can I help you today?" },
@@ -39,14 +41,16 @@ export default function SupportChatPanel() {
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(true);
+  const [loadingMessages, setLoadingMessages] = useState(false);
   const [sending, setSending] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
   const [showQuickReplies, setShowQuickReplies] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [filterUnread, setFilterUnread] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const typingTimeoutRef = useRef<NodeJS.Timeout>();
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const user = useSession();
 
   useEffect(() => {
@@ -65,6 +69,19 @@ export default function SupportChatPanel() {
   useEffect(() => {
     scrollToBottom();
   }, [messages]);
+
+  const filteredRooms = useMemo(() => {
+    return chatRooms.filter((room) => {
+      const matchesUnread = !filterUnread || room.unread_count > 0;
+      if (!matchesUnread) return false;
+      if (!searchQuery) return true;
+      const query = searchQuery.toLowerCase();
+      return (
+        room.user_name.toLowerCase().includes(query) ||
+        room.last_message?.toLowerCase().includes(query)
+      );
+    });
+  }, [chatRooms, filterUnread, searchQuery]);
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -124,8 +141,10 @@ export default function SupportChatPanel() {
       );
 
       setChatRooms(roomsWithUnread);
+      setError(null);
     } catch (error) {
-      console.error('Error loading chat rooms:', error);
+      notifyError('Support chat rooms load failed');
+      setError('Unable to load support chats. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -133,6 +152,7 @@ export default function SupportChatPanel() {
 
   const loadMessages = async (roomId: string) => {
     try {
+      setLoadingMessages(true);
       const { data, error } = await supabase
         .from('chat_messages')
         .select(`
@@ -149,7 +169,8 @@ export default function SupportChatPanel() {
         .eq('room_id', roomId)
         .order('created_at', { ascending: true });
 
-      if (!error && data) {
+      if (error) throw error;
+      if (data) {
         const formattedMessages = data.map((msg: any) => ({
           id: msg.id,
           content: msg.content,
@@ -163,7 +184,10 @@ export default function SupportChatPanel() {
         setMessages(formattedMessages);
       }
     } catch (error) {
-      console.error('Error loading messages:', error);
+      notifyError('Support messages load failed');
+      setError('Unable to load messages. Please try again.');
+    } finally {
+      setLoadingMessages(false);
     }
   };
 
@@ -264,10 +288,14 @@ export default function SupportChatPanel() {
 
     if (!isTyping) {
       setIsTyping(true);
-      await supabase.from('chat_typing_indicators').upsert({
-        room_id: selectedRoom.id,
-        user_id: user.id,
-        updated_at: new Date().toISOString(),
+      await adminDb({
+        table: 'chat_typing_indicators',
+        action: 'upsert',
+        data: {
+          room_id: selectedRoom.id,
+          user_id: user.id,
+          updated_at: new Date().toISOString(),
+        },
       });
     }
 
@@ -277,11 +305,11 @@ export default function SupportChatPanel() {
 
     typingTimeoutRef.current = setTimeout(async () => {
       setIsTyping(false);
-      await supabase
-        .from('chat_typing_indicators')
-        .delete()
-        .eq('room_id', selectedRoom.id)
-        .eq('user_id', user.id);
+      await adminDb({
+        table: 'chat_typing_indicators',
+        action: 'delete',
+        match: { room_id: selectedRoom.id, user_id: user.id },
+      });
     }, 3000);
   };
 
@@ -297,21 +325,24 @@ export default function SupportChatPanel() {
       clearTimeout(typingTimeoutRef.current);
     }
     setIsTyping(false);
-    await supabase
-      .from('chat_typing_indicators')
-      .delete()
-      .eq('room_id', selectedRoom.id)
-      .eq('user_id', user.id);
-
-    const { error } = await supabase.from('chat_messages').insert({
-      room_id: selectedRoom.id,
-      user_id: user.id,
-      content: messageText,
-      type: 'text',
+    await adminDb({
+      table: 'chat_typing_indicators',
+      action: 'delete',
+      match: { room_id: selectedRoom.id, user_id: user.id },
     });
 
-    if (error) {
-      console.error('Error sending message:', error);
+    const result = await adminDb({
+      table: 'chat_messages',
+      action: 'insert',
+      data: {
+        room_id: selectedRoom.id,
+        user_id: user.id,
+        content: messageText,
+        type: 'text',
+      },
+    });
+
+    if (!result.ok) {
       setNewMessage(messageText);
     }
 
@@ -375,14 +406,23 @@ export default function SupportChatPanel() {
             <Filter className="h-3.5 w-3.5" />
             <span>Unread only</span>
           </button>
+          <button
+            onClick={loadChatRooms}
+            className="ml-2 px-3 py-1.5 text-sm rounded-lg bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+          >
+            Refresh
+          </button>
 
           <p className="text-sm text-gray-600 dark:text-gray-400 mt-3">
-            {chatRooms.filter(r =>
-              (!filterUnread || r.unread_count > 0) &&
-              (!searchQuery || r.user_name.toLowerCase().includes(searchQuery.toLowerCase()) || r.last_message?.toLowerCase().includes(searchQuery.toLowerCase()))
-            ).length} conversations
+            {filteredRooms.length} conversations
           </p>
         </div>
+
+        {error && (
+          <div className="mx-4 mt-3 rounded-lg border border-red-500/30 bg-red-100 text-red-700 dark:bg-red-900/20 dark:text-red-300 px-3 py-2 text-sm">
+            {error}
+          </div>
+        )}
 
         <div className="flex-1 overflow-y-auto">
           {loading ? (
@@ -397,12 +437,7 @@ export default function SupportChatPanel() {
               </p>
             </div>
           ) : (
-            chatRooms
-              .filter(r =>
-                (!filterUnread || r.unread_count > 0) &&
-                (!searchQuery || r.user_name.toLowerCase().includes(searchQuery.toLowerCase()) || r.last_message?.toLowerCase().includes(searchQuery.toLowerCase()))
-              )
-              .map((room) => (
+            filteredRooms.map((room) => (
               <button
                 key={room.id}
                 onClick={() => setSelectedRoom(room)}
@@ -452,40 +487,50 @@ export default function SupportChatPanel() {
             </div>
 
             <div className="flex-1 overflow-y-auto p-4 space-y-4 bg-gray-50 dark:bg-gray-900">
-              {messages.map((message) => (
-                <div
-                  key={message.id}
-                  className={`flex ${
-                    message.is_support ? 'justify-end' : 'justify-start'
-                  }`}
-                >
+              {loadingMessages ? (
+                <div className="flex items-center justify-center py-6">
+                  <Loader className="h-5 w-5 animate-spin text-blue-600" />
+                </div>
+              ) : messages.length === 0 ? (
+                <div className="text-center text-sm text-gray-500 dark:text-gray-400">
+                  No messages yet.
+                </div>
+              ) : (
+                messages.map((message) => (
                   <div
-                    className={`max-w-[70%] rounded-2xl px-4 py-2 ${
-                      message.is_support
-                        ? 'bg-blue-600 text-white'
-                        : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700'
+                    key={message.id}
+                    className={`flex ${
+                      message.is_support ? 'justify-end' : 'justify-start'
                     }`}
                   >
-                    {!message.is_support && (
-                      <p className="text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">
-                        {message.sender_name}
-                      </p>
-                    )}
-                    <p className="text-sm whitespace-pre-wrap break-words">
-                      {message.content}
-                    </p>
-                    <p
-                      className={`text-xs mt-1 ${
+                    <div
+                      className={`max-w-[70%] rounded-2xl px-4 py-2 ${
                         message.is_support
-                          ? 'text-blue-100'
-                          : 'text-gray-500 dark:text-gray-500'
+                          ? 'bg-blue-600 text-white'
+                          : 'bg-white dark:bg-gray-800 text-gray-900 dark:text-white border border-gray-200 dark:border-gray-700'
                       }`}
                     >
-                      {formatTime(message.created_at)}
-                    </p>
+                      {!message.is_support && (
+                        <p className="text-xs font-semibold mb-1 text-gray-600 dark:text-gray-400">
+                          {message.sender_name}
+                        </p>
+                      )}
+                      <p className="text-sm whitespace-pre-wrap break-words">
+                        {message.content}
+                      </p>
+                      <p
+                        className={`text-xs mt-1 ${
+                          message.is_support
+                            ? 'text-blue-100'
+                            : 'text-gray-500 dark:text-gray-500'
+                        }`}
+                      >
+                        {formatTime(message.created_at)}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              ))}
+                ))
+              )}
               {typingUsers.length > 0 && (
                 <div className="flex justify-start">
                   <div className="bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-2xl px-4 py-2">

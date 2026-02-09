@@ -78,11 +78,14 @@ function ScienceContent() {
 
   return (
     <div className="min-h-screen bg-white dark:bg-gray-950 transition-colors pt-16">
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-50 to-indigo-50 dark:from-blue-950/20 dark:to-indigo-950/20">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-[radial-gradient(circle_at_top,_#fff6ed,_transparent_55%),linear-gradient(135deg,#f8fafc,white)] dark:bg-[radial-gradient(circle_at_top,_rgba(59,130,246,0.18),_transparent_55%),linear-gradient(135deg,#0f172a,#020617)]">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h1 className="text-5xl font-bold text-gray-900 dark:text-white mb-6">The Science Behind BioMath Core</h1>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full border border-orange-200/80 bg-white/70 text-[11px] font-semibold uppercase tracking-[0.32em] text-orange-700 backdrop-blur dark:bg-white/10 dark:text-orange-200 dark:border-orange-300/20 mb-6">
+              Science
+            </div>
+            <h1 className="text-5xl font-semibold tracking-tight text-gray-900 dark:text-white mb-6">The Science Behind BioMath Core</h1>
+            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
               Our platform is built on decades of research in systems biology, biomathematics, and physiological modeling.
             </p>
           </div>
@@ -91,37 +94,37 @@ function ScienceContent() {
 
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-12 text-center">Core Scientific Pillars</h2>
+          <h2 className="text-4xl font-semibold text-gray-900 dark:text-white mb-12 text-center">Core Scientific Pillars</h2>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {pillars.map((pillar, index) => (
-              <div key={index} className="bg-white dark:bg-gray-800 rounded-xl p-6 border-2 border-gray-200 dark:border-gray-700 hover:border-blue-500 dark:hover:border-blue-400 transition-all">
+              <div key={index} className="bg-white dark:bg-gray-900 rounded-2xl p-6 border border-gray-200 dark:border-gray-800 hover:border-blue-400 transition-all shadow-sm">
                 <pillar.icon className="h-12 w-12 text-blue-600 dark:text-blue-400 mb-4" />
                 <h3 className="text-xl font-semibold text-gray-900 dark:text-white mb-3">{pillar.title}</h3>
-                <p className="text-gray-600 dark:text-gray-300">{pillar.description}</p>
+                <p className="text-gray-600 dark:text-gray-400">{pillar.description}</p>
               </div>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gray-50 dark:bg-gray-900">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-slate-50 dark:bg-gray-950">
         <div className="max-w-7xl mx-auto">
           <div className="text-center mb-12">
-            <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            <h2 className="text-4xl font-semibold text-gray-900 dark:text-white mb-4">
               Mathematical Models
             </h2>
-            <p className="text-xl text-gray-600 dark:text-gray-300 max-w-3xl mx-auto">
+            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-3xl mx-auto">
               Unlike black-box AI, our models are interpretable and explainable. Every prediction can be traced back to its underlying drivers.
             </p>
           </div>
 
           <div className="space-y-8">
             {models.map((model, index) => (
-              <div key={index} className="bg-white dark:bg-gray-800 rounded-xl p-8 border-2 border-gray-200 dark:border-gray-700">
+              <div key={index} className="bg-white dark:bg-gray-900 rounded-2xl p-8 border border-gray-200 dark:border-gray-800 shadow-sm">
                 <div className="flex flex-col lg:flex-row lg:items-center lg:space-x-8">
                   <div className="flex-1 mb-6 lg:mb-0">
-                    <h3 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">{model.name}</h3>
-                    <p className="text-gray-600 dark:text-gray-300 mb-4">{model.description}</p>
+                    <h3 className="text-2xl font-semibold text-gray-900 dark:text-white mb-3">{model.name}</h3>
+                    <p className="text-gray-600 dark:text-gray-400 mb-4">{model.description}</p>
                     <div className="inline-block bg-blue-50 dark:bg-blue-900/20 px-4 py-2 rounded-lg">
                       <p className="text-sm text-gray-500 dark:text-gray-400 mb-1">Simplified Form:</p>
                       <code className="text-blue-700 dark:text-blue-300 font-mono font-semibold">{model.equations}</code>
@@ -140,7 +143,7 @@ function ScienceContent() {
 
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-7xl mx-auto">
-          <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-12 text-center">
+          <h2 className="text-4xl font-semibold text-gray-900 dark:text-white mb-12 text-center">
             From Data to Insight
           </h2>
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -175,12 +178,12 @@ function ScienceContent() {
         </div>
       </section>
 
-      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-blue-600 to-indigo-600 dark:from-blue-700 dark:to-indigo-700">
+      <section className="py-20 px-4 sm:px-6 lg:px-8 bg-gradient-to-br from-slate-950 via-gray-950 to-slate-900">
         <div className="max-w-7xl mx-auto">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div className="text-white">
-              <h2 className="text-4xl font-bold mb-6">Why Biomathematics?</h2>
-              <div className="space-y-4 text-lg text-blue-100">
+              <h2 className="text-4xl font-semibold mb-6">Why Biomathematics?</h2>
+              <div className="space-y-4 text-lg text-slate-200">
                 <p>
                   <strong className="text-white">Explainability:</strong> Unlike neural networks, mathematical models can be interrogated and understood.
                 </p>
@@ -195,12 +198,12 @@ function ScienceContent() {
                 </p>
               </div>
             </div>
-            <div className="bg-white/10 backdrop-blur-lg rounded-2xl p-8 border border-white/20">
-              <h3 className="text-2xl font-bold text-white mb-4">Published Research</h3>
-              <p className="text-blue-100 mb-6">
+            <div className="bg-white/5 backdrop-blur-lg rounded-2xl p-8 border border-white/10">
+              <h3 className="text-2xl font-semibold text-white mb-4">Published Research</h3>
+              <p className="text-slate-200 mb-6">
                 Our scientific team has published extensively in peer-reviewed journals on topics including:
               </p>
-              <ul className="space-y-2 text-blue-100">
+              <ul className="space-y-2 text-slate-200">
                 <li className="flex items-start">
                   <span className="mr-2">•</span>
                   <span>Systems biology of stress and recovery</span>
@@ -225,13 +228,13 @@ function ScienceContent() {
 
       <section className="py-20 px-4 sm:px-6 lg:px-8">
         <div className="max-w-4xl mx-auto text-center">
-          <h2 className="text-4xl font-bold text-gray-900 dark:text-white mb-6">
+          <h2 className="text-4xl font-semibold text-gray-900 dark:text-white mb-6">
             Experience Science-Backed Wellness
           </h2>
-          <p className="text-xl text-gray-600 dark:text-gray-300 mb-8">
+          <p className="text-xl text-gray-600 dark:text-gray-400 mb-8">
             Join thousands who trust BioMath Core for evidence-based health insights.
           </p>
-          <button className="px-8 py-4 bg-blue-600 hover:bg-blue-700 dark:bg-blue-500 dark:hover:bg-blue-600 text-white font-semibold rounded-lg transition-colors">
+          <button className="px-8 py-4 bg-gray-900 hover:bg-gray-800 text-white font-semibold rounded-lg transition-colors">
             Explore the Platform
           </button>
         </div>

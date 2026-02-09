@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { Star, Quote, CheckCircle } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { injectStructuredData } from '../lib/structuredData';
+import { notifyUserInfo } from '../lib/adminNotify';
 
 interface Testimonial {
   id: string;
@@ -67,7 +68,7 @@ export default function Testimonials() {
         injectStructuredData(reviewSchema);
       }
     } catch (error) {
-      console.error('Error fetching testimonials:', error);
+      notifyUserInfo('Testimonials are temporarily unavailable.');
     } finally {
       setLoading(false);
     }

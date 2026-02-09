@@ -1,5 +1,6 @@
 import { Mail, Moon, Sun } from 'lucide-react';
 import { useTheme } from '../contexts/ThemeContext';
+import NewsletterSignup from './NewsletterSignup';
 
 interface FooterProps {
   onNavigate: (page: string) => void;
@@ -72,16 +73,7 @@ export default function Footer({ onNavigate }: FooterProps) {
 
             <div className="mb-6">
               <h3 className="text-sm font-semibold text-gray-900 dark:text-white mb-3">Newsletter</h3>
-              <div className="flex max-w-md">
-                <input
-                  type="email"
-                  placeholder="Your email"
-                  className="flex-1 px-4 py-2 text-sm border border-gray-300 dark:border-gray-700 bg-white dark:bg-gray-900 text-gray-900 dark:text-white rounded-l-lg focus:outline-none focus:ring-2 focus:ring-orange-500 focus:border-transparent"
-                />
-                <button className="px-4 py-2 bg-gradient-to-r from-orange-500 to-orange-600 hover:from-orange-600 hover:to-orange-700 text-white text-sm font-medium rounded-r-lg transition-all">
-                  Subscribe
-                </button>
-              </div>
+              <NewsletterSignup variant="footer" />
             </div>
 
             <div className="flex items-center space-x-4 mb-4">
@@ -110,7 +102,7 @@ export default function Footer({ onNavigate }: FooterProps) {
                 </button>
               </li>
               <li>
-                <button onClick={() => onNavigate('services')} className="text-sm text-gray-400 hover:text-orange-500 transition-colors">
+                <button onClick={() => onNavigate('pricing')} className="text-sm text-gray-400 hover:text-orange-500 transition-colors">
                   Pricing
                 </button>
               </li>
@@ -288,7 +280,7 @@ export default function Footer({ onNavigate }: FooterProps) {
 
         <div className="mt-12 pt-8 border-t border-gray-300 dark:border-gray-800">
           <p className="text-center text-sm text-gray-600 dark:text-gray-400 mb-3">
-            © 2025 BioMath Core. All rights reserved.
+          © 2026 BioMath Core. All rights reserved.
           </p>
           <p className="text-center text-xs text-gray-500 dark:text-gray-500 max-w-3xl mx-auto">
             BioMath Core is a wellness platform, not a medical service. We do not diagnose, treat, or provide medical advice. Our platform offers guidance for wellness and preventive health support only. Always consult with qualified healthcare professionals for medical concerns.

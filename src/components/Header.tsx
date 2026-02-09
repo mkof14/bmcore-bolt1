@@ -22,7 +22,7 @@ export default function Header({ onNavigate, currentPage }: HeaderProps) {
   const navItems = [
     { name: 'Home', path: 'home' },
     { name: 'About', path: 'about' },
-    { name: 'Pricing', path: 'services' },
+    { name: 'Pricing', path: 'pricing' },
     { name: 'All Services', path: 'services-catalog' },
     { name: 'Member Zone', path: 'member-zone' },
     { name: 'Investors', path: 'investors' },
@@ -85,7 +85,7 @@ export default function Header({ onNavigate, currentPage }: HeaderProps) {
             ) : (
               <button
                 onClick={() => onNavigate('signin')}
-                className="px-4 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md transition-colors opacity-5 hover:opacity-100"
+                className="px-4 py-2 text-sm font-medium text-gray-900 dark:text-white bg-gray-900/3 dark:bg-white/5 hover:bg-gray-900/6 dark:hover:bg-white/10 active:bg-gray-900/10 dark:active:bg-white/15 border border-gray-200/40 dark:border-white/15 rounded-md transition-colors"
               >
                 Sign In/Up
               </button>
@@ -146,7 +146,7 @@ export default function Header({ onNavigate, currentPage }: HeaderProps) {
                       onNavigate('signin');
                       setMobileMenuOpen(false);
                     }}
-                    className="px-3 py-2 text-sm font-medium text-white bg-blue-600 hover:bg-blue-700 rounded-md text-left transition-colors w-full opacity-5 hover:opacity-100"
+                    className="px-3 py-2 text-sm font-medium text-gray-900 dark:text-white bg-gray-900/3 dark:bg-white/5 hover:bg-gray-900/6 dark:hover:bg-white/10 active:bg-gray-900/10 dark:active:bg-white/15 border border-gray-200/40 dark:border-white/15 rounded-md text-left transition-colors w-full"
                   >
                     Sign In/Up
                   </button>

@@ -1,6 +1,7 @@
 import { useEffect, useState, ReactNode } from 'react';
 import { supabase } from '../lib/supabase';
 import LoadingSpinner from './LoadingSpinner';
+import { notifyInfo } from '../lib/adminNotify';
 
 interface AdminGateProps {
   children: ReactNode;
@@ -30,17 +31,25 @@ export default function AdminGate({ children, onNavigate }: AdminGateProps) {
         .maybeSingle();
 
       if (error) {
-        console.error('Error checking admin status:', error);
         setIsAdmin(false);
         return;
       }
 
       setIsAdmin(!!data?.is_admin);
     } catch (error) {
-      console.error('Error in checkAdminStatus:', error);
       setIsAdmin(false);
     }
   };
+
+  useEffect(() => {
+    const originalAlert = window.alert;
+    window.alert = (message?: any) => {
+      notifyInfo(String(message ?? ''));
+    };
+    return () => {
+      window.alert = originalAlert;
+    };
+  }, []);
 
   if (isAdmin === null) {
     return (

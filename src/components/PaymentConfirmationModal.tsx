@@ -1,4 +1,4 @@
-import { X, Shield, CreditCard, Calendar, Lock } from 'lucide-react';
+import { X, Shield, Calendar, Lock } from 'lucide-react';
 
 interface PaymentConfirmationModalProps {
   isOpen: boolean;

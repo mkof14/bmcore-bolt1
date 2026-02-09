@@ -31,7 +31,7 @@ class Analytics {
     this.initialized = true;
 
     const gaId = import.meta.env.VITE_GA_MEASUREMENT_ID;
-    const fbPixelId = import.meta.env.VITE_FB_PIXEL_ID;
+    const fbPixelId = import.meta.env.VITE_FACEBOOK_PIXEL_ID;
 
     if (gaId && this.enabled) {
       this.initGA(gaId);

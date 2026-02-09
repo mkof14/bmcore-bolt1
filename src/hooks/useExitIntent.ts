@@ -8,7 +8,7 @@ export function useExitIntent(delay = 1000): boolean {
     const hasShown = sessionStorage.getItem('exit_intent_shown');
     if (hasShown) return;
 
-    let timeout: NodeJS.Timeout;
+    let timeout: ReturnType<typeof setTimeout>;
 
     const handleMouseLeave = (e: MouseEvent) => {
       if (e.clientY <= 0) {

@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
-import { ChevronRight, Check, Lock, Save, Globe, Ruler } from 'lucide-react';
+import { Check, Lock, Save, Globe, Ruler } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { notifyUserError } from '../../lib/adminNotify';
+import ReportBrandHeader from '../../components/report/ReportBrandHeader';
 
 type QuestionnaireSection =
   | 'categories'
@@ -50,6 +52,7 @@ export default function QuestionnairesSection() {
   const [womensSexualHealthUnlocked, setWomensSexualHealthUnlocked] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [lastSaved, setLastSaved] = useState<Date | null>(null);
+  const [autoSaveError, setAutoSaveError] = useState(false);
 
   useEffect(() => {
     loadQuestionnaire();
@@ -67,7 +70,6 @@ export default function QuestionnairesSection() {
         .maybeSingle();
 
       if (error && error.code !== 'PGRST116') {
-        console.error('Error loading questionnaire:', error);
         return;
       }
 
@@ -105,7 +107,7 @@ export default function QuestionnairesSection() {
         setLastSaved(data.last_autosave_at ? new Date(data.last_autosave_at) : null);
       }
     } catch (error) {
-      console.error('Error:', error);
+      notifyUserError('Questionnaire load failed');
     } finally {
       setIsLoading(false);
     }
@@ -131,12 +133,13 @@ export default function QuestionnairesSection() {
         });
 
       if (error) {
-        console.error('Autosave error:', error);
+        setAutoSaveError(true);
       } else {
         setLastSaved(new Date());
+        setAutoSaveError(false);
       }
     } catch (error) {
-      console.error('Autosave error:', error);
+      setAutoSaveError(true);
     }
   };
 
@@ -148,6 +151,12 @@ export default function QuestionnairesSection() {
     setStatuses(prev => ({ ...prev, [section]: newStatus }));
 
     autoSave(section, newData);
+  };
+
+  const createSectionChangeHandler = (section: QuestionnaireSection) => {
+    return (field: string, value: unknown) => {
+      handleInputChange(section, field, value);
+    };
   };
 
   const checkSectionComplete = (section: QuestionnaireSection, data: QuestionnaireData): boolean => {
@@ -218,36 +227,44 @@ export default function QuestionnairesSection() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-white mb-2">Health Questionnaires</h1>
-        <p className="text-gray-400">
+        <h1 className="text-3xl font-semibold text-gray-900 mb-2">Health Questionnaires</h1>
+        <p className="text-gray-600">
           Complete your health profile to receive personalized recommendations and insights
         </p>
       </div>
 
+      <ReportBrandHeader
+        title="BioMath Core"
+        subtitle="Health Questionnaires"
+        variant="strip"
+        className="mb-6"
+      />
+
       <div className="flex flex-col lg:flex-row gap-6 h-full">
         {/* Sidebar */}
         <div className="lg:w-64 flex-shrink-0">
-        <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-lg border border-gray-700/50 p-4 sticky top-4">
-          <div className="mb-4 pb-4 border-b border-gray-700/50">
-            <h3 className="font-semibold text-white mb-3">Settings</h3>
+        <div className="bg-white/90 rounded-2xl border border-slate-200 p-4 sticky top-4 shadow-lg">
+          <ReportBrandHeader variant="strip" subtitle="Settings & Sections" className="mb-4" />
+          <div className="mb-4 pb-4 border-b border-slate-200">
+            <h3 className="font-semibold text-gray-900 mb-3">Settings</h3>
 
             <button
               onClick={toggleUnitSystem}
-              className="w-full flex items-center justify-between p-2 bg-gray-800/50 border border-gray-700/30 rounded-lg hover:border-orange-600/30 transition-colors mb-2"
+              className="w-full flex items-center justify-between p-2 bg-slate-50 border border-slate-200 rounded-lg hover:border-orange-300 transition-colors mb-2"
             >
               <div className="flex items-center space-x-2">
-                <Ruler className="h-4 w-4 text-gray-400" />
-                <span className="text-sm text-gray-300">Units</span>
+                <Ruler className="h-4 w-4 text-gray-500" />
+                <span className="text-sm text-gray-600">Units</span>
               </div>
               <span className="text-sm font-medium text-orange-500">
                 {unitSystem === 'metric' ? 'Metric' : 'Imperial'}
               </span>
             </button>
 
-            <div className="flex items-center justify-between p-2 bg-gray-800/50 border border-gray-700/30 rounded-lg">
+            <div className="flex items-center justify-between p-2 bg-slate-50 border border-slate-200 rounded-lg">
               <div className="flex items-center space-x-2">
-                <Globe className="h-4 w-4 text-gray-400" />
-                <span className="text-sm text-gray-300">Language</span>
+                <Globe className="h-4 w-4 text-gray-500" />
+                <span className="text-sm text-gray-600">Language</span>
               </div>
               <span className="text-sm font-medium text-orange-500">
                 {language.toUpperCase()}
@@ -258,6 +275,12 @@ export default function QuestionnairesSection() {
               <div className="mt-3 flex items-center space-x-2 text-xs text-gray-500 dark:text-gray-400">
                 <Save className="h-3 w-3" />
                 <span>Saved {lastSaved.toLocaleTimeString()}</span>
+              </div>
+            )}
+            {autoSaveError && (
+              <div className="mt-3 flex items-center space-x-2 text-xs text-red-500">
+                <Save className="h-3 w-3" />
+                <span>Auto-save failed. Please try again.</span>
               </div>
             )}
           </div>
@@ -274,10 +297,10 @@ export default function QuestionnairesSection() {
                   disabled={section.locked}
                   className={`w-full flex items-center justify-between p-3 rounded-lg transition-colors text-left ${
                     currentSection === section.id
-                      ? 'bg-blue-100 dark:bg-blue-900/30 text-orange-500'
+                      ? 'bg-orange-50 border border-orange-200 text-orange-700'
                       : section.locked
-                      ? 'bg-gray-800/50 border border-gray-700/30 text-gray-400 dark:text-gray-600 cursor-not-allowed'
-                      : 'hover:bg-gray-100 dark:hover:bg-gray-700 text-gray-300'
+                      ? 'bg-slate-50 border border-slate-200 text-gray-400 cursor-not-allowed'
+                      : 'hover:bg-slate-50 text-gray-700'
                   }`}
                 >
                   <div className="flex items-center space-x-2 flex-1">
@@ -302,63 +325,64 @@ export default function QuestionnairesSection() {
 
       {/* Main Content */}
       <div className="flex-1">
-        <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 rounded-lg border-2 border-gray-700/50 p-6">
+        <div className="bg-white/90 rounded-2xl border border-slate-200 p-6 shadow-lg">
+          <ReportBrandHeader variant="strip" subtitle="Questionnaire Form" className="mb-4" />
           {currentSection === 'categories' && (
             <CategoriesForm
               data={responses.categories}
-              onChange={(field, value) => handleInputChange('categories', field, value)}
+              onChange={createSectionChangeHandler('categories')}
               unitSystem={unitSystem}
             />
           )}
           {currentSection === 'personal_info' && (
             <PersonalInfoForm
               data={responses.personal_info}
-              onChange={(field, value) => handleInputChange('personal_info', field, value)}
+              onChange={createSectionChangeHandler('personal_info')}
               unitSystem={unitSystem}
             />
           )}
           {currentSection === 'medical_history' && (
             <MedicalHistoryForm
               data={responses.medical_history}
-              onChange={(field, value) => handleInputChange('medical_history', field, value)}
+              onChange={createSectionChangeHandler('medical_history')}
             />
           )}
           {currentSection === 'medications' && (
             <MedicationsForm
               data={responses.medications}
-              onChange={(field, value) => handleInputChange('medications', field, value)}
+              onChange={createSectionChangeHandler('medications')}
             />
           )}
           {currentSection === 'allergies' && (
             <AllergiesForm
               data={responses.allergies}
-              onChange={(field, value) => handleInputChange('allergies', field, value)}
+              onChange={createSectionChangeHandler('allergies')}
             />
           )}
           {currentSection === 'vital_signs' && (
             <VitalSignsForm
               data={responses.vital_signs}
-              onChange={(field, value) => handleInputChange('vital_signs', field, value)}
+              onChange={createSectionChangeHandler('vital_signs')}
               unitSystem={unitSystem}
             />
           )}
           {currentSection === 'lifestyle' && (
             <LifestyleForm
               data={responses.lifestyle}
-              onChange={(field, value) => handleInputChange('lifestyle', field, value)}
+              onChange={createSectionChangeHandler('lifestyle')}
             />
           )}
           {currentSection === 'psychological_health' && (
             <PsychologicalHealthForm
               data={responses.psychological_health}
-              onChange={(field, value) => handleInputChange('psychological_health', field, value)}
+              onChange={createSectionChangeHandler('psychological_health')}
             />
           )}
           {currentSection === 'mens_sexual_health' && (
             mensSexualHealthUnlocked ? (
               <MensSexualHealthForm
                 data={responses.mens_sexual_health}
-                onChange={(field, value) => handleInputChange('mens_sexual_health', field, value)}
+                onChange={createSectionChangeHandler('mens_sexual_health')}
               />
             ) : (
               <LockedSectionMessage section="Men's Sexual Health" />
@@ -368,7 +392,7 @@ export default function QuestionnairesSection() {
             womensSexualHealthUnlocked ? (
               <WomensSexualHealthForm
                 data={responses.womens_sexual_health}
-                onChange={(field, value) => handleInputChange('womens_sexual_health', field, value)}
+                onChange={createSectionChangeHandler('womens_sexual_health')}
               />
             ) : (
               <LockedSectionMessage section="Women's Sexual Health" />
@@ -391,17 +415,17 @@ function CategoriesForm({ data, onChange }: any) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-white mb-2">Categories</h2>
-        <p className="text-gray-400">Tell us which health areas are most important to you</p>
+        <h2 className="text-2xl font-semibold text-gray-900 mb-2">Categories</h2>
+        <p className="text-gray-600">Tell us which health areas are most important to you</p>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
           Which areas of health are most important for you right now? <span className="text-red-500">*</span>
         </label>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
           {healthAreas.map(area => (
-            <label key={area} className="flex items-center space-x-2 p-3 bg-gray-800/50 border border-gray-700/30 rounded-lg cursor-pointer hover:border-orange-600/30">
+            <label key={area} className="flex items-center space-x-2 p-3 bg-slate-50 border border-slate-200 rounded-lg cursor-pointer hover:border-orange-300">
               <input
                 type="checkbox"
                 checked={(data.primary_health_areas || []).includes(area)}
@@ -415,20 +439,20 @@ function CategoriesForm({ data, onChange }: any) {
                 }}
                 className="rounded border-gray-300"
               />
-              <span className="text-sm text-gray-900 dark:text-gray-100">{area}</span>
+              <span className="text-sm text-gray-900">{area}</span>
             </label>
           ))}
         </div>
       </div>
 
       <div>
-        <label className="block text-sm font-medium text-gray-300 mb-2">
+        <label className="block text-sm font-medium text-gray-700 mb-2">
           What is your primary health priority? <span className="text-red-500">*</span>
         </label>
         <select
           value={data.primary_priority || ''}
           onChange={(e) => onChange('primary_priority', e.target.value)}
-          className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+          className="w-full px-4 py-2 border border-slate-200 dark:border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
         >
           <option value="">Select priority...</option>
           <option value="prevention">Prevention</option>
@@ -445,7 +469,7 @@ function PersonalInfoForm({ data, onChange, unitSystem }: any) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-white mb-2">Personal Information</h2>
+        <h2 className="text-2xl font-semibold text-gray-900 mb-2">Personal Information</h2>
         <p className="text-gray-400">Help us personalize your experience</p>
       </div>
 
@@ -458,7 +482,7 @@ function PersonalInfoForm({ data, onChange, unitSystem }: any) {
             type="text"
             value={data.full_name || ''}
             onChange={(e) => onChange('full_name', e.target.value)}
-            className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            className="w-full px-4 py-2 border border-slate-200 dark:border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
           />
         </div>
 
@@ -469,7 +493,7 @@ function PersonalInfoForm({ data, onChange, unitSystem }: any) {
           <select
             value={data.biological_sex || ''}
             onChange={(e) => onChange('biological_sex', e.target.value)}
-            className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            className="w-full px-4 py-2 border border-slate-200 dark:border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
           >
             <option value="">Select...</option>
             <option value="male">Male</option>
@@ -485,7 +509,7 @@ function PersonalInfoForm({ data, onChange, unitSystem }: any) {
             type="date"
             value={data.date_of_birth || ''}
             onChange={(e) => onChange('date_of_birth', e.target.value)}
-            className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            className="w-full px-4 py-2 border border-slate-200 dark:border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
           />
         </div>
 
@@ -497,7 +521,7 @@ function PersonalInfoForm({ data, onChange, unitSystem }: any) {
             type="text"
             value={data.country || ''}
             onChange={(e) => onChange('country', e.target.value)}
-            className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            className="w-full px-4 py-2 border border-slate-200 dark:border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
           />
         </div>
 
@@ -509,7 +533,7 @@ function PersonalInfoForm({ data, onChange, unitSystem }: any) {
             type="number"
             value={data.height || ''}
             onChange={(e) => onChange('height', e.target.value)}
-            className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            className="w-full px-4 py-2 border border-slate-200 dark:border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
           />
         </div>
 
@@ -521,7 +545,7 @@ function PersonalInfoForm({ data, onChange, unitSystem }: any) {
             type="number"
             value={data.weight || ''}
             onChange={(e) => onChange('weight', e.target.value)}
-            className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            className="w-full px-4 py-2 border border-slate-200 dark:border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
           />
         </div>
       </div>
@@ -533,7 +557,7 @@ function MedicalHistoryForm({ data, onChange }: any) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-white mb-2">Medical History</h2>
+        <h2 className="text-2xl font-semibold text-gray-900 mb-2">Medical History</h2>
         <p className="text-gray-400">Your medical background helps us provide better insights</p>
       </div>
 
@@ -572,7 +596,7 @@ function MedicalHistoryForm({ data, onChange }: any) {
             value={data.conditions_list || ''}
             onChange={(e) => onChange('conditions_list', e.target.value)}
             rows={4}
-            className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            className="w-full px-4 py-2 border border-slate-200 dark:border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
             placeholder="List your conditions..."
           />
         </div>
@@ -585,7 +609,7 @@ function MedicationsForm({ data, onChange }: any) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-white mb-2">Medications</h2>
+        <h2 className="text-2xl font-semibold text-gray-900 mb-2">Medications</h2>
         <p className="text-gray-400">Current medications and supplements</p>
       </div>
 
@@ -624,7 +648,7 @@ function MedicationsForm({ data, onChange }: any) {
             value={data.medications_list || ''}
             onChange={(e) => onChange('medications_list', e.target.value)}
             rows={4}
-            className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            className="w-full px-4 py-2 border border-slate-200 dark:border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
             placeholder="Medication name, dosage, frequency..."
           />
         </div>
@@ -637,7 +661,7 @@ function AllergiesForm({ data, onChange }: any) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-white mb-2">Allergies</h2>
+        <h2 className="text-2xl font-semibold text-gray-900 mb-2">Allergies</h2>
         <p className="text-gray-400">Known allergies and reactions</p>
       </div>
 
@@ -676,7 +700,7 @@ function AllergiesForm({ data, onChange }: any) {
             value={data.allergies_list || ''}
             onChange={(e) => onChange('allergies_list', e.target.value)}
             rows={4}
-            className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            className="w-full px-4 py-2 border border-slate-200 dark:border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
             placeholder="Type of allergy, severity, reactions..."
           />
         </div>
@@ -689,7 +713,7 @@ function VitalSignsForm({ data, onChange, unitSystem }: any) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-white mb-2">Vital Signs</h2>
+        <h2 className="text-2xl font-semibold text-gray-900 mb-2">Vital Signs</h2>
         <p className="text-gray-400">Recent measurements (all optional)</p>
       </div>
 
@@ -702,7 +726,7 @@ function VitalSignsForm({ data, onChange, unitSystem }: any) {
             type="number"
             value={data.resting_heart_rate || ''}
             onChange={(e) => onChange('resting_heart_rate', e.target.value)}
-            className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            className="w-full px-4 py-2 border border-slate-200 dark:border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
           />
         </div>
 
@@ -715,7 +739,7 @@ function VitalSignsForm({ data, onChange, unitSystem }: any) {
             value={data.blood_pressure || ''}
             onChange={(e) => onChange('blood_pressure', e.target.value)}
             placeholder="120/80"
-            className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            className="w-full px-4 py-2 border border-slate-200 dark:border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
           />
         </div>
       </div>
@@ -727,7 +751,7 @@ function LifestyleForm({ data, onChange }: any) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-white mb-2">Lifestyle</h2>
+        <h2 className="text-2xl font-semibold text-gray-900 mb-2">Lifestyle</h2>
         <p className="text-gray-400">Daily habits and routines</p>
       </div>
 
@@ -739,7 +763,7 @@ function LifestyleForm({ data, onChange }: any) {
           <select
             value={data.smoking_status || ''}
             onChange={(e) => onChange('smoking_status', e.target.value)}
-            className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            className="w-full px-4 py-2 border border-slate-200 dark:border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
           >
             <option value="">Select...</option>
             <option value="never">Never</option>
@@ -755,7 +779,7 @@ function LifestyleForm({ data, onChange }: any) {
           <select
             value={data.alcohol_consumption || ''}
             onChange={(e) => onChange('alcohol_consumption', e.target.value)}
-            className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            className="w-full px-4 py-2 border border-slate-200 dark:border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
           >
             <option value="">Select...</option>
             <option value="none">None</option>
@@ -773,7 +797,7 @@ function LifestyleForm({ data, onChange }: any) {
             type="number"
             value={data.exercise_frequency || ''}
             onChange={(e) => onChange('exercise_frequency', e.target.value)}
-            className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            className="w-full px-4 py-2 border border-slate-200 dark:border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
           />
         </div>
 
@@ -786,7 +810,7 @@ function LifestyleForm({ data, onChange }: any) {
             step="0.5"
             value={data.sleep_duration || ''}
             onChange={(e) => onChange('sleep_duration', e.target.value)}
-            className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
+            className="w-full px-4 py-2 border border-slate-200 dark:border-gray-700/50 rounded-lg bg-white dark:bg-gray-900 text-gray-900 dark:text-gray-100"
           />
         </div>
       </div>
@@ -798,7 +822,7 @@ function PsychologicalHealthForm({ data, onChange }: any) {
   return (
     <div className="space-y-6">
       <div>
-        <h2 className="text-2xl font-bold text-white mb-2">Psychological Health</h2>
+        <h2 className="text-2xl font-semibold text-gray-900 mb-2">Psychological Health</h2>
         <p className="text-gray-400">Mental and emotional wellbeing</p>
       </div>
 
@@ -809,7 +833,7 @@ function PsychologicalHealthForm({ data, onChange }: any) {
         <select
           value={data.mood_stability || ''}
           onChange={(e) => onChange('mood_stability', e.target.value)}
-          className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900"
+          className="w-full px-4 py-2 border border-slate-200 dark:border-gray-700/50 rounded-lg bg-white dark:bg-gray-900"
         >
           <option value="">Select...</option>
           <option value="very_stable">Very Stable</option>
@@ -859,7 +883,7 @@ function MensSexualHealthForm({ data, onChange }: any) {
       </div>
 
       <div>
-        <h2 className="text-2xl font-bold text-white mb-2">Men's Sexual Health</h2>
+        <h2 className="text-2xl font-semibold text-gray-900 mb-2">Men's Sexual Health</h2>
         <p className="text-gray-400">Supportive guidance for hormonal and sexual wellbeing</p>
       </div>
 
@@ -870,7 +894,7 @@ function MensSexualHealthForm({ data, onChange }: any) {
         <select
           value={data.sexual_interest_trend || ''}
           onChange={(e) => onChange('sexual_interest_trend', e.target.value)}
-          className="w-full px-4 py-2 border-2 border-gray-700/50 rounded-lg bg-white dark:bg-gray-900"
+          className="w-full px-4 py-2 border border-slate-200 dark:border-gray-700/50 rounded-lg bg-white dark:bg-gray-900"
         >
           <option value="">Select...</option>
           <option value="increasing">Increasing</option>
@@ -919,7 +943,7 @@ function WomensSexualHealthForm({ data, onChange }: any) {
       </div>
 
       <div>
-        <h2 className="text-2xl font-bold text-white mb-2">Women's Sexual Health</h2>
+        <h2 className="text-2xl font-semibold text-gray-900 mb-2">Women's Sexual Health</h2>
         <p className="text-gray-400">Supportive guidance for hormonal and sexual wellbeing</p>
       </div>
 
@@ -982,7 +1006,7 @@ function LockedSectionMessage({ section }: { section: string }) {
   return (
     <div className="flex flex-col items-center justify-center py-12 px-4">
       <Lock className="h-16 w-16 text-gray-400 mb-4" />
-      <h3 className="text-xl font-bold text-white mb-2">
+      <h3 className="text-xl font-semibold text-gray-900 mb-2">
         {section} Locked
       </h3>
       <p className="text-center text-gray-400 max-w-md mb-6">

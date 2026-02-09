@@ -97,3 +97,11 @@ if (require.main === module) {
 }
 
 export { runSmokeTests, testEndpoint };
+
+import { describe, it } from "vitest";
+
+describe("API Smoke", () => {
+  it.skip("manual smoke tests run via node", () => {
+    // Run `node tests/api.smoke.test.ts` with a server running to execute.
+  });
+});

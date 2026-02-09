@@ -4,6 +4,12 @@ const base = "https://api.vercel.com";
 
 const memApplied: Record<string, number> = {};
 
+const logVercelWarning = (message: string, error?: unknown) => {
+  if (process.env.NODE_ENV !== "production") {
+    console.warn(message, error);
+  }
+};
+
 function headers() {
   const token = process.env.VERCEL_TOKEN || "";
   return {
@@ -94,7 +100,8 @@ export async function fetchEnvMap(): Promise<Record<string, { production: boolea
       };
     }
     return map;
-  } catch {
+  } catch (error) {
+    logVercelWarning("Failed to fetch Vercel env map", error);
     const map: Record<string, { production: boolean; preview: boolean }> = {};
     Object.keys(memApplied).forEach(k => {
       map[k] = { production: true, preview: true };

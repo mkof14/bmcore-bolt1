@@ -28,9 +28,11 @@ export default function SystemStatus() {
   const [uptime, setUptime] = useState<UptimeStatus | null>(null);
   const [loading, setLoading] = useState(true);
   const [lastRefresh, setLastRefresh] = useState(new Date());
+  const [error, setError] = useState<string | null>(null);
 
   const fetchStatus = async () => {
     setLoading(true);
+    setError(null);
     try {
       const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 
@@ -42,16 +44,20 @@ export default function SystemStatus() {
       if (depsRes?.ok) {
         const depsData = await depsRes.json();
         setDeps(depsData);
+      } else {
+        setDeps(null);
       }
 
       if (uptimeRes?.ok) {
         const uptimeData = await uptimeRes.json();
         setUptime(uptimeData);
+      } else {
+        setUptime(null);
       }
 
       setLastRefresh(new Date());
     } catch (error) {
-      console.error("Failed to fetch status:", error);
+      setError("System status load failed");
     } finally {
       setLoading(false);
     }
@@ -81,6 +87,12 @@ export default function SystemStatus() {
           Refresh
         </button>
       </div>
+
+      {error && (
+        <div className="rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+          {error}
+        </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="bg-white border border-gray-200 rounded-xl p-6">
@@ -115,7 +127,7 @@ export default function SystemStatus() {
               </div>
             </div>
           ) : (
-            <div className="text-sm text-gray-500">Loading...</div>
+            <div className="text-sm text-gray-500">Status unavailable</div>
           )}
         </div>
 
@@ -246,7 +258,7 @@ export default function SystemStatus() {
               </div>
             </div>
           ) : (
-            <div className="text-sm text-gray-500">Loading...</div>
+            <div className="text-sm text-gray-500">Status unavailable</div>
           )}
         </div>
       </div>

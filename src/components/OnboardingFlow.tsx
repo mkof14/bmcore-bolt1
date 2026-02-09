@@ -1,5 +1,6 @@
 import { useState } from 'react';
-import { CheckCircle, ChevronRight, ChevronLeft, X, Sparkles } from 'lucide-react';
+import { CheckCircle, ChevronRight, ChevronLeft, Sparkles } from 'lucide-react';
+import ModalShell from './ui/ModalShell';
 
 interface OnboardingStep {
   id: string;
@@ -329,73 +330,57 @@ export default function OnboardingFlow({ isOpen, onClose, onComplete }: Onboardi
   if (!isOpen) return null;
 
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-      <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-2xl w-full border border-gray-200 dark:border-gray-700 overflow-hidden">
-        <div className="p-6 border-b border-gray-200 dark:border-gray-700">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              {steps[currentStep].icon}
-              <div>
-                <h2 className="text-xl font-bold text-gray-900 dark:text-white">
-                  {steps[currentStep].title}
-                </h2>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  {steps[currentStep].description}
-                </p>
-              </div>
-            </div>
-            {currentStep !== 0 && (
-              <button
-                onClick={onClose}
-                className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors"
-              >
-                <X className="w-5 h-5 text-gray-500" />
-              </button>
-            )}
-          </div>
+    <ModalShell
+      title={steps[currentStep].title}
+      icon={steps[currentStep].icon}
+      onClose={currentStep !== 0 ? onClose : undefined}
+      showClose={currentStep !== 0}
+      panelClassName="max-w-2xl"
+    >
+      <p className="text-sm text-gray-600 dark:text-gray-400 mb-4">
+        {steps[currentStep].description}
+      </p>
 
-          <div className="flex gap-2">
-            {steps.map((_, index) => (
-              <div
-                key={index}
-                className={`h-1 flex-1 rounded-full transition-colors ${
-                  index <= currentStep
-                    ? 'bg-orange-500'
-                    : 'bg-gray-200 dark:bg-gray-700'
-                }`}
-              />
-            ))}
-          </div>
-        </div>
-
-        <div className="p-6 max-h-[60vh] overflow-y-auto">
-          {steps[currentStep].content}
-        </div>
-
-        <div className="p-6 border-t border-gray-200 dark:border-gray-700 flex justify-between">
-          <button
-            onClick={handleBack}
-            disabled={currentStep === 0}
-            className={`px-6 py-3 font-medium rounded-lg transition-colors inline-flex items-center gap-2 ${
-              currentStep === 0
-                ? 'invisible'
-                : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+      <div className="flex gap-2 mb-6">
+        {steps.map((_, index) => (
+          <div
+            key={index}
+            className={`h-1 flex-1 rounded-full transition-colors ${
+              index <= currentStep
+                ? 'bg-orange-500'
+                : 'bg-gray-200 dark:bg-gray-700'
             }`}
-          >
-            <ChevronLeft className="w-5 h-5" />
-            Back
-          </button>
-
-          <button
-            onClick={handleNext}
-            disabled={!canProceed()}
-            className="px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white font-medium rounded-lg transition-colors inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            {currentStep === steps.length - 1 ? 'Get Started' : 'Continue'}
-            <ChevronRight className="w-5 h-5" />
-          </button>
-        </div>
+          />
+        ))}
       </div>
-    </div>
+
+      <div className="max-h-[60vh] overflow-y-auto mb-6">
+        {steps[currentStep].content}
+      </div>
+
+      <div className="flex justify-between">
+        <button
+          onClick={handleBack}
+          disabled={currentStep === 0}
+          className={`px-6 py-3 font-medium rounded-lg transition-colors inline-flex items-center gap-2 ${
+            currentStep === 0
+              ? 'invisible'
+              : 'text-gray-700 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800'
+          }`}
+        >
+          <ChevronLeft className="w-5 h-5" />
+          Back
+        </button>
+
+        <button
+          onClick={handleNext}
+          disabled={!canProceed()}
+          className="px-6 py-3 bg-orange-600 hover:bg-orange-700 text-white font-medium rounded-lg transition-colors inline-flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+        >
+          {currentStep === steps.length - 1 ? 'Get Started' : 'Continue'}
+          <ChevronRight className="w-5 h-5" />
+        </button>
+      </div>
+    </ModalShell>
   );
 }

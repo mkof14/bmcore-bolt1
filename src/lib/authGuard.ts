@@ -4,6 +4,7 @@ export interface AuthUser {
   id: string;
   email: string;
   role?: string;
+  isAdmin?: boolean;
 }
 
 export interface AuthSession {
@@ -28,11 +29,28 @@ export async function getSessionFromRequest(req: Request): Promise<AuthSession |
       return null;
     }
 
+    let role = user.user_metadata?.role;
+    let isAdmin = false;
+    try {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role, is_admin")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (profile) {
+        role = profile.role ?? role;
+        isAdmin = !!profile.is_admin;
+      }
+    } catch {
+      // ignore profile lookup errors
+    }
+
     return {
       user: {
         id: user.id,
         email: user.email || "",
-        role: user.user_metadata?.role,
+        role,
+        isAdmin,
       },
       accessToken: token,
     };
@@ -54,7 +72,7 @@ export async function requireAdmin(req: Request): Promise<AuthSession> {
 
   const { data: profile } = await supabase
     .from("profiles")
-    .select("is_admin")
+    .select("is_admin, role")
     .eq("id", session.user.id)
     .maybeSingle();
 
@@ -62,13 +80,21 @@ export async function requireAdmin(req: Request): Promise<AuthSession> {
     throw new Error("FORBIDDEN: Admin access required");
   }
 
+  session.user.isAdmin = true;
+  session.user.role = profile?.role ?? session.user.role;
   return session;
 }
 
 export function requireRole(role: string) {
   return async (req: Request): Promise<AuthSession> => {
     const session = await requireAuth(req);
-    if (session.user.role !== role) {
+    const { data: profile } = await supabase
+      .from("profiles")
+      .select("role")
+      .eq("id", session.user.id)
+      .maybeSingle();
+
+    if (!profile?.role || profile.role !== role) {
       throw new Error(`FORBIDDEN: ${role} role required`);
     }
     return session;
@@ -86,10 +112,27 @@ export async function getCurrentUser(): Promise<AuthUser | null> {
       return null;
     }
 
+    let role = user.user_metadata?.role;
+    let isAdmin = false;
+    try {
+      const { data: profile } = await supabase
+        .from("profiles")
+        .select("role, is_admin")
+        .eq("id", user.id)
+        .maybeSingle();
+      if (profile) {
+        role = profile.role ?? role;
+        isAdmin = !!profile.is_admin;
+      }
+    } catch {
+      // ignore profile lookup errors
+    }
+
     return {
       id: user.id,
       email: user.email || "",
-      role: user.user_metadata?.role,
+      role,
+      isAdmin,
     };
   } catch {
     return null;

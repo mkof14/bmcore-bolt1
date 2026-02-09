@@ -3,6 +3,7 @@ import { Send, X, Loader } from 'lucide-react';
 import { supabase } from '../lib/supabase';
 import { useSession } from '../hooks/useSession';
 import TypingIndicator from './TypingIndicator';
+import { notifyUserError } from '../lib/adminNotify';
 
 interface Message {
   id: string;
@@ -26,7 +27,7 @@ export default function LiveSupportChat({ isOpen, onClose }: LiveSupportChatProp
   const [isTyping, setIsTyping] = useState(false);
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const typingTimeoutRef = useRef<NodeJS.Timeout>();
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const user = useSession();
 
   const scrollToBottom = useCallback(() => {
@@ -163,7 +164,7 @@ export default function LiveSupportChat({ isOpen, onClose }: LiveSupportChatProp
       await loadMessages(currentRoomId);
       setupRealtimeSubscriptions(currentRoomId);
     } catch (error) {
-      console.error('Error initializing chat:', error as unknown);
+      notifyUserError('Support chat failed to load. Please try again.');
     } finally {
       setLoading(false);
     }
@@ -198,16 +199,19 @@ export default function LiveSupportChat({ isOpen, onClose }: LiveSupportChatProp
       .limit(100);
 
     if (!error && data) {
-      const formattedMessages = data.map((msg: { id: string; content: string; user_id: string; created_at: string; profiles: { first_name: string; last_name: string; is_admin: boolean; }; }) => ({
-        id: msg.id,
-        content: msg.content,
-        user_id: msg.user_id,
-        created_at: msg.created_at,
-        sender_name: msg.profiles
-          ? `${msg.profiles.first_name || ''} ${msg.profiles.last_name || ''}`.trim() || 'User'
-          : 'User',
-        is_support: msg.profiles?.is_admin || false,
-      }));
+      const formattedMessages = (data as any[]).map((msg) => {
+        const profile = Array.isArray(msg.profiles) ? msg.profiles[0] : msg.profiles;
+        return {
+          id: msg.id,
+          content: msg.content,
+          user_id: msg.user_id,
+          created_at: msg.created_at,
+          sender_name: profile
+            ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || 'User'
+            : 'User',
+          is_support: profile?.is_admin || false,
+        };
+      });
       setMessages(formattedMessages);
     }
   };
@@ -267,7 +271,6 @@ export default function LiveSupportChat({ isOpen, onClose }: LiveSupportChatProp
     });
 
     if (error) {
-      console.error('Error sending message:', error);
       setNewMessage(messageText);
     }
   };

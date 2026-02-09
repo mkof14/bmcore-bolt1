@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
-import { X, Plus, Trash2 } from 'lucide-react';
-import { supabase } from '../../lib/supabase';
+import { Plus, Trash2 } from 'lucide-react';
+import { adminDb } from '../../lib/adminApi';
+import { notifyError, notifySuccess } from '../../lib/adminNotify';
+import ModalShell from '../ui/ModalShell';
 
 interface CareerPosting {
   id: string;
@@ -111,7 +113,7 @@ export default function CareerPostingForm({ job, onClose, onSave }: CareerPostin
 
   const handleSave = async () => {
     if (!formData.title || !formData.department) {
-      alert('Title and department are required');
+      notifyError('Title and department are required');
       return;
     }
 
@@ -131,226 +133,218 @@ export default function CareerPostingForm({ job, onClose, onSave }: CareerPostin
       };
 
       if (job) {
-        const { error } = await supabase
-          .from('career_postings')
-          .update(jobData)
-          .eq('id', job.id);
+        const result = await adminDb({
+          table: 'career_postings',
+          action: 'update',
+          data: jobData,
+          match: { id: job.id },
+        });
 
-        if (error) throw error;
+        if (!result.ok) throw new Error(result.error || 'Job posting update failed');
       } else {
-        const { error } = await supabase
-          .from('career_postings')
-          .insert(jobData);
+        const result = await adminDb({
+          table: 'career_postings',
+          action: 'insert',
+          data: jobData,
+        });
 
-        if (error) throw error;
+        if (!result.ok) throw new Error(result.error || 'Job posting create failed');
       }
 
       onSave();
       onClose();
+      notifySuccess('Job posting saved');
     } catch (error) {
-      console.error('Error saving job:', error);
-      alert('Failed to save job posting');
+      notifyError('Job posting save failed');
     } finally {
       setSaving(false);
     }
   };
 
   return (
-    <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-      <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
-        <div className="p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-white">
-              {job ? 'Edit Job Posting' : 'Create Job Posting'}
-            </h2>
-            <button
-              onClick={onClose}
-              className="p-2 hover:bg-gray-700 rounded-lg transition-colors"
-            >
-              <X className="h-5 w-5 text-gray-400" />
-            </button>
+    <ModalShell
+      title={job ? 'Edit Job Posting' : 'Create Job Posting'}
+      onClose={onClose}
+      panelClassName="max-w-4xl"
+    >
+      <div className="space-y-4">
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Job Title</label>
+          <input
+            type="text"
+            value={formData.title}
+            onChange={(e) => handleTitleChange(e.target.value)}
+            className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            placeholder="Enter job title"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Slug</label>
+          <input
+            type="text"
+            value={formData.slug}
+            onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
+            className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            placeholder="job-url-slug"
+          />
+        </div>
+
+        <div className="grid md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Department</label>
+            <input
+              type="text"
+              value={formData.department}
+              onChange={(e) => setFormData({ ...formData, department: e.target.value })}
+              className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              placeholder="Engineering, Sales, etc."
+            />
           </div>
 
-          <div className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Job Title</label>
-              <input
-                type="text"
-                value={formData.title}
-                onChange={(e) => handleTitleChange(e.target.value)}
-                className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-                placeholder="Enter job title"
-              />
-            </div>
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Location</label>
+            <input
+              type="text"
+              value={formData.location}
+              onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+              className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              placeholder="Remote, New York, etc."
+            />
+          </div>
+        </div>
 
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Slug</label>
-              <input
-                type="text"
-                value={formData.slug}
-                onChange={(e) => setFormData({ ...formData, slug: e.target.value })}
-                className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-                placeholder="job-url-slug"
-              />
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">Department</label>
-                <input
-                  type="text"
-                  value={formData.department}
-                  onChange={(e) => setFormData({ ...formData, department: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-                  placeholder="Engineering, Sales, etc."
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">Location</label>
-                <input
-                  type="text"
-                  value={formData.location}
-                  onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-                  placeholder="Remote, New York, etc."
-                />
-              </div>
-            </div>
-
-            <div className="grid md:grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">Employment Type</label>
-                <select
-                  value={formData.employment_type}
-                  onChange={(e) => setFormData({ ...formData, employment_type: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-                >
-                  <option value="full-time">Full-time</option>
-                  <option value="part-time">Part-time</option>
-                  <option value="contract">Contract</option>
-                  <option value="internship">Internship</option>
-                </select>
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-400 mb-2">Status</label>
-                <select
-                  value={formData.status}
-                  onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                  className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-                >
-                  <option value="active">Active</option>
-                  <option value="closed">Closed</option>
-                  <option value="draft">Draft</option>
-                </select>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Salary Range (Optional)</label>
-              <input
-                type="text"
-                value={formData.salary_range}
-                onChange={(e) => setFormData({ ...formData, salary_range: e.target.value })}
-                className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-                placeholder="$80k - $120k"
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium text-gray-400 mb-2">Description</label>
-              <textarea
-                value={formData.description}
-                onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                rows={4}
-                className="w-full px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-                placeholder="Job description..."
-              />
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="block text-sm font-medium text-gray-400">Requirements</label>
-                <button
-                  onClick={addRequirement}
-                  className="flex items-center gap-1 text-sm text-orange-400 hover:text-orange-300"
-                >
-                  <Plus className="h-4 w-4" />
-                  Add
-                </button>
-              </div>
-              <div className="space-y-2">
-                {formData.requirements.map((req, index) => (
-                  <div key={index} className="flex gap-2">
-                    <input
-                      type="text"
-                      value={req}
-                      onChange={(e) => updateRequirement(index, e.target.value)}
-                      className="flex-1 px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-                      placeholder="Requirement..."
-                    />
-                    <button
-                      onClick={() => removeRequirement(index)}
-                      className="p-2 text-red-400 hover:bg-red-900/30 rounded-lg transition-colors"
-                    >
-                      <Trash2 className="h-5 w-5" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <div>
-              <div className="flex items-center justify-between mb-2">
-                <label className="block text-sm font-medium text-gray-400">Responsibilities</label>
-                <button
-                  onClick={addResponsibility}
-                  className="flex items-center gap-1 text-sm text-orange-400 hover:text-orange-300"
-                >
-                  <Plus className="h-4 w-4" />
-                  Add
-                </button>
-              </div>
-              <div className="space-y-2">
-                {formData.responsibilities.map((resp, index) => (
-                  <div key={index} className="flex gap-2">
-                    <input
-                      type="text"
-                      value={resp}
-                      onChange={(e) => updateResponsibility(index, e.target.value)}
-                      className="flex-1 px-4 py-2 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
-                      placeholder="Responsibility..."
-                    />
-                    <button
-                      onClick={() => removeResponsibility(index)}
-                      className="p-2 text-red-400 hover:bg-red-900/30 rounded-lg transition-colors"
-                    >
-                      <Trash2 className="h-5 w-5" />
-                    </button>
-                  </div>
-                ))}
-              </div>
-            </div>
+        <div className="grid md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Employment Type</label>
+            <select
+              value={formData.employment_type}
+              onChange={(e) => setFormData({ ...formData, employment_type: e.target.value })}
+              className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            >
+              <option value="full-time">Full-time</option>
+              <option value="part-time">Part-time</option>
+              <option value="contract">Contract</option>
+              <option value="internship">Internship</option>
+            </select>
           </div>
 
-          <div className="flex gap-3 mt-6">
-            <button
-              onClick={handleSave}
-              disabled={saving}
-              className="px-6 py-2 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-lg hover:from-orange-500 hover:to-orange-600 transition-all disabled:opacity-50"
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">Status</label>
+            <select
+              value={formData.status}
+              onChange={(e) => setFormData({ ...formData, status: e.target.value })}
+              className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
             >
-              {saving ? 'Saving...' : 'Save Job'}
-            </button>
+              <option value="active">Active</option>
+              <option value="closed">Closed</option>
+              <option value="draft">Draft</option>
+            </select>
+          </div>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Salary Range (Optional)</label>
+          <input
+            type="text"
+            value={formData.salary_range}
+            onChange={(e) => setFormData({ ...formData, salary_range: e.target.value })}
+            className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            placeholder="$80k - $120k"
+          />
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2">Description</label>
+          <textarea
+            value={formData.description}
+            onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+            rows={4}
+            className="w-full px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
+            placeholder="Job description..."
+          />
+        </div>
+
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-sm font-medium text-gray-700">Requirements</label>
             <button
-              onClick={onClose}
-              className="px-6 py-2 bg-gray-700 text-white rounded-lg hover:bg-gray-600 transition-colors"
+              onClick={addRequirement}
+              className="flex items-center gap-1 text-sm text-orange-600 hover:text-orange-500"
             >
-              Cancel
+              <Plus className="h-4 w-4" />
+              Add
             </button>
+          </div>
+          <div className="space-y-2">
+            {formData.requirements.map((req, index) => (
+              <div key={index} className="flex gap-2">
+                <input
+                  type="text"
+                  value={req}
+                  onChange={(e) => updateRequirement(index, e.target.value)}
+                  className="flex-1 px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  placeholder="Requirement..."
+                />
+                <button
+                  onClick={() => removeRequirement(index)}
+                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                >
+                  <Trash2 className="h-5 w-5" />
+                </button>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        <div>
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-sm font-medium text-gray-700">Responsibilities</label>
+            <button
+              onClick={addResponsibility}
+              className="flex items-center gap-1 text-sm text-orange-600 hover:text-orange-500"
+            >
+              <Plus className="h-4 w-4" />
+              Add
+            </button>
+          </div>
+          <div className="space-y-2">
+            {formData.responsibilities.map((resp, index) => (
+              <div key={index} className="flex gap-2">
+                <input
+                  type="text"
+                  value={resp}
+                  onChange={(e) => updateResponsibility(index, e.target.value)}
+                  className="flex-1 px-4 py-2 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
+                  placeholder="Responsibility..."
+                />
+                <button
+                  onClick={() => removeResponsibility(index)}
+                  className="p-2 text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                >
+                  <Trash2 className="h-5 w-5" />
+                </button>
+              </div>
+            ))}
           </div>
         </div>
       </div>
-    </div>
+
+      <div className="flex gap-3 mt-6">
+        <button
+          onClick={handleSave}
+          disabled={saving}
+          className="px-6 py-2 bg-gradient-to-r from-orange-600 to-orange-500 text-white rounded-lg hover:from-orange-500 hover:to-orange-600 transition-all disabled:opacity-50"
+        >
+          {saving ? 'Saving...' : 'Save Job'}
+        </button>
+        <button
+          onClick={onClose}
+          className="px-6 py-2 bg-slate-100 text-slate-700 rounded-lg hover:bg-slate-200 border border-slate-200 transition-colors"
+        >
+          Cancel
+        </button>
+      </div>
+    </ModalShell>
   );
 }

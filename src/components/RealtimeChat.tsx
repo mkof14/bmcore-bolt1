@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
-import { Send, Smile, Paperclip, MoreVertical, Check, CheckCheck } from 'lucide-react';
+import { Send, Smile, Paperclip, MoreVertical, CheckCheck } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { notifyUserError } from '../lib/adminNotify';
 
 interface Message {
   id: string;
@@ -32,7 +33,7 @@ export default function RealtimeChat({ roomId, onClose }: RealtimeChatProps) {
   const [typingUsers, setTypingUsers] = useState<string[]>([]);
   const [currentUser, setCurrentUser] = useState<any>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
-  const typingTimeoutRef = useRef<NodeJS.Timeout>();
+  const typingTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
     fetchCurrentUser();
@@ -70,7 +71,7 @@ export default function RealtimeChat({ roomId, onClose }: RealtimeChatProps) {
       if (error) throw error;
       setMessages(data || []);
     } catch (error) {
-      console.error('Error fetching messages:', error);
+      notifyUserError('Messages failed to load.');
     } finally {
       setLoading(false);
     }
@@ -88,15 +89,16 @@ export default function RealtimeChat({ roomId, onClose }: RealtimeChatProps) {
           filter: `room_id=eq.${roomId}`,
         },
         async (payload) => {
+          const newPayload = payload.new as any;
           const { data: userData } = await supabase
             .from('profiles')
             .select('full_name, avatar_url')
-            .eq('id', payload.new.user_id)
+            .eq('id', newPayload.user_id)
             .single();
 
           setMessages((prev) => [
             ...prev,
-            { ...payload.new, user: userData } as Message,
+            { ...newPayload, user: userData } as Message,
           ]);
         }
       )
@@ -117,11 +119,12 @@ export default function RealtimeChat({ roomId, onClose }: RealtimeChatProps) {
           filter: `room_id=eq.${roomId}`,
         },
         async (payload) => {
-          if (payload.new && payload.new.user_id !== currentUser?.id) {
+          const newPayload = payload.new as any;
+          if (newPayload && newPayload.user_id !== currentUser?.id) {
             const { data } = await supabase
               .from('profiles')
               .select('full_name')
-              .eq('id', payload.new.user_id)
+              .eq('id', newPayload.user_id)
               .single();
 
             if (data) {
@@ -160,7 +163,7 @@ export default function RealtimeChat({ roomId, onClose }: RealtimeChatProps) {
       setNewMessage('');
       await clearTypingIndicator();
     } catch (error) {
-      console.error('Error sending message:', error);
+      notifyUserError('Message send failed.');
     } finally {
       setSending(false);
     }

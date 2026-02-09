@@ -16,6 +16,7 @@ import InvitationManager from '../components/admin/InvitationManager';
 import ConfigSystem from './admin/ConfigSystem';
 import SupportChatPanel from './admin/SupportChatPanel';
 import { supabase } from '../lib/supabase';
+import { notifyError } from '../lib/adminNotify';
 
 interface AdminPanelProps {
   onNavigate: (page: string) => void;
@@ -44,25 +45,25 @@ export default function AdminPanel({ onNavigate }: AdminPanelProps) {
   ];
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-950 via-gray-900 to-gray-950">
+    <div className="min-h-screen bg-gradient-to-b from-white via-orange-50/40 to-white">
       <div className="flex h-screen pt-16">
         <aside
           className={`${
             sidebarOpen ? 'w-64' : 'w-20'
-          } bg-gradient-to-b from-gray-900 to-gray-950 border-r border-gray-800/50 transition-all duration-300 flex flex-col`}
+          } bg-white/90 border-r border-slate-200 transition-all duration-300 flex flex-col`}
         >
-          <div className="p-4 flex items-center justify-between border-b border-gray-800/50">
+          <div className="p-4 flex items-center justify-between border-b border-slate-200">
             {sidebarOpen && (
-              <h2 className="text-lg font-bold text-white">Admin Panel</h2>
+              <h2 className="text-lg font-semibold text-gray-900">Admin Panel</h2>
             )}
             <button
               onClick={() => setSidebarOpen(!sidebarOpen)}
-              className="p-2 hover:bg-gray-800/50 rounded-lg transition-colors"
+              className="p-2 hover:bg-slate-100 rounded-lg transition-colors"
             >
               {sidebarOpen ? (
-                <X className="h-5 w-5 text-gray-400" />
+                <X className="h-5 w-5 text-gray-500" />
               ) : (
-                <Menu className="h-5 w-5 text-gray-400" />
+                <Menu className="h-5 w-5 text-gray-500" />
               )}
             </button>
           </div>
@@ -78,8 +79,8 @@ export default function AdminPanel({ onNavigate }: AdminPanelProps) {
                   onClick={() => setActiveSection(item.id)}
                   className={`w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-all duration-300 ${
                     isActive
-                      ? 'bg-gradient-to-r from-orange-900/30 to-orange-800/20 border border-orange-600/30 text-orange-500'
-                      : 'text-gray-400 hover:bg-gray-800/50 border border-transparent hover:border-gray-700/50'
+                      ? 'bg-orange-50 border border-orange-200 text-orange-700'
+                      : 'text-gray-600 hover:bg-slate-100 border border-transparent hover:border-slate-200'
                   }`}
                 >
                   <Icon className="h-5 w-5 flex-shrink-0" />
@@ -151,7 +152,7 @@ function DashboardSection() {
         emailsSent: emails.count || 0,
       });
     } catch (error) {
-      console.error('Error loading stats:', error);
+      notifyError('Dashboard stats load failed');
     } finally {
       setLoading(false);
     }
@@ -279,8 +280,6 @@ function DashboardSection() {
     </div>
   );
 }
-
-
 
 
 

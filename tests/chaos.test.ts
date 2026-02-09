@@ -84,11 +84,11 @@ describe("Performance Budget", () => {
   });
 
   it("should handle slow external API calls gracefully", async () => {
-    const TIMEOUT = 5000;
+    const TIMEOUT = 1000;
 
     const mockSlowAPI = () =>
       Promise.race([
-        new Promise((resolve) => setTimeout(resolve, 10000)),
+        new Promise((resolve) => setTimeout(resolve, 2000)),
         new Promise((_, reject) =>
           setTimeout(() => reject(new Error("Request timeout")), TIMEOUT)
         ),

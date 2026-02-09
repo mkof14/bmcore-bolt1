@@ -16,6 +16,8 @@ export interface Opinion {
   warnings?: string[];
 }
 
+export type Recommendation = Opinion["recommendations"][number];
+
 export interface OpinionDiff {
   agreements: Array<{
     topic: string;

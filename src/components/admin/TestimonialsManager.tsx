@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Star, Check, X, Eye, EyeOff, ArrowUp, ArrowDown, Edit2, Trash2 } from 'lucide-react';
+import { Star, Check, X, Eye, EyeOff, ArrowUp, ArrowDown, Trash2 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { adminDb } from '../../lib/adminApi';
+import { notifyError, notifySuccess } from '../../lib/adminNotify';
 
 interface Testimonial {
   id: string;
@@ -40,7 +42,7 @@ export default function TestimonialsManager() {
       if (error) throw error;
       setTestimonials(data || []);
     } catch (error) {
-      console.error('Error fetching testimonials:', error);
+      notifyError('Testimonials load failed');
     } finally {
       setLoading(false);
     }
@@ -48,43 +50,52 @@ export default function TestimonialsManager() {
 
   async function updateStatus(id: string, status: 'approved' | 'rejected') {
     try {
-      const { error } = await supabase
-        .from('testimonials')
-        .update({ status })
-        .eq('id', id);
+      const result = await adminDb({
+        table: 'testimonials',
+        action: 'update',
+        data: { status },
+        match: { id },
+      });
 
-      if (error) throw error;
+      if (!result.ok) throw new Error(result.error || 'Testimonial status update failed');
       fetchTestimonials();
+      notifySuccess(`Testimonial ${status}`);
     } catch (error) {
-      console.error('Error updating testimonial status:', error);
+      notifyError('Testimonial status update failed');
     }
   }
 
   async function toggleFeatured(id: string, currentFeatured: boolean) {
     try {
-      const { error } = await supabase
-        .from('testimonials')
-        .update({ featured: !currentFeatured })
-        .eq('id', id);
+      const result = await adminDb({
+        table: 'testimonials',
+        action: 'update',
+        data: { featured: !currentFeatured },
+        match: { id },
+      });
 
-      if (error) throw error;
+      if (!result.ok) throw new Error(result.error || 'Testimonial featured update failed');
       fetchTestimonials();
+      notifySuccess(`Testimonial ${currentFeatured ? 'unfeatured' : 'featured'}`);
     } catch (error) {
-      console.error('Error toggling featured:', error);
+      notifyError('Testimonial featured update failed');
     }
   }
 
   async function toggleVerified(id: string, currentVerified: boolean) {
     try {
-      const { error } = await supabase
-        .from('testimonials')
-        .update({ verified: !currentVerified })
-        .eq('id', id);
+      const result = await adminDb({
+        table: 'testimonials',
+        action: 'update',
+        data: { verified: !currentVerified },
+        match: { id },
+      });
 
-      if (error) throw error;
+      if (!result.ok) throw new Error(result.error || 'Testimonial verification update failed');
       fetchTestimonials();
+      notifySuccess(`Testimonial ${currentVerified ? 'unverified' : 'verified'}`);
     } catch (error) {
-      console.error('Error toggling verified:', error);
+      notifyError('Testimonial verification update failed');
     }
   }
 
@@ -100,19 +111,23 @@ export default function TestimonialsManager() {
       const other = testimonials[newIndex];
 
       await Promise.all([
-        supabase
-          .from('testimonials')
-          .update({ display_order: other.display_order })
-          .eq('id', current.id),
-        supabase
-          .from('testimonials')
-          .update({ display_order: current.display_order })
-          .eq('id', other.id),
+        adminDb({
+          table: 'testimonials',
+          action: 'update',
+          data: { display_order: other.display_order },
+          match: { id: current.id },
+        }),
+        adminDb({
+          table: 'testimonials',
+          action: 'update',
+          data: { display_order: current.display_order },
+          match: { id: other.id },
+        }),
       ]);
 
       fetchTestimonials();
     } catch (error) {
-      console.error('Error updating display order:', error);
+      notifyError('Testimonial order update failed');
     }
   }
 
@@ -120,11 +135,16 @@ export default function TestimonialsManager() {
     if (!confirm('Are you sure you want to delete this testimonial?')) return;
 
     try {
-      const { error } = await supabase.from('testimonials').delete().eq('id', id);
-      if (error) throw error;
+      const result = await adminDb({
+        table: 'testimonials',
+        action: 'delete',
+        match: { id },
+      });
+      if (!result.ok) throw new Error(result.error || 'Testimonial delete failed');
       fetchTestimonials();
+      notifySuccess('Testimonial deleted');
     } catch (error) {
-      console.error('Error deleting testimonial:', error);
+      notifyError('Testimonial delete failed');
     }
   }
 
@@ -133,7 +153,7 @@ export default function TestimonialsManager() {
       <div className="p-6">
         <div className="animate-pulse space-y-4">
           {[1, 2, 3].map((i) => (
-            <div key={i} className="h-32 bg-gray-200 dark:bg-gray-700 rounded-lg"></div>
+            <div key={i} className="h-32 bg-slate-100 rounded-lg border border-slate-200"></div>
           ))}
         </div>
       </div>
@@ -143,9 +163,7 @@ export default function TestimonialsManager() {
   return (
     <div className="p-6">
       <div className="flex justify-between items-center mb-6">
-        <h2 className="text-2xl font-bold text-gray-900 dark:text-white">
-          Testimonials Management
-        </h2>
+        <h2 className="text-2xl font-bold text-gray-900">Testimonials Management</h2>
         <div className="flex gap-2">
           {(['all', 'pending', 'approved', 'rejected'] as const).map((f) => (
             <button
@@ -154,7 +172,7 @@ export default function TestimonialsManager() {
               className={`px-4 py-2 rounded-lg text-sm font-medium capitalize transition-colors ${
                 filter === f
                   ? 'bg-blue-600 text-white'
-                  : 'bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-700'
+                  : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
               }`}
             >
               {f}
@@ -163,12 +181,18 @@ export default function TestimonialsManager() {
         </div>
       </div>
 
-      <div className="space-y-4">
-        {testimonials.map((testimonial) => (
-          <div
-            key={testimonial.id}
-            className="bg-white dark:bg-gray-800 rounded-lg p-6 shadow-sm"
-          >
+      {testimonials.length === 0 ? (
+        <div className="rounded-xl border border-slate-200 bg-white/90 p-8 text-center shadow-sm">
+          <p className="text-lg font-semibold text-gray-900 mb-2">No testimonials yet</p>
+          <p className="text-sm text-gray-500">Once users submit feedback, it will appear here.</p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {testimonials.map((testimonial) => (
+            <div
+              key={testimonial.id}
+              className="bg-white/90 border border-slate-200 rounded-2xl p-6 shadow-sm"
+            >
             <div className="flex items-start justify-between mb-4">
               <div className="flex items-start gap-4">
                 {testimonial.avatar_url ? (
@@ -189,21 +213,21 @@ export default function TestimonialsManager() {
                 )}
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <h3 className="font-semibold text-gray-900 dark:text-white">
+                    <h3 className="font-semibold text-gray-900">
                       {testimonial.full_name}
                     </h3>
                     {testimonial.verified && (
-                      <span className="text-xs bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400 px-2 py-0.5 rounded-full">
+                      <span className="text-xs bg-blue-100 text-blue-600 px-2 py-0.5 rounded-full">
                         Verified
                       </span>
                     )}
                     {testimonial.featured && (
-                      <span className="text-xs bg-purple-100 dark:bg-purple-900 text-purple-600 dark:text-purple-400 px-2 py-0.5 rounded-full">
+                      <span className="text-xs bg-purple-100 text-purple-600 px-2 py-0.5 rounded-full">
                         Featured
                       </span>
                     )}
                   </div>
-                  <p className="text-sm text-gray-600 dark:text-gray-400">
+                  <p className="text-sm text-gray-600">
                     {testimonial.role} at {testimonial.company}
                   </p>
                   <div className="flex items-center gap-1 mt-1">
@@ -213,7 +237,7 @@ export default function TestimonialsManager() {
                         className={`h-3 w-3 ${
                           i < testimonial.rating
                             ? 'text-yellow-400 fill-yellow-400'
-                            : 'text-gray-300 dark:text-gray-600'
+                            : 'text-gray-400'
                         }`}
                       />
                     ))}
@@ -225,10 +249,10 @@ export default function TestimonialsManager() {
                 <span
                   className={`text-xs px-2 py-1 rounded-full ${
                     testimonial.status === 'approved'
-                      ? 'bg-green-100 dark:bg-green-900 text-green-600 dark:text-green-400'
+                      ? 'bg-green-100 text-green-700'
                       : testimonial.status === 'rejected'
-                      ? 'bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400'
-                      : 'bg-yellow-100 dark:bg-yellow-900 text-yellow-600 dark:text-yellow-400'
+                      ? 'bg-red-100 text-red-700'
+                      : 'bg-yellow-100 text-yellow-700'
                   }`}
                 >
                   {testimonial.status}
@@ -236,7 +260,7 @@ export default function TestimonialsManager() {
               </div>
             </div>
 
-            <p className="text-gray-700 dark:text-gray-300 mb-4 text-sm">
+            <p className="text-gray-700 mb-4">
               {testimonial.content}
             </p>
 
@@ -265,7 +289,7 @@ export default function TestimonialsManager() {
                 className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                   testimonial.featured
                     ? 'bg-purple-600 hover:bg-purple-700 text-white'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
                 }`}
               >
                 {testimonial.featured ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
@@ -277,7 +301,7 @@ export default function TestimonialsManager() {
                 className={`flex items-center gap-1 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors ${
                   testimonial.verified
                     ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                    : 'bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 hover:bg-gray-200 dark:hover:bg-gray-600'
+                    : 'bg-slate-100 text-slate-700 hover:bg-slate-200 border border-slate-200'
                 }`}
               >
                 <Check className="h-4 w-4" />
@@ -286,7 +310,7 @@ export default function TestimonialsManager() {
 
               <button
                 onClick={() => updateDisplayOrder(testimonial.id, 'up')}
-                className="p-1.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                className="p-1.5 bg-slate-100 border border-slate-200 rounded hover:bg-slate-200 transition-colors"
                 title="Move up"
               >
                 <ArrowUp className="h-4 w-4" />
@@ -294,7 +318,7 @@ export default function TestimonialsManager() {
 
               <button
                 onClick={() => updateDisplayOrder(testimonial.id, 'down')}
-                className="p-1.5 bg-gray-100 dark:bg-gray-700 text-gray-700 dark:text-gray-300 rounded hover:bg-gray-200 dark:hover:bg-gray-600 transition-colors"
+                className="p-1.5 bg-slate-100 border border-slate-200 rounded hover:bg-slate-200 transition-colors"
                 title="Move down"
               >
                 <ArrowDown className="h-4 w-4" />
@@ -302,21 +326,16 @@ export default function TestimonialsManager() {
 
               <button
                 onClick={() => deleteTestimonial(testimonial.id)}
-                className="p-1.5 bg-red-100 dark:bg-red-900 text-red-600 dark:text-red-400 rounded hover:bg-red-200 dark:hover:bg-red-800 transition-colors"
+                className="p-1.5 bg-red-100 border border-red-200 rounded hover:bg-red-200 transition-colors"
                 title="Delete"
               >
                 <Trash2 className="h-4 w-4" />
               </button>
             </div>
-          </div>
-        ))}
-
-        {testimonials.length === 0 && (
-          <div className="text-center py-12 text-gray-500 dark:text-gray-400">
-            No testimonials found
-          </div>
-        )}
-      </div>
+            </div>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

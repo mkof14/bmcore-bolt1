@@ -7,7 +7,6 @@ import {
   Calendar,
   DollarSign,
   ArrowUpRight,
-  ArrowDownRight,
   Clock,
   CheckCircle,
   AlertCircle,
@@ -16,9 +15,12 @@ import {
   Shield,
   Sparkles,
   RefreshCw,
-  ExternalLink
+  ExternalLink,
+  Info
 } from 'lucide-react';
 import { supabase } from '../../lib/supabase';
+import { notifyUserError, notifyUserInfo } from '../../lib/adminNotify';
+import ReportBrandHeader from '../../components/report/ReportBrandHeader';
 
 interface Invoice {
   id: string;
@@ -79,6 +81,7 @@ export default function BillingSection() {
   const loadBillingData = async () => {
     try {
       setLoading(true);
+      let planData: SubscriptionPlan | null = null;
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
@@ -96,13 +99,14 @@ export default function BillingSection() {
 
       // Load plan details
       if (subData) {
-        const { data: planData } = await supabase
+        const { data } = await supabase
           .from('subscription_plans')
           .select('*')
           .eq('id', subData.plan_id)
           .single();
 
-        setPlan(planData);
+        planData = data;
+        setPlan(data);
       }
 
       // Load invoices
@@ -120,17 +124,51 @@ export default function BillingSection() {
         .reduce((sum, inv) => sum + inv.amount, 0);
       setTotalPaid(total);
 
-      // Load usage stats (mock for now, replace with real data)
+      const [deviceConnections, userDevices, blackBoxFiles, medicalFiles] = await Promise.all([
+        supabase
+          .from('device_connections')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', user.id),
+        supabase
+          .from('user_devices')
+          .select('id', { count: 'exact', head: true })
+          .eq('user_id', user.id),
+        supabase
+          .from('black_box_files')
+          .select('file_size')
+          .eq('user_id', user.id),
+        supabase
+          .from('medical_files')
+          .select('file_size')
+          .eq('user_id', user.id)
+      ]);
+
+      const storageBytes = [
+        ...(blackBoxFiles.data || []),
+        ...(medicalFiles.data || [])
+      ].reduce((sum, file: { file_size?: number | null }) => sum + Number(file.file_size || 0), 0);
+
+      const storageUsed = Number((storageBytes / (1024 * 1024 * 1024)).toFixed(2));
+      const planId = (subData?.plan_id || '').toLowerCase();
+      const storageLimitMap: Record<string, number> = {
+        core: 10,
+        daily: 50,
+        max: 200
+      };
+      const storageLimit = storageLimitMap[planId] ?? 10;
+
+      const deviceCount = Math.max(deviceConnections.count || 0, userDevices.count || 0);
+
       setUsageStats({
         reportsUsed: subData?.reports_used_this_period || 0,
-        reportsLimit: planData?.max_reports_per_month || -1,
-        devicesConnected: 2,
-        storageUsed: 2.4,
-        storageLimit: 10
+        reportsLimit: planData?.max_reports_per_month ?? -1,
+        devicesConnected: deviceCount,
+        storageUsed,
+        storageLimit
       });
 
     } catch (error) {
-      console.error('Error loading billing data:', error);
+      notifyUserError('Billing data load failed');
     } finally {
       setLoading(false);
     }
@@ -148,7 +186,7 @@ export default function BillingSection() {
       case 'paid': return 'bg-green-900/30 border-green-600/30 text-green-400';
       case 'pending': return 'bg-yellow-900/30 border-yellow-600/30 text-yellow-400';
       case 'failed': return 'bg-red-900/30 border-red-600/30 text-red-400';
-      default: return 'bg-gray-700/30 border-gray-600/30 text-gray-400';
+      default: return 'bg-slate-100 border-slate-200 text-slate-600 dark:bg-gray-700/30 dark:border-gray-600/30 dark:text-gray-400';
     }
   };
 
@@ -175,7 +213,7 @@ export default function BillingSection() {
       case 'core': return 'from-orange-900/30 via-orange-800/20 border-orange-600/30 text-orange-400';
       case 'daily': return 'from-blue-900/30 via-blue-800/20 border-blue-600/30 text-blue-400';
       case 'max': return 'from-purple-900/30 via-purple-800/20 border-purple-600/30 text-purple-400';
-      default: return 'from-gray-900/30 via-gray-800/20 border-gray-600/30 text-gray-400';
+      default: return 'from-slate-100 via-slate-50 border-slate-200 text-slate-600 dark:from-gray-900/30 dark:via-gray-800/20 dark:border-gray-600/30 dark:text-gray-400';
     }
   };
 
@@ -206,7 +244,7 @@ export default function BillingSection() {
   };
 
   const handleManageBilling = async () => {
-    alert('Billing portal is currently unavailable. Please contact support.');
+    notifyUserInfo('Billing portal is currently unavailable. Please contact support.');
   };
 
   const handleUpgradePlan = () => {
@@ -225,22 +263,29 @@ export default function BillingSection() {
   return (
     <div>
       <div className="mb-6">
-        <h1 className="text-3xl font-bold text-white mb-2 flex items-center gap-3">
+        <h1 className="text-3xl font-semibold text-gray-900 mb-2 flex items-center gap-3">
           <CreditCard className="h-8 w-8 text-orange-500" />
           Billing & Subscription
         </h1>
-        <p className="text-gray-400">
+        <p className="text-gray-600">
           Manage your subscription, update payment methods, and view your complete payment history
         </p>
       </div>
 
+      <ReportBrandHeader
+        title="BioMath Core"
+        subtitle="Billing & Usage"
+        variant="strip"
+        className="mb-6"
+      />
+
       {/* Help Banner */}
       {!subscription && (
-        <div className="mb-6 bg-blue-500/10 border border-blue-500/30 rounded-xl p-4 flex items-start gap-3">
-          <Info className="h-5 w-5 text-blue-400 flex-shrink-0 mt-0.5" />
+        <div className="mb-6 bg-blue-50 border border-blue-200 rounded-2xl p-4 flex items-start gap-3">
+          <Info className="h-5 w-5 text-blue-600 flex-shrink-0 mt-0.5" />
           <div>
-            <h3 className="text-white font-semibold mb-1">No Active Subscription</h3>
-            <p className="text-sm text-gray-300 mb-3">
+            <h3 className="text-gray-900 font-semibold mb-1">No Active Subscription</h3>
+            <p className="text-sm text-gray-600 mb-3">
               You don't have an active subscription yet. Choose a plan to unlock all features and start your health journey!
             </p>
             <button
@@ -254,7 +299,8 @@ export default function BillingSection() {
       )}
 
       {/* Current Plan Card */}
-      <div className="mb-6 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-2xl p-6">
+      <div className="mb-6 bg-white/90 border border-slate-200 rounded-2xl p-6 shadow-lg">
+        <ReportBrandHeader variant="strip" subtitle="Current Plan" className="mb-4" />
         <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
           <div className="flex items-start gap-4">
             <div className={`bg-gradient-to-br ${getPlanColor(subscription?.plan_id || '')} to-gray-900 border rounded-xl p-4`}>
@@ -262,7 +308,7 @@ export default function BillingSection() {
             </div>
             <div>
               <div className="flex items-center gap-3 mb-2">
-                <h2 className="text-2xl font-bold text-white">
+                <h2 className="text-2xl font-semibold text-gray-900">
                   {plan?.name || 'No Plan'}
                 </h2>
                 {subscription?.is_trial && (
@@ -276,7 +322,7 @@ export default function BillingSection() {
                   </span>
                 )}
               </div>
-              <p className="text-gray-400 mb-1">
+              <p className="text-gray-600 mb-1">
                 {formatPrice(
                   subscription?.billing_period === 'annual'
                     ? plan?.annual_price_cents || 0
@@ -301,7 +347,7 @@ export default function BillingSection() {
             </button>
             <button
               onClick={handleManageBilling}
-              className="px-4 py-2 bg-gray-700 hover:bg-gray-600 text-white rounded-lg font-semibold transition-all flex items-center gap-2 group"
+              className="px-4 py-2 bg-slate-200 hover:bg-slate-300 text-gray-700 rounded-lg font-semibold transition-all flex items-center gap-2 group"
               title="Update payment method, view invoices, or cancel subscription"
             >
               <ExternalLink className="h-4 w-4 group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform" />
@@ -315,17 +361,18 @@ export default function BillingSection() {
       <div className="mb-6 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         {/* Next Billing - When your card will be charged next */}
         <div
-          className="bg-gradient-to-br from-green-900/30 via-green-800/20 to-gray-900 border border-green-600/30 rounded-xl p-4 cursor-help"
+          className="bg-white/90 border border-emerald-200 rounded-2xl p-4 cursor-help shadow-lg"
           title="Your next automatic payment date"
         >
+          <ReportBrandHeader variant="strip" subtitle="Next Billing" className="mb-3" />
           <div className="flex items-center justify-between mb-2">
-            <Calendar className="h-5 w-5 text-green-400" />
-            <span className="text-xs text-green-400 font-semibold">
+            <Calendar className="h-5 w-5 text-emerald-600" />
+            <span className="text-xs text-emerald-700 font-semibold">
               {getDaysUntilRenewal()} days away
             </span>
           </div>
-          <p className="text-xs text-gray-400 mb-1">Next Billing Date</p>
-          <p className="text-lg font-bold text-white">
+          <p className="text-xs text-gray-500 mb-1">Next Billing Date</p>
+          <p className="text-lg font-semibold text-gray-900">
             {subscription ? formatDate(subscription.current_period_end) : 'No subscription'}
           </p>
           <p className="text-xs text-gray-500 mt-1">
@@ -339,15 +386,16 @@ export default function BillingSection() {
 
         {/* Total Paid - Lifetime spending */}
         <div
-          className="bg-gradient-to-br from-blue-900/30 via-blue-800/20 to-gray-900 border border-blue-600/30 rounded-xl p-4 cursor-help"
+          className="bg-white/90 border border-blue-200 rounded-2xl p-4 cursor-help shadow-lg"
           title="Total amount you've paid since joining"
         >
+          <ReportBrandHeader variant="strip" subtitle="Total Paid" className="mb-3" />
           <div className="flex items-center justify-between mb-2">
-            <DollarSign className="h-5 w-5 text-blue-400" />
-            <TrendingUp className="h-4 w-4 text-blue-400" />
+            <DollarSign className="h-5 w-5 text-blue-600" />
+            <TrendingUp className="h-4 w-4 text-blue-600" />
           </div>
-          <p className="text-xs text-gray-400 mb-1">Total Paid (Lifetime)</p>
-          <p className="text-lg font-bold text-white">${totalPaid.toFixed(2)}</p>
+          <p className="text-xs text-gray-500 mb-1">Total Paid (Lifetime)</p>
+          <p className="text-lg font-semibold text-gray-900">${totalPaid.toFixed(2)}</p>
           <p className="text-xs text-gray-500 mt-1">
             {invoices.filter(i => i.status === 'paid').length} successful payment{invoices.filter(i => i.status === 'paid').length !== 1 ? 's' : ''}
           </p>
@@ -355,44 +403,46 @@ export default function BillingSection() {
 
         {/* Reports Usage - Track your monthly report generation */}
         <div
-          className="bg-gradient-to-br from-purple-900/30 via-purple-800/20 to-gray-900 border border-purple-600/30 rounded-xl p-4 cursor-help"
+          className="bg-white/90 border border-purple-200 rounded-2xl p-4 cursor-help shadow-lg"
           title="Number of health reports generated this billing period"
         >
+          <ReportBrandHeader variant="strip" subtitle="Reports Usage" className="mb-3" />
           <div className="flex items-center justify-between mb-2">
-            <RefreshCw className="h-5 w-5 text-purple-400" />
-            <span className="text-xs text-purple-400 font-semibold">
+            <RefreshCw className="h-5 w-5 text-purple-600" />
+            <span className="text-xs text-purple-700 font-semibold">
               {usageStats?.reportsLimit === -1 ? 'Unlimited' : `${usageStats?.reportsUsed}/${usageStats?.reportsLimit}`}
             </span>
           </div>
-          <p className="text-xs text-gray-400 mb-1">Reports This Month</p>
-          <p className="text-lg font-bold text-white">{usageStats?.reportsUsed || 0}</p>
+          <p className="text-xs text-gray-500 mb-1">Reports This Month</p>
+          <p className="text-lg font-semibold text-gray-900">{usageStats?.reportsUsed || 0}</p>
           {usageStats && usageStats.reportsLimit !== -1 ? (
-            <div className="mt-2 bg-gray-800 rounded-full h-1.5">
+            <div className="mt-2 bg-slate-200 rounded-full h-1.5">
               <div
                 className="bg-purple-500 h-1.5 rounded-full transition-all"
                 style={{ width: `${getUsagePercentage(usageStats.reportsUsed, usageStats.reportsLimit)}%` }}
               />
             </div>
           ) : (
-            <p className="text-xs text-purple-400 mt-1">∞ Generate unlimited reports</p>
+            <p className="text-xs text-purple-600 mt-1">∞ Generate unlimited reports</p>
           )}
         </div>
 
         {/* Storage Usage - Your data storage consumption */}
         <div
-          className="bg-gradient-to-br from-orange-900/30 via-orange-800/20 to-gray-900 border border-orange-600/30 rounded-xl p-4 cursor-help"
+          className="bg-white/90 border border-orange-200 rounded-2xl p-4 cursor-help shadow-lg"
           title="Storage space used for your health data and files"
         >
+          <ReportBrandHeader variant="strip" subtitle="Storage Usage" className="mb-3" />
           <div className="flex items-center justify-between mb-2">
-            <CreditCard className="h-5 w-5 text-orange-400" />
-            <span className="text-xs text-orange-400 font-semibold">
+            <CreditCard className="h-5 w-5 text-orange-500" />
+            <span className="text-xs text-orange-700 font-semibold">
               {usageStats?.storageUsed}GB / {usageStats?.storageLimit}GB
             </span>
           </div>
-          <p className="text-xs text-gray-400 mb-1">Storage Used</p>
-          <p className="text-lg font-bold text-white">{usageStats?.storageUsed || 0} GB</p>
+          <p className="text-xs text-gray-500 mb-1">Storage Used</p>
+          <p className="text-lg font-semibold text-gray-900">{usageStats?.storageUsed || 0} GB</p>
           {usageStats && (
-            <div className="mt-2 bg-gray-800 rounded-full h-1.5">
+            <div className="mt-2 bg-slate-200 rounded-full h-1.5">
               <div
                 className="bg-orange-500 h-1.5 rounded-full transition-all"
                 style={{ width: `${getUsagePercentage(usageStats.storageUsed, usageStats.storageLimit)}%` }}
@@ -407,26 +457,26 @@ export default function BillingSection() {
 
       {/* Payment History */}
       <div className="mb-6">
-        <h2 className="text-xl font-bold text-white mb-4 flex items-center gap-2">
+        <h2 className="text-xl font-semibold text-gray-900 mb-4 flex items-center gap-2">
           <Clock className="h-5 w-5 text-orange-500" />
           Payment History
         </h2>
 
         <div className="mb-4 flex flex-col md:flex-row gap-4">
           <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-500" />
             <input
               type="text"
               placeholder="Search invoices..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-3 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
+              className="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-lg text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-orange-500"
             />
           </div>
           <select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value)}
-            className="px-4 py-3 bg-gray-800/50 border border-gray-700/50 rounded-lg text-white focus:outline-none focus:ring-2 focus:ring-orange-500"
+            className="px-4 py-3 bg-white border border-slate-200 rounded-lg text-gray-900 focus:outline-none focus:ring-2 focus:ring-orange-500"
           >
             <option value="all">All Status</option>
             <option value="paid">Paid</option>
@@ -435,39 +485,40 @@ export default function BillingSection() {
           </select>
         </div>
 
-        <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl overflow-hidden">
+        <div className="bg-white/90 border border-slate-200 rounded-2xl overflow-hidden shadow-lg">
+          <ReportBrandHeader variant="strip" subtitle="Invoices & Payments" className="m-4 mb-0" />
           <div className="overflow-x-auto">
             <table className="w-full">
-              <thead className="bg-gray-800/50 border-b border-gray-700/50">
+              <thead className="bg-slate-50 border-b border-slate-200">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Invoice</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Plan</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Amount</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Date</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-400 uppercase tracking-wider">Actions</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Invoice</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Plan</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-gray-700/50">
+              <tbody className="divide-y divide-slate-200">
                 {filteredInvoices.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center text-gray-400">
+                    <td colSpan={6} className="px-6 py-12 text-center text-gray-500">
                       <div className="flex flex-col items-center gap-2">
-                        <AlertCircle className="h-12 w-12 text-gray-600" />
+                        <AlertCircle className="h-12 w-12 text-gray-500" />
                         <p>No invoices found</p>
                       </div>
                     </td>
                   </tr>
                 ) : (
                   filteredInvoices.map((invoice) => (
-                    <tr key={invoice.id} className="hover:bg-gray-800/30 transition-colors">
-                      <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-white">
+                    <tr key={invoice.id} className="hover:bg-slate-50 transition-colors">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm font-mono text-gray-900">
                         {invoice.invoice_number}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-300">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
                         {invoice.plan_name}
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-white font-semibold">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-semibold">
                         ${invoice.amount.toFixed(2)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
@@ -476,11 +527,11 @@ export default function BillingSection() {
                           {invoice.status}
                         </span>
                       </td>
-                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-400">
+                      <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {formatDate(invoice.created_at)}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm">
-                        <button className="text-orange-400 hover:text-orange-300 flex items-center gap-1 transition-colors">
+                        <button className="text-orange-600 hover:text-orange-500 flex items-center gap-1 transition-colors">
                           <Download className="h-4 w-4" />
                           PDF
                         </button>
@@ -496,43 +547,43 @@ export default function BillingSection() {
 
       {/* Quick Actions - Common billing tasks */}
       <div className="mb-4">
-        <h3 className="text-lg font-semibold text-white mb-3 flex items-center gap-2">
+        <h3 className="text-lg font-semibold text-gray-900 mb-3 flex items-center gap-2">
           <Zap className="h-5 w-5 text-orange-500" />
           Quick Actions
         </h3>
-        <p className="text-sm text-gray-400 mb-4">
+        <p className="text-sm text-gray-600 mb-4">
           Manage your subscription and billing with these quick shortcuts
         </p>
       </div>
       <div className="grid md:grid-cols-3 gap-4">
         <button
           onClick={handleUpgradePlan}
-          className="p-4 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl hover:border-orange-500/50 transition-all text-left group"
+          className="p-4 bg-white/90 border border-slate-200 rounded-2xl hover:border-orange-300 transition-all text-left group shadow-lg"
           title="Browse all available plans"
         >
-          <ArrowUpRight className="h-6 w-6 text-orange-400 mb-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-          <h3 className="text-white font-semibold mb-1">Upgrade Plan</h3>
-          <p className="text-sm text-gray-400">Get access to more features and higher limits</p>
+          <ArrowUpRight className="h-6 w-6 text-orange-500 mb-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+          <h3 className="text-gray-900 font-semibold mb-1">Upgrade Plan</h3>
+          <p className="text-sm text-gray-600">Get access to more features and higher limits</p>
         </button>
 
         <button
           onClick={handleManageBilling}
-          className="p-4 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl hover:border-blue-500/50 transition-all text-left group"
+          className="p-4 bg-white/90 border border-slate-200 rounded-2xl hover:border-blue-300 transition-all text-left group shadow-lg"
           title="Manage Billing Cycle"
         >
-          <RefreshCw className="h-6 w-6 text-blue-400 mb-2 group-hover:rotate-180 transition-transform duration-500" />
-          <h3 className="text-white font-semibold mb-1">Change Billing Cycle</h3>
-          <p className="text-sm text-gray-400">Switch between monthly and annual billing (save 17%)</p>
+          <RefreshCw className="h-6 w-6 text-blue-500 mb-2 group-hover:rotate-180 transition-transform duration-500" />
+          <h3 className="text-gray-900 font-semibold mb-1">Change Billing Cycle</h3>
+          <p className="text-sm text-gray-600">Switch between monthly and annual billing (save 17%)</p>
         </button>
 
         <button
           onClick={handleManageBilling}
-          className="p-4 bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-xl hover:border-purple-500/50 transition-all text-left group"
+          className="p-4 bg-white/90 border border-slate-200 rounded-2xl hover:border-purple-300 transition-all text-left group shadow-lg"
           title="Manage Payment Methods"
         >
-          <ExternalLink className="h-6 w-6 text-purple-400 mb-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
-          <h3 className="text-white font-semibold mb-1">Payment Methods</h3>
-          <p className="text-sm text-gray-400">Update your credit card and billing information</p>
+          <ExternalLink className="h-6 w-6 text-purple-500 mb-2 group-hover:translate-x-1 group-hover:-translate-y-1 transition-transform" />
+          <h3 className="text-gray-900 font-semibold mb-1">Payment Methods</h3>
+          <p className="text-sm text-gray-600">Update your credit card and billing information</p>
         </button>
       </div>
     </div>

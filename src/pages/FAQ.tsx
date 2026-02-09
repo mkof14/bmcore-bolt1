@@ -14,10 +14,10 @@ interface FAQItemProps {
 
 function FAQItem({ question, answer, isOpen, onToggle }: FAQItemProps) {
   return (
-    <div className="border border-gray-200 dark:border-gray-700 rounded-lg overflow-hidden">
+    <div className="border border-slate-200 dark:border-gray-800 rounded-2xl overflow-hidden bg-white/90 dark:bg-gray-900/70 shadow-sm">
       <button
         onClick={onToggle}
-        className="w-full px-6 py-4 flex items-center justify-between bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-750 transition-colors text-left"
+        className="w-full px-6 py-4 flex items-center justify-between bg-transparent hover:bg-white/80 dark:hover:bg-gray-900 transition-colors text-left"
       >
         <span className="font-semibold text-gray-900 dark:text-white pr-8">{question}</span>
         {isOpen ? (
@@ -27,7 +27,7 @@ function FAQItem({ question, answer, isOpen, onToggle }: FAQItemProps) {
         )}
       </button>
       {isOpen && (
-        <div className="px-6 py-4 bg-gray-50 dark:bg-gray-800/50 border-t border-gray-200 dark:border-gray-700">
+        <div className="px-6 py-4 bg-slate-50/80 dark:bg-gray-900/50 border-t border-slate-200 dark:border-gray-800">
           <p className="text-gray-700 dark:text-gray-300 whitespace-pre-line">{answer}</p>
         </div>
       )}
@@ -230,6 +230,16 @@ export default function FAQ({ onNavigate }: FAQProps) {
           id: "devices-connect",
           question: "Can I connect and disconnect devices?",
           answer: "Yes, anytime."
+        },
+        {
+          id: "signal-hub",
+          question: "What is the Signal Hub?",
+          answer: "Signal Hub summarizes your active data sources, signal strength, and recent changes so you can understand what your reports are built on."
+        },
+        {
+          id: "report-favorites",
+          question: "Can I save and organize reports?",
+          answer: "Yes. You can mark reports as favorites and add personal notes for quick reference."
         }
       ]
     },
@@ -260,6 +270,11 @@ export default function FAQ({ onNavigate }: FAQProps) {
           id: "learning",
           question: "Does the assistant learn over time?",
           answer: "Yes — it remembers style preferences (simple vs deep explanations)."
+        },
+        {
+          id: "multi-model-mode",
+          question: "What is multi-model mode?",
+          answer: "Multi-model mode runs more than one AI perspective at the same time to expand the breadth of analysis. It helps surface both physiological and behavioral insights."
         }
       ]
     },
@@ -287,9 +302,64 @@ export default function FAQ({ onNavigate }: FAQProps) {
           answer: "Yes. You can compare side-by-side and merge into a final summary."
         },
         {
+          id: "aggregated-report",
+          question: "How does the aggregated report work?",
+          answer: "The system combines the strongest findings from each model into one unified report, with clear priorities and a single action plan."
+        },
+        {
           id: "replace-doctor",
           question: "Does second opinion replace a doctor?",
           answer: "No. It complements human care — it does not replace medical professionals."
+        }
+      ]
+    },
+    {
+      title: "Reports & Insights",
+      items: [
+        {
+          id: "report-quality",
+          question: "What is the Report Quality Score?",
+          answer: "A clarity and reliability indicator based on signal coverage, consistency, and data freshness. It helps you understand how strong the current report is."
+        },
+        {
+          id: "data-coverage",
+          question: "What does Data Coverage mean?",
+          answer: "It shows how complete your inputs are across devices, questionnaires, notes, and reports. Higher coverage means deeper context."
+        },
+        {
+          id: "knowledge-snapshot",
+          question: "What is a Knowledge Snapshot?",
+          answer: "A snapshot is the platform’s current understanding of your health state, built from your latest signals and history."
+        },
+        {
+          id: "action-plan",
+          question: "What is the Action Plan Builder?",
+          answer: "It turns insights into 7, 14, and 30-day steps with priorities and checkboxes, so progress is structured and gentle."
+        }
+      ]
+    },
+    {
+      title: "AI Systems",
+      items: [
+        {
+          id: "ai-pipeline",
+          question: "How does the AI report pipeline work?",
+          answer: "Signals are gathered from your devices, questionnaires, notes, and reports, then summarized into a knowledge snapshot. Multi-model analysis runs in parallel, and the strongest findings are merged into a unified report."
+        },
+        {
+          id: "memory-depth",
+          question: "What is Memory Depth?",
+          answer: "Memory Depth reflects how much relevant history and context the system can access when generating your report. It increases as you add more signals."
+        },
+        {
+          id: "knowledge-timeline",
+          question: "What is the Knowledge Timeline?",
+          answer: "A timeline of key changes in your signals and reports so you can see how your context evolves over time."
+        },
+        {
+          id: "report-styles",
+          question: "Can I change report styles?",
+          answer: "Yes. You can view a quick summary, a balanced analysis, or a full deep‑dive narrative depending on how much detail you want."
         }
       ]
     },
@@ -392,26 +462,29 @@ export default function FAQ({ onNavigate }: FAQProps) {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900 flex flex-col">
+    <div className="min-h-screen bg-gradient-to-b from-white via-orange-50/40 to-white dark:from-gray-950 dark:via-gray-950 dark:to-gray-900 flex flex-col">
       <SEO
         title="FAQ - Frequently Asked Questions"
         description="Find answers to common questions about BioMath Core: services, pricing, data security, reports, and more. Get quick answers to your health analytics questions."
         keywords={['biomath core faq', 'health platform questions', 'wellness service help', 'health analytics faq', 'common questions']}
         url="/faq"
       />
-      <Header onNavigate={onNavigate} />
+      <Header onNavigate={onNavigate} currentPage="faq" />
 
       <main className="flex-1">
-        <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
           {/* Header */}
-          <div className="text-center mb-12">
-            <div className="inline-flex items-center justify-center w-16 h-16 bg-blue-100 dark:bg-blue-900/30 rounded-full mb-4">
-              <HelpCircle className="h-8 w-8 text-blue-600 dark:text-blue-400" />
+          <div className="text-center mb-14">
+            <span className="inline-flex items-center rounded-full border border-orange-200 dark:border-white/10 bg-white/80 dark:bg-gray-900/60 px-4 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-orange-700 dark:text-orange-300">
+              Knowledge Base
+            </span>
+            <div className="mx-auto mt-5 flex h-14 w-14 items-center justify-center rounded-2xl bg-blue-100 dark:bg-blue-900/40">
+              <HelpCircle className="h-6 w-6 text-blue-600 dark:text-blue-400" />
             </div>
-            <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-4">
+            <h1 className="mt-6 text-4xl md:text-5xl font-semibold text-gray-900 dark:text-white mb-4">
               Frequently Asked Questions
             </h1>
-            <p className="text-xl text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
+            <p className="text-lg text-gray-600 dark:text-gray-400 max-w-2xl mx-auto">
               Everything you need to know about BioMath Core
             </p>
           </div>
@@ -420,7 +493,7 @@ export default function FAQ({ onNavigate }: FAQProps) {
           <div className="space-y-12">
             {faqSections.map((section, sectionIndex) => (
               <div key={sectionIndex}>
-                <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-6">
+                <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-6">
                   {section.title}
                 </h2>
                 <div className="space-y-4">
@@ -439,11 +512,11 @@ export default function FAQ({ onNavigate }: FAQProps) {
           </div>
 
           {/* Still have questions */}
-          <div className="mt-16 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/20 dark:to-indigo-900/20 rounded-2xl p-8 text-center border border-blue-200 dark:border-blue-800">
-            <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-4">
+          <div className="mt-16 bg-gradient-to-r from-blue-50 to-indigo-50 dark:from-blue-900/30 dark:to-indigo-900/30 rounded-3xl p-8 text-center border border-blue-200 dark:border-blue-900/40 shadow-lg">
+            <h2 className="text-2xl font-semibold text-gray-900 dark:text-white mb-4">
               Still have questions?
             </h2>
-            <p className="text-gray-600 dark:text-gray-400 mb-6">
+            <p className="text-gray-600 dark:text-gray-300 mb-6">
               We're here to help. Reach out to our support team.
             </p>
             <button

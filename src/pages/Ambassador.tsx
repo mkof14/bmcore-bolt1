@@ -44,41 +44,44 @@ export default function Ambassador({ onNavigate }: AmbassadorProps) {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-950 to-gray-900 pt-20 pb-16">
+    <div className="min-h-screen bg-gradient-to-b from-white via-orange-50/40 to-white pt-20 pb-16">
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <BackButton onNavigate={onNavigate} />
 
-        <div className="text-center mb-16">
-          <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-gray-800 to-gray-900 border border-orange-600/30 rounded-xl mb-6 shadow-lg shadow-orange-600/10">
-            <Award className="h-10 w-10 text-orange-500" />
+        <div className="text-center mb-14">
+          <span className="inline-flex items-center rounded-full border border-orange-200 bg-white/80 px-4 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-orange-700">
+            Ambassador Program
+          </span>
+          <div className="mx-auto mt-5 flex h-16 w-16 items-center justify-center rounded-2xl border border-orange-200 bg-white/90 shadow-md">
+            <Award className="h-8 w-8 text-orange-500" />
           </div>
-          <h1 className="text-5xl md:text-6xl font-bold text-white mb-6">
+          <h1 className="mt-6 text-4xl md:text-5xl font-semibold text-gray-900 mb-4">
             Ambassador Program
           </h1>
-          <p className="text-xl text-gray-300 max-w-2xl mx-auto leading-relaxed">
+          <p className="text-lg text-gray-600 max-w-2xl mx-auto leading-relaxed">
             Become a wellness multiplier. Share BioMath Core authentically and earn enhanced rewards while helping others discover calm, supportive guidance.
           </p>
         </div>
 
-        <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-2xl p-10 mb-12 text-white">
-          <h2 className="text-3xl font-bold mb-8 text-center">What Makes an Ambassador?</h2>
+        <div className="bg-white/90 border border-slate-200 rounded-3xl p-10 mb-12 text-gray-900 shadow-xl">
+          <h2 className="text-3xl font-semibold mb-8 text-center">What Makes an Ambassador?</h2>
           <div className="grid md:grid-cols-2 gap-8">
-            <div className="relative bg-gray-800/50 border border-gray-700/30 rounded-xl p-6 overflow-hidden">
+            <div className="relative bg-slate-50 border border-slate-200 rounded-2xl p-6 overflow-hidden">
               <div className="flex items-center space-x-3 mb-4">
                 <TrendingUp className="h-6 w-6 text-orange-500" />
-                <h3 className="text-lg font-semibold">Organic Growth</h3>
+                <h3 className="text-lg font-semibold text-gray-900">Organic Growth</h3>
               </div>
-              <p className="text-gray-400 leading-relaxed">
+              <p className="text-gray-600 leading-relaxed">
                 Loyal users who refer 10+ friends become eligible for automatic Ambassador upgrade with enhanced benefits.
               </p>
             </div>
 
-            <div className="relative bg-gray-800/50 border border-gray-700/30 rounded-xl p-6 overflow-hidden">
+            <div className="relative bg-slate-50 border border-slate-200 rounded-2xl p-6 overflow-hidden">
               <div className="flex items-center space-x-3 mb-4">
                 <Users className="h-6 w-6 text-orange-500" />
-                <h3 className="text-lg font-semibold">Direct Application</h3>
+                <h3 className="text-lg font-semibold text-gray-900">Direct Application</h3>
               </div>
-              <p className="text-gray-400 leading-relaxed">
+              <p className="text-gray-600 leading-relaxed">
                 Wellness coaches, health educators, content creators, and community leaders can apply directly through our form below.
               </p>
             </div>
@@ -86,69 +89,66 @@ export default function Ambassador({ onNavigate }: AmbassadorProps) {
         </div>
 
         <div className="grid md:grid-cols-3 gap-6 mb-12">
-          <div className="group relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 border border-gray-700/40 rounded-xl p-6 text-center hover:border-orange-600/40 transition-all duration-300 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-orange-900/0 to-orange-900/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div className="group relative bg-white/90 border border-slate-200 rounded-2xl p-6 text-center hover:border-orange-300 transition-all duration-300 overflow-hidden shadow-lg">
             <div className="relative">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-900 border border-orange-600/20 rounded-lg mx-auto mb-4 group-hover:border-orange-500/40 transition-all">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-orange-50 border border-orange-200 rounded-2xl mx-auto mb-4">
                 <Gift className="h-8 w-8 text-orange-500" />
               </div>
-              <h3 className="text-lg font-semibold text-white mb-2">Higher Rewards</h3>
-              <p className="text-sm text-gray-400 leading-relaxed">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Higher Rewards</h3>
+              <p className="text-sm text-gray-600 leading-relaxed">
                 Earn $20 per referral (2x standard rate) with tier-based scaling opportunities
               </p>
             </div>
           </div>
 
-          <div className="group relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 border border-gray-700/40 rounded-xl p-6 text-center hover:border-orange-600/40 transition-all duration-300 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-orange-900/0 to-orange-900/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div className="group relative bg-white/90 border border-slate-200 rounded-2xl p-6 text-center hover:border-orange-300 transition-all duration-300 overflow-hidden shadow-lg">
             <div className="relative">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-900 border border-orange-600/20 rounded-lg mx-auto mb-4 group-hover:border-orange-500/40 transition-all">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-orange-50 border border-orange-200 rounded-2xl mx-auto mb-4">
                 <Star className="h-8 w-8 text-orange-500" />
               </div>
-              <h3 className="text-lg font-semibold text-white mb-2">Priority Access</h3>
-              <p className="text-sm text-gray-400 leading-relaxed">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Priority Access</h3>
+              <p className="text-sm text-gray-600 leading-relaxed">
                 Early feature testing, priority support, and exclusive Ambassador dashboard
               </p>
             </div>
           </div>
 
-          <div className="group relative bg-gradient-to-b from-gray-800/50 to-gray-900/50 border border-gray-700/40 rounded-xl p-6 text-center hover:border-orange-600/40 transition-all duration-300 overflow-hidden">
-            <div className="absolute inset-0 bg-gradient-to-br from-orange-900/0 to-orange-900/5 opacity-0 group-hover:opacity-100 transition-opacity"></div>
+          <div className="group relative bg-white/90 border border-slate-200 rounded-2xl p-6 text-center hover:border-orange-300 transition-all duration-300 overflow-hidden shadow-lg">
             <div className="relative">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-900 border border-orange-600/20 rounded-lg mx-auto mb-4 group-hover:border-orange-500/40 transition-all">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-orange-50 border border-orange-200 rounded-2xl mx-auto mb-4">
                 <CheckCircle className="h-8 w-8 text-orange-500" />
               </div>
-              <h3 className="text-lg font-semibold text-white mb-2">Co-Branded Tools</h3>
-              <p className="text-sm text-gray-400 leading-relaxed">
+              <h3 className="text-lg font-semibold text-gray-900 mb-2">Co-Branded Tools</h3>
+              <p className="text-sm text-gray-600 leading-relaxed">
                 Dedicated materials, social assets, optional landing page, and sharing toolkit
               </p>
             </div>
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-2xl p-8 mb-12">
-          <h2 className="text-2xl font-bold text-white mb-6">Ambassador Benefits</h2>
+        <div className="bg-white/90 border border-slate-200 rounded-3xl p-8 mb-12 shadow-lg">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-6">Ambassador Benefits</h2>
           <div className="grid md:grid-cols-2 gap-6">
             <div className="space-y-4">
               <div className="flex items-start space-x-3">
                 <CheckCircle className="h-5 w-5 text-orange-500 mt-0.5 flex-shrink-0" />
                 <div>
-                  <h4 className="font-semibold text-white mb-1">Enhanced Rewards</h4>
-                  <p className="text-sm text-gray-400">Double the standard referral rate with scaling tiers</p>
+                  <h4 className="font-semibold text-gray-900 mb-1">Enhanced Rewards</h4>
+                  <p className="text-sm text-gray-600">Double the standard referral rate with scaling tiers</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
                 <CheckCircle className="h-5 w-5 text-orange-500 mt-0.5 flex-shrink-0" />
                 <div>
-                  <h4 className="font-semibold text-white mb-1">Dedicated Dashboard</h4>
-                  <p className="text-sm text-gray-400">Track cohort, lifetime rewards, and ambassador tier level</p>
+                  <h4 className="font-semibold text-gray-900 mb-1">Dedicated Dashboard</h4>
+                  <p className="text-sm text-gray-600">Track cohort, lifetime rewards, and ambassador tier level</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
                 <CheckCircle className="h-5 w-5 text-orange-500 mt-0.5 flex-shrink-0" />
                 <div>
-                  <h4 className="font-semibold text-white mb-1">Co-Branded Materials</h4>
-                  <p className="text-sm text-gray-400">Professional social assets and sharing toolkit</p>
+                  <h4 className="font-semibold text-gray-900 mb-1">Co-Branded Materials</h4>
+                  <p className="text-sm text-gray-600">Professional social assets and sharing toolkit</p>
                 </div>
               </div>
             </div>
@@ -156,34 +156,34 @@ export default function Ambassador({ onNavigate }: AmbassadorProps) {
               <div className="flex items-start space-x-3">
                 <CheckCircle className="h-5 w-5 text-orange-500 mt-0.5 flex-shrink-0" />
                 <div>
-                  <h4 className="font-semibold text-white mb-1">Priority Support</h4>
-                  <p className="text-sm text-gray-400">Direct access to platform team for questions</p>
+                  <h4 className="font-semibold text-gray-900 mb-1">Priority Support</h4>
+                  <p className="text-sm text-gray-600">Direct access to platform team for questions</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
                 <CheckCircle className="h-5 w-5 text-orange-500 mt-0.5 flex-shrink-0" />
                 <div>
-                  <h4 className="font-semibold text-white mb-1">Early Features</h4>
-                  <p className="text-sm text-gray-400">Beta testing and preview access to new platform capabilities</p>
+                  <h4 className="font-semibold text-gray-900 mb-1">Early Features</h4>
+                  <p className="text-sm text-gray-600">Beta testing and preview access to new platform capabilities</p>
                 </div>
               </div>
               <div className="flex items-start space-x-3">
                 <CheckCircle className="h-5 w-5 text-orange-500 mt-0.5 flex-shrink-0" />
                 <div>
-                  <h4 className="font-semibold text-white mb-1">Revenue-Sharing Growth</h4>
-                  <p className="text-sm text-gray-400">Eligibility for advanced partnership models</p>
+                  <h4 className="font-semibold text-gray-900 mb-1">Revenue-Sharing Growth</h4>
+                  <p className="text-sm text-gray-600">Eligibility for advanced partnership models</p>
                 </div>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-2xl p-8 mb-12">
-          <h2 className="text-2xl font-bold text-white mb-2">Ambassador Responsibilities</h2>
-          <p className="text-gray-400 mb-6 leading-relaxed">
+        <div className="bg-white/90 border border-slate-200 rounded-3xl p-8 mb-12 shadow-lg">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-2">Ambassador Responsibilities</h2>
+          <p className="text-gray-600 mb-6 leading-relaxed">
             As an ambassador, we ask that you share authentically and maintain our wellness-first values:
           </p>
-          <div className="space-y-3 text-sm text-gray-400">
+          <div className="space-y-3 text-sm text-gray-600">
             <div className="flex items-start space-x-3">
               <div className="w-1.5 h-1.5 bg-orange-500 rounded-full mt-2 flex-shrink-0"></div>
               <p>Share the platform authentically based on personal experience</p>
@@ -203,16 +203,16 @@ export default function Ambassador({ onNavigate }: AmbassadorProps) {
           </div>
         </div>
 
-        <div className="bg-gradient-to-br from-gray-900 via-gray-800 to-gray-900 border border-gray-700/50 rounded-2xl p-8">
-          <h2 className="text-2xl font-bold text-white mb-6">Apply to Become an Ambassador</h2>
+        <div className="bg-white/90 border border-slate-200 rounded-3xl p-8 shadow-xl">
+          <h2 className="text-2xl font-semibold text-gray-900 mb-6">Apply to Become an Ambassador</h2>
 
           {submitted ? (
             <div className="text-center py-12">
-              <div className="inline-flex items-center justify-center w-16 h-16 bg-gray-800 border border-orange-600/30 rounded-xl mb-4">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-orange-50 border border-orange-200 rounded-2xl mb-4">
                 <CheckCircle className="h-8 w-8 text-orange-500" />
               </div>
-              <h3 className="text-xl font-semibold text-white mb-2">Application Submitted!</h3>
-              <p className="text-gray-400 mb-4">
+              <h3 className="text-xl font-semibold text-gray-900 mb-2">Application Submitted!</h3>
+              <p className="text-gray-600 mb-4">
                 Thank you for your interest in becoming a BioMath Core Ambassador.
               </p>
               <p className="text-sm text-gray-500">
@@ -223,7 +223,7 @@ export default function Ambassador({ onNavigate }: AmbassadorProps) {
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-white mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Full Name *
                   </label>
                   <input
@@ -232,12 +232,12 @@ export default function Ambassador({ onNavigate }: AmbassadorProps) {
                     value={formData.fullName}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-700 rounded-lg bg-gray-900 text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-slate-200 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-white mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Email Address *
                   </label>
                   <input
@@ -246,14 +246,14 @@ export default function Ambassador({ onNavigate }: AmbassadorProps) {
                     value={formData.email}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-700 rounded-lg bg-gray-900 text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-slate-200 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   />
                 </div>
               </div>
 
               <div className="grid md:grid-cols-2 gap-6">
                 <div>
-                  <label className="block text-sm font-medium text-white mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Country/Region *
                   </label>
                   <input
@@ -262,12 +262,12 @@ export default function Ambassador({ onNavigate }: AmbassadorProps) {
                     value={formData.country}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-700 rounded-lg bg-gray-900 text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-slate-200 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-sm font-medium text-white mb-2">
+                  <label className="block text-sm font-medium text-gray-700 mb-2">
                     Audience Type *
                   </label>
                   <select
@@ -275,7 +275,7 @@ export default function Ambassador({ onNavigate }: AmbassadorProps) {
                     value={formData.audienceType}
                     onChange={handleChange}
                     required
-                    className="w-full px-4 py-3 border border-gray-700 rounded-lg bg-gray-900 text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-slate-200 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   >
                     <option value="">Select type...</option>
                     <option value="users">General Users</option>
@@ -288,7 +288,7 @@ export default function Ambassador({ onNavigate }: AmbassadorProps) {
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-white mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Do you currently use our referral program? *
                 </label>
                 <div className="flex space-x-6">
@@ -302,7 +302,7 @@ export default function Ambassador({ onNavigate }: AmbassadorProps) {
                       required
                       className="text-orange-600 focus:ring-orange-500"
                     />
-                    <span className="text-white">Yes</span>
+                    <span className="text-gray-700">Yes</span>
                   </label>
                   <label className="flex items-center space-x-2">
                     <input
@@ -314,13 +314,13 @@ export default function Ambassador({ onNavigate }: AmbassadorProps) {
                       required
                       className="text-orange-600 focus:ring-orange-500"
                     />
-                    <span className="text-white">No</span>
+                    <span className="text-gray-700">No</span>
                   </label>
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-white mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Why do you want to become an ambassador? *
                 </label>
                 <textarea
@@ -329,13 +329,13 @@ export default function Ambassador({ onNavigate }: AmbassadorProps) {
                   onChange={handleChange}
                   required
                   rows={4}
-                  className="w-full px-4 py-3 border border-gray-700 rounded-lg bg-gray-900 text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-slate-200 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                   placeholder="Share your motivation and how you'd like to contribute..."
                 />
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-white mb-2">
+                <label className="block text-sm font-medium text-gray-700 mb-2">
                   Website or Social Link (Optional)
                 </label>
                 <input
@@ -344,7 +344,7 @@ export default function Ambassador({ onNavigate }: AmbassadorProps) {
                   value={formData.socialLink}
                   onChange={handleChange}
                   placeholder="https://"
-                  className="w-full px-4 py-3 border border-gray-700 rounded-lg bg-gray-900 text-white focus:ring-2 focus:ring-orange-500 focus:border-transparent"
+                  className="w-full px-4 py-3 border border-slate-200 rounded-lg bg-white text-gray-900 focus:ring-2 focus:ring-orange-500 focus:border-transparent"
                 />
               </div>
 
@@ -358,12 +358,12 @@ export default function Ambassador({ onNavigate }: AmbassadorProps) {
           )}
         </div>
 
-        <div className="mt-8 bg-gray-800/30 border border-gray-700/30 rounded-xl p-6 text-center">
-          <p className="text-sm text-gray-400">
-            <span className="font-medium text-white">Already have 10+ referrals?</span> Check your{' '}
+        <div className="mt-8 bg-white/90 border border-slate-200 rounded-3xl p-6 text-center shadow-lg">
+          <p className="text-sm text-gray-600">
+            <span className="font-medium text-gray-900">Already have 10+ referrals?</span> Check your{' '}
             <button
               onClick={() => onNavigate('member')}
-              className="text-orange-500 hover:text-orange-400 hover:underline font-medium transition-colors"
+              className="text-orange-600 hover:text-orange-500 hover:underline font-medium transition-colors"
             >
               Member Zone
             </button>

@@ -206,7 +206,8 @@ export async function sendSystemAlert(
   message: string,
   severity: "info" | "warning" | "error"
 ): Promise<void> {
-  console[severity](`[ALERT] ${message}`);
+  const level = severity === "warning" ? "warn" : severity;
+  console[level](`[ALERT] ${message}`);
 
   await logAuditEvent({
     action: "system_alert",

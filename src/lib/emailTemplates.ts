@@ -220,3 +220,33 @@ export async function seedEmailTemplates(supabaseClient: any) {
 
   return results;
 }
+
+export async function seedEmailTemplatesAdmin() {
+  const results: Array<{ template: string; success: boolean; error?: any }> = [];
+
+  for (const template of EMAIL_TEMPLATES) {
+    const result = await adminDb({
+      table: 'email_templates',
+      action: 'upsert',
+      onConflict: 'slug',
+      data: {
+        name: template.name,
+        slug: template.slug,
+        category: template.category,
+        subject_en: template.subject_en,
+        subject_ru: template.subject_ru || null,
+        preview_text: template.preview_text || null,
+        body_en: template.body_en,
+        body_ru: template.body_ru || null,
+        variable_schema: template.variable_schema,
+        status: 'active',
+        description: template.description,
+      },
+    });
+
+    results.push({ template: template.slug, success: result.ok, error: result.error });
+  }
+
+  return results;
+}
+import { adminDb } from './adminApi';

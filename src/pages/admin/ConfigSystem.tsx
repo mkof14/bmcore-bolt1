@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { CONFIG_SECTIONS } from "@/config/configSchema";
+import { CONFIG_SECTIONS, type ConfigSection, type ConfigKey } from "@/config/configSchema";
 import { computeCompletion } from "@/lib/envUtils";
 import { Download } from "lucide-react";
 
@@ -40,8 +40,8 @@ export default function ConfigSystem() {
 
   useEffect(() => {
     const fetchStatus = () => {
-      const groups = CONFIG_SECTIONS.map(sec => {
-        const items = sec.keys.map(k => {
+      const groups = CONFIG_SECTIONS.map((sec: ConfigSection) => {
+        const items = sec.keys.map((k: ConfigKey) => {
           const val = import.meta.env[k.key];
           const present = Boolean(val);
           const ok = present && validateValue(val, k.validator);
@@ -81,11 +81,11 @@ export default function ConfigSystem() {
     const s = q.trim().toLowerCase();
     if (!s) return data.groups;
     return data.groups
-      .map(g => ({
+      .map((g) => ({
         ...g,
-        items: g.items.filter(it => (it.key + it.label + g.group).toLowerCase().includes(s))
+        items: g.items.filter((it) => (it.key + it.label + g.group).toLowerCase().includes(s))
       }))
-      .filter(g => g.items.length > 0);
+      .filter((g) => g.items.length > 0);
   }, [data, q]);
 
   async function onSave(type: "env" | "csv") {
@@ -131,7 +131,7 @@ export default function ConfigSystem() {
   if (!data) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="text-red-600">Failed to load configuration</div>
+        <div className="text-red-600">Configuration load failed</div>
       </div>
     );
   }

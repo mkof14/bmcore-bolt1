@@ -73,12 +73,12 @@ export default function SiteMapManager() {
 
       setMessage({
         type: 'success',
-        text: 'Page configuration saved successfully! ✓'
+        text: 'Page configuration saved'
       });
 
       setTimeout(() => setMessage(null), 5000);
     } catch (error: any) {
-      setMessage({ type: 'error', text: error.message });
+      setMessage({ type: 'error', text: error.message || 'Page configuration save failed' });
     } finally {
       setSaving(false);
     }
@@ -100,22 +100,22 @@ export default function SiteMapManager() {
   }));
 
   const categoryNames: Record<string, string> = {
-    main: '🏠 Main Pages',
-    info: 'ℹ️ Info & Help',
-    marketing: '🎯 Marketing',
-    member: '👤 Member Pages',
-    admin: '⚙️ Administration',
-    legal: '⚖️ Legal Pages'
+    main: 'Main Pages',
+    info: 'Info & Help',
+    marketing: 'Marketing',
+    member: 'Member Pages',
+    admin: 'Administration',
+    legal: 'Legal Pages'
   };
 
   return (
     <div className="max-w-7xl mx-auto p-6 space-y-6">
-      <div className="bg-gradient-to-br from-gray-900 to-gray-800 rounded-xl border border-gray-700/50 p-8">
+      <div className="bg-white/90 rounded-2xl border border-slate-200 p-8 shadow-lg">
         <div className="flex items-center gap-3 mb-6">
           <Map className="w-8 h-8 text-blue-400" />
           <div>
-            <h2 className="text-2xl font-bold text-white">Site Map & Page Visibility</h2>
-            <p className="text-gray-400 text-sm mt-1">
+            <h2 className="text-2xl font-semibold text-gray-900">Site Map & Page Visibility</h2>
+            <p className="text-gray-600 text-sm mt-1">
               Manage site page visibility
             </p>
           </div>
@@ -142,10 +142,10 @@ export default function SiteMapManager() {
           {categoryStats.map(({ category, total, enabled }) => (
             <div
               key={category}
-              className="bg-gray-800/50 p-4 rounded-lg border border-gray-700/30"
+              className="bg-white p-4 rounded-lg border border-slate-200"
             >
-              <div className="text-2xl font-bold text-white">{enabled}/{total}</div>
-              <div className="text-xs text-gray-400 mt-1">
+              <div className="text-2xl font-semibold text-gray-900">{enabled}/{total}</div>
+              <div className="text-xs text-gray-600 mt-1">
                 {categoryNames[category]?.replace(/^[^\s]+ /, '')}
               </div>
               <div className="flex gap-2 mt-3">
@@ -172,7 +172,7 @@ export default function SiteMapManager() {
 
             return (
               <div key={category} className="space-y-3">
-                <h3 className="text-xl font-bold text-white border-b border-gray-700 pb-2">
+                <h3 className="text-xl font-semibold text-gray-900 border-b border-slate-200 pb-2">
                   {categoryNames[category]}
                 </h3>
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
@@ -185,7 +185,7 @@ export default function SiteMapManager() {
                         className={`p-4 rounded-lg border-2 transition-all text-left ${
                           page.enabled
                             ? 'bg-green-500/10 border-green-500/30 hover:bg-green-500/20'
-                            : 'bg-gray-800/30 border-gray-700/30 hover:bg-gray-800/50'
+                            : 'bg-slate-50 border-slate-200 hover:bg-slate-100'
                         }`}
                       >
                         <div className="flex items-start justify-between">
@@ -198,7 +198,7 @@ export default function SiteMapManager() {
                               <div className="text-xs text-gray-500 mt-0.5">{page.path}</div>
                             </div>
                           </div>
-                          <div className={`p-1 rounded ${page.enabled ? 'bg-green-500/20' : 'bg-gray-700/30'}`}>
+                          <div className={`p-1 rounded ${page.enabled ? 'bg-green-500/20' : 'bg-slate-200'}`}>
                             {page.enabled ? (
                               <Eye className="w-4 h-4 text-green-400" />
                             ) : (
@@ -206,7 +206,7 @@ export default function SiteMapManager() {
                             )}
                           </div>
                         </div>
-                        <p className={`text-xs mt-2 ${page.enabled ? 'text-gray-400' : 'text-gray-600'}`}>
+                        <p className={`text-xs mt-2 ${page.enabled ? 'text-gray-600' : 'text-gray-600'}`}>
                           {page.description}
                         </p>
                       </button>
@@ -218,7 +218,7 @@ export default function SiteMapManager() {
           })}
         </div>
 
-        <div className="mt-8 pt-6 border-t border-gray-700/50">
+        <div className="mt-8 pt-6 border-t border-slate-200">
           <button
             onClick={handleSave}
             disabled={saving}
@@ -244,7 +244,7 @@ export default function SiteMapManager() {
           <AlertCircle className="w-5 h-5" />
           How it works
         </h3>
-        <ul className="space-y-2 text-sm text-gray-300">
+        <ul className="space-y-2 text-sm text-gray-700">
           <li>🟢 <strong>Green cards</strong> - page is active and accessible to users</li>
           <li>⚫ <strong>Gray cards</strong> - page is hidden (returns 404 or redirect)</li>
           <li>🔘 <strong>Category buttons</strong> - quickly enable/disable all pages in category</li>

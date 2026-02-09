@@ -226,11 +226,19 @@ class SessionRecorder {
       };
 
       const compressed = this.compressData(sessionData);
+      const { supabase } = await import("./supabase");
+      const { data } = await supabase.auth.getSession();
+      const token = data?.session?.access_token;
+      if (!token) return;
 
-      await fetch('/api/sessions/save', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(compressed)
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+      await fetch(`${supabaseUrl}/functions/v1/sessions-save`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(compressed),
       });
     } catch (error) {
       console.error('Failed to save session:', error);
@@ -259,16 +267,41 @@ class SessionRecorder {
 
 export const sessionRecorder = new SessionRecorder();
 
+function hasAnalyticsConsent(): boolean {
+  try {
+    const consent = localStorage.getItem('biomath_cookie_preferences');
+    if (!consent) return false;
+    const preferences = JSON.parse(consent);
+    return preferences?.analytics === true;
+  } catch {
+    return false;
+  }
+}
+
 export function startSessionRecording(): void {
   if (typeof window === 'undefined') return;
 
-  if (Math.random() < 0.1) {
-    sessionRecorder.start();
+  const maybeStart = () => {
+    if (!hasAnalyticsConsent()) return;
+    if (Math.random() < 0.1) {
+      sessionRecorder.start();
 
-    window.addEventListener('beforeunload', () => {
+      window.addEventListener('beforeunload', () => {
+        sessionRecorder.stop();
+      });
+    }
+  };
+
+  maybeStart();
+
+  window.addEventListener('cookieConsentUpdated', (event: Event) => {
+    const customEvent = event as CustomEvent<{ analytics: boolean }>;
+    if (customEvent.detail?.analytics) {
+      maybeStart();
+    } else {
       sessionRecorder.stop();
-    });
-  }
+    }
+  });
 }
 
 export function getHeatmapData(): HeatmapPoint[] {

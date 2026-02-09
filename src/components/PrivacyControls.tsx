@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Shield, Download, Trash2, Eye, EyeOff, AlertTriangle } from 'lucide-react';
+import { Shield, Download, Trash2, EyeOff, AlertTriangle } from 'lucide-react';
 import { exportUserData, downloadDataAsJSON, deleteUserData, anonymizeUserData } from '../lib/gdprDataExport';
 import LoadingSpinner, { LoadingButton } from './LoadingSpinner';
 import ErrorMessage from './ErrorMessage';
+import ModalShell from './ui/ModalShell';
 
 interface PrivacyControlsProps {
   userId: string;
@@ -26,9 +27,9 @@ export default function PrivacyControls({ userId, onDataDeleted }: PrivacyContro
     try {
       const data = await exportUserData(userId);
       downloadDataAsJSON(data);
-      setSuccess('Your data has been exported successfully!');
+      setSuccess('Data export complete');
     } catch (err) {
-      setError('Failed to export data. Please try again.');
+      setError('Data export failed');
     } finally {
       setIsExporting(false);
     }
@@ -41,12 +42,12 @@ export default function PrivacyControls({ userId, onDataDeleted }: PrivacyContro
 
     try {
       await deleteUserData(userId);
-      setSuccess('Your data has been deleted successfully.');
+      setSuccess('Data deleted');
       if (onDataDeleted) {
         setTimeout(() => onDataDeleted(), 2000);
       }
     } catch (err) {
-      setError('Failed to delete data. Please contact support.');
+      setError('Data delete failed');
     } finally {
       setIsDeleting(false);
       setShowDeleteConfirm(false);
@@ -60,9 +61,9 @@ export default function PrivacyControls({ userId, onDataDeleted }: PrivacyContro
 
     try {
       await anonymizeUserData(userId);
-      setSuccess('Your personal data has been anonymized.');
+      setSuccess('Data anonymized');
     } catch (err) {
-      setError('Failed to anonymize data. Please contact support.');
+      setError('Data anonymize failed');
     } finally {
       setIsAnonymizing(false);
       setShowAnonymizeConfirm(false);
@@ -171,79 +172,69 @@ export default function PrivacyControls({ userId, onDataDeleted }: PrivacyContro
       </div>
 
       {showAnonymizeConfirm && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-md w-full border border-gray-200 dark:border-gray-700 p-6">
-            <div className="flex items-start gap-3 mb-4">
-              <AlertTriangle className="w-6 h-6 text-yellow-500 flex-shrink-0 mt-0.5" />
-              <div>
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
-                  Anonymize Your Data?
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400">
-                  This will remove all personally identifiable information from your account. Your health data will be kept for research purposes but cannot be linked back to you.
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-3 mt-6">
-              <button
-                onClick={() => setShowAnonymizeConfirm(false)}
-                className="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-medium rounded-lg transition-colors"
-              >
-                Cancel
-              </button>
-              <LoadingButton
-                loading={isAnonymizing}
-                onClick={handleAnonymizeData}
-                className="flex-1 px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white font-medium rounded-lg transition-colors"
-              >
-                Anonymize
-              </LoadingButton>
-            </div>
+        <ModalShell
+          title="Anonymize Your Data?"
+          icon={<AlertTriangle className="w-6 h-6 text-yellow-500" />}
+          onClose={() => setShowAnonymizeConfirm(false)}
+          panelClassName="max-w-md"
+        >
+          <p className="text-sm text-gray-600 dark:text-gray-400">
+            This will remove all personally identifiable information from your account. Your health data will be kept for research purposes but cannot be linked back to you.
+          </p>
+          <div className="flex gap-3 mt-6">
+            <button
+              onClick={() => setShowAnonymizeConfirm(false)}
+              className="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-medium rounded-lg transition-colors"
+            >
+              Cancel
+            </button>
+            <LoadingButton
+              loading={isAnonymizing}
+              onClick={handleAnonymizeData}
+              className="flex-1 px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white font-medium rounded-lg transition-colors"
+            >
+              Anonymize
+            </LoadingButton>
           </div>
-        </div>
+        </ModalShell>
       )}
 
       {showDeleteConfirm && (
-        <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white dark:bg-gray-900 rounded-2xl shadow-2xl max-w-md w-full border border-red-200 dark:border-red-800 p-6">
-            <div className="flex items-start gap-3 mb-4">
-              <AlertTriangle className="w-6 h-6 text-red-500 flex-shrink-0 mt-0.5" />
-              <div>
-                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-2">
-                  Delete All Data?
-                </h3>
-                <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
-                  This will permanently delete your account and all associated data, including:
-                </p>
-                <ul className="text-sm text-gray-600 dark:text-gray-400 list-disc list-inside space-y-1">
-                  <li>Profile information</li>
-                  <li>Health data and reports</li>
-                  <li>Device readings</li>
-                  <li>Goals and habits</li>
-                  <li>Subscription history</li>
-                </ul>
-                <p className="text-sm font-semibold text-red-600 dark:text-red-400 mt-3">
-                  This action cannot be undone.
-                </p>
-              </div>
-            </div>
-            <div className="flex gap-3 mt-6">
-              <button
-                onClick={() => setShowDeleteConfirm(false)}
-                className="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-medium rounded-lg transition-colors"
-              >
-                Cancel
-              </button>
-              <LoadingButton
-                loading={isDeleting}
-                onClick={handleDeleteData}
-                className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors"
-              >
-                Delete Forever
-              </LoadingButton>
-            </div>
+        <ModalShell
+          title="Delete All Data?"
+          icon={<AlertTriangle className="w-6 h-6 text-red-500" />}
+          onClose={() => setShowDeleteConfirm(false)}
+          panelClassName="max-w-md border border-red-200 dark:border-red-800"
+        >
+          <p className="text-sm text-gray-600 dark:text-gray-400 mb-3">
+            This will permanently delete your account and all associated data, including:
+          </p>
+          <ul className="text-sm text-gray-600 dark:text-gray-400 list-disc list-inside space-y-1">
+            <li>Profile information</li>
+            <li>Health data and reports</li>
+            <li>Device readings</li>
+            <li>Goals and habits</li>
+            <li>Subscription history</li>
+          </ul>
+          <p className="text-sm font-semibold text-red-600 dark:text-red-400 mt-3">
+            This action cannot be undone.
+          </p>
+          <div className="flex gap-3 mt-6">
+            <button
+              onClick={() => setShowDeleteConfirm(false)}
+              className="flex-1 px-4 py-2 bg-gray-200 hover:bg-gray-300 dark:bg-gray-700 dark:hover:bg-gray-600 text-gray-900 dark:text-white font-medium rounded-lg transition-colors"
+            >
+              Cancel
+            </button>
+            <LoadingButton
+              loading={isDeleting}
+              onClick={handleDeleteData}
+              className="flex-1 px-4 py-2 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-colors"
+            >
+              Delete Forever
+            </LoadingButton>
           </div>
-        </div>
+        </ModalShell>
       )}
     </div>
   );

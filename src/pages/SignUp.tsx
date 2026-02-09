@@ -1,6 +1,7 @@
 import { useState, useRef } from 'react';
 import { Mail, Lock, User, AlertCircle, CheckCircle, Gift, Eye, EyeOff } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { notifyUserInfo } from '../lib/adminNotify';
 import BackButton from '../components/BackButton';
 
 interface SignUpProps {
@@ -77,7 +78,7 @@ export default function SignUp({ onNavigate }: SignUpProps) {
 
       if (requireEmailVerification) {
         setError('');
-        alert('Account created! Please check your email to confirm your account before signing in.');
+        notifyUserInfo('Account created. Please check your email to confirm before signing in.');
       }
 
       setTimeout(() => {

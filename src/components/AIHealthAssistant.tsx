@@ -3,10 +3,11 @@ import { Send, Mic, AlertCircle, Shield, Scale, Volume2 } from 'lucide-react';
 import AudioVisualizer from './AudioVisualizer';
 import TypingIndicator from './TypingIndicator';
 import { supabase } from '../lib/supabase';
+import { notifyUserError, notifyUserInfo } from '../lib/adminNotify';
 import { generateDualOpinion } from '../lib/dualOpinionEngine';
 import DualOpinionView from './DualOpinionView';
 import type { AssistantPersona } from '../types/database';
-import type { Opinion, OpinionDiff } from '../lib/dualOpinionEngine';
+import type { Opinion, OpinionDiff, Recommendation } from '../lib/dualOpinionEngine';
 
 // Define strict types for messages
 interface BaseMessage {
@@ -58,7 +59,7 @@ export default function AIHealthAssistant({ isOpen, onClose }: AIHealthAssistant
   const [isUserSpeaking, setIsUserSpeaking] = useState(false);
   const [micIntensity, setMicIntensity] = useState(0.5);
 
-  const silenceTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const silenceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const audioContextRef = useRef<AudioContext | null>(null);
@@ -79,7 +80,6 @@ export default function AIHealthAssistant({ isOpen, onClose }: AIHealthAssistant
 
   const generateSingleResponse = (input: string, persona: AssistantPersona | null): string => {
     const msg = input.toLowerCase();
-    console.log('Generating single response for persona:', persona?.name);
 
     if (msg.includes('energy') || msg.includes('tired')) {
       return 'Afternoon energy dips are common and often related to circadian rhythms, meal composition, and sleep quality. Consider:\n\n• Balanced lunch with protein and complex carbs\n• 10-minute walk after eating\n• Hydration check (often overlooked!)\n• Consistent sleep schedule\n\nWould you like me to analyze this in more depth with two expert opinions? Toggle "Second Opinion" and ask again!';
@@ -202,7 +202,7 @@ export default function AIHealthAssistant({ isOpen, onClose }: AIHealthAssistant
     try {
       const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
       if (!SpeechRecognition) {
-        alert('Speech recognition is not supported in your browser. Please use Chrome, Edge, or Safari.');
+        notifyUserInfo('Speech recognition is not supported in your browser. Please use Chrome, Edge, or Safari.');
         setIsRecording(false);
         return;
       }
@@ -212,7 +212,8 @@ export default function AIHealthAssistant({ isOpen, onClose }: AIHealthAssistant
       recognition.interimResults = true;
       recognition.lang = 'en-US';
 
-      recognition.onstart = () => console.log('Speech recognition started');
+      recognition.onstart = () => {
+      };
 
       recognition.onresult = (event: SpeechRecognitionEvent) => {
         let finalTranscript = '';
@@ -239,9 +240,8 @@ export default function AIHealthAssistant({ isOpen, onClose }: AIHealthAssistant
       };
 
       recognition.onerror = (event: SpeechRecognitionErrorEvent) => {
-        console.error('Speech recognition error:', event.error);
         if (event.error === 'not-allowed') {
-          alert('Microphone access denied. Please allow microphone access in your browser settings.');
+          notifyUserError('Microphone access denied. Please allow microphone access in your browser settings.');
         }
         setIsRecording(false);
       };
@@ -262,8 +262,7 @@ export default function AIHealthAssistant({ isOpen, onClose }: AIHealthAssistant
       audioContextRef.current = audioContext;
 
     } catch (error) {
-      console.error('Error starting recording:', error);
-      alert('Could not access microphone. Please check permissions.');
+      notifyUserError('Could not access microphone. Please check permissions.');
       setIsRecording(false);
     }
   }, [isRecording, inputMessage, handleSendMessage]);
@@ -323,7 +322,7 @@ export default function AIHealthAssistant({ isOpen, onClose }: AIHealthAssistant
     setMessages(prev => [...prev, confirmMsg]);
   };
 
-  const handleAddGoals = (recommendations: string[]) => {
+  const handleAddGoals = (recommendations: Recommendation[]) => {
     const confirmMsg: SystemMessage = {
       id: Date.now().toString(),
       role: 'system',
@@ -400,7 +399,7 @@ export default function AIHealthAssistant({ isOpen, onClose }: AIHealthAssistant
 
           <div className="flex-1 overflow-y-auto p-6 space-y-4 bg-gray-950/50">
             {messages.map((message) => {
-              if (message.type === 'dual-opinion') {
+              if ('type' in message && message.type === 'dual-opinion') {
                 return (
                   <div key={message.id} className="w-full">
                     <div className="mb-3 flex items-center space-x-2 bg-gray-800/50 backdrop-blur px-3 py-2 rounded-xl border border-orange-600/30 w-fit">

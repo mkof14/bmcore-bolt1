@@ -43,7 +43,7 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
       bgImage: 'https://images.pexels.com/photos/3768894/pexels-photo-3768894.jpeg?auto=compress&cs=tinysrgb&w=600',
     },
     {
-      id: 'longevity-aging',
+      id: 'longevity',
       name: 'Longevity & Anti-Aging',
       icon: TrendingUp,
       gradient: 'from-blue-950/80 via-black/70 to-black/85',
@@ -228,10 +228,10 @@ export default function HealthCategories({ onNavigate }: HealthCategoriesProps) 
     <section className={`py-20 px-4 sm:px-6 lg:px-8 ${isDark ? 'bg-gray-950' : 'bg-gray-50'}`}>
       <div className="max-w-7xl mx-auto">
         <div className="text-center mb-12">
-          <h2 className={`text-4xl md:text-5xl font-bold mb-4 ${isDark ? 'text-white' : 'text-gray-900'}`}>
+          <h2 className={`text-4xl md:text-5xl font-semibold mb-4 ${isDark ? 'text-gray-100' : 'text-gray-800'}`}>
             Health Categories
           </h2>
-          <p className={`text-xl max-w-3xl mx-auto ${isDark ? 'text-gray-400' : 'text-gray-600'}`}>
+          <p className={`text-xl max-w-3xl mx-auto ${isDark ? 'text-gray-400' : 'text-gray-500'}`}>
             Explore 200+ AI-powered services across 20 comprehensive health categories
           </p>
         </div>
